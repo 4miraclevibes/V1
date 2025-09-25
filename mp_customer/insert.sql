@@ -1,4 +1,4 @@
-INSERT INTO [POWERAPPS].[dbo].[MP_CUSTOMER] (
+INSERT INTO [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] (
     [code],
     [name],
     [city],
@@ -16,14 +16,14 @@ INSERT INTO [POWERAPPS].[dbo].[MP_CUSTOMER] (
     [credit_limit],
     [GFcode]
 ) VALUES (
-    'COGLPG_013508', -- code
-    'KOPERASI PPLHI LAMPUNG', -- name
-    'LAMPUNG', -- city
+    'Test', -- code
+    'Test', -- name
+    'Test', -- city
     '8/13/2025', -- createdate
-    '60', -- distributor_id
-    '83', -- account_id
-    'ATT-KOSONG', -- account_trading_term
-    '500', -- regency_id
+    '1', -- distributor_id
+    '1', -- account_id
+    'TEST', -- account_trading_term
+    '1', -- regency_id
     GETDATE(), -- created_at
     GETDATE(), -- updated_at
     'active', -- status
