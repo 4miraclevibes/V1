@@ -9,14 +9,14 @@ If(
                 (IsBlank(searchDistributor.Text) || searchDistributor.Text in distributor_name) &&
                 (IsBlank(searchCode.Text) || searchCode.Text in customer_code) &&
                 (IsBlank(searchName.Text) || searchName.Text in customer_name) &&
-                //(IsBlank(searchAccount.Text) || searchAccount.Text in account_name) &&
                 (IsBlank(searchAccountTrade.Text) || searchAccountTrade.Text in customer_account_trading_term) &&
+                //(IsBlank(searchAccount.Text) || searchAccount.Text in account_name) &&
                 //(IsBlank(searchSubChanel.Text) || searchSubChanel.Text in sub_chanel_name) &&
                 //(IsBlank(searchChanel.Text) || searchChanel.Text in chanel_name) &&
                 //(IsBlank(searchMarketchanel.Text) || searchMarketchanel.Text in market_name) &&
                 //(IsBlank(searchKota.Text) || searchKota.Text in regency_name) &&
-                (IsBlank(searchStatus.Text) || searchStatus.Text in customer_status) &&
                 //(IsBlank(searchProvince.Text) || searchProvince.Text in province_name) &&
+                (IsBlank(searchStatus.Text) || searchStatus.Text in customer_status) &&
                 (IsBlank(searchRegionCb.Selected) || region_name = searchRegionCb.Selected.Region) &&
                 (IsBlank(searchSubRegionCb.Selected) || sub_region_name = searchSubRegionCb.Selected.SubRegion) &&
                 (IsBlank(searchDistributorCb.Selected) || distributor_name = searchDistributorCb.Selected.Value) &&
@@ -47,14 +47,14 @@ If(
                 (IsBlank(searchDistributor.Text) || searchDistributor.Text in distributor_name) &&
                 (IsBlank(searchCode.Text) || searchCode.Text in customer_code) &&
                 (IsBlank(searchName.Text) || searchName.Text in customer_name) &&
-                //(IsBlank(searchAccount.Text) || searchAccount.Text in account_name) &&
                 (IsBlank(searchAccountTrade.Text) || searchAccountTrade.Text in customer_account_trading_term) &&
+                //(IsBlank(searchAccount.Text) || searchAccount.Text in account_name) &&
                 //(IsBlank(searchSubChanel.Text) || searchSubChanel.Text in sub_chanel_name) &&
                 //(IsBlank(searchChanel.Text) || searchChanel.Text in chanel_name) &&
                 //(IsBlank(searchMarketchanel.Text) || searchMarketchanel.Text in market_name) &&
                 //(IsBlank(searchKota.Text) || searchKota.Text in regency_name) &&
-                (IsBlank(searchStatus.Text) || searchStatus.Text in customer_status) &&
                 //(IsBlank(searchProvince.Text) || searchProvince.Text in province_name) &&
+                (IsBlank(searchStatus.Text) || searchStatus.Text in customer_status) &&
                 (IsBlank(searchRegionCb.Selected) || region_name = searchRegionCb.Selected.Region) &&
                 (IsBlank(searchSubRegionCb.Selected) || sub_region_name = searchSubRegionCb.Selected.SubRegion) &&
                 (IsBlank(searchDistributorCb.Selected) || distributor_name = searchDistributorCb.Selected.Value) &&
