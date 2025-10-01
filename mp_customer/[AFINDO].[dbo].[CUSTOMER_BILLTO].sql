@@ -1,0 +1,6 @@
+SELECT [billto_party]
+      ,[billto_party_name]
+      ,[status]
+      ,[created_date]
+      ,[type]
+  FROM [AFINDO].[dbo].[CUSTOMER_BILLTO]
