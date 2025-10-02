@@ -1,0 +1,7 @@
+SELECT [bill_to_party]
+      ,[bill_to_party_name]
+      ,[sold_to_party_name]
+      ,[billto_group]
+      ,[name]
+      ,[created_date]
+  FROM [AFINDO].[dbo].[FS_GROUP_ACCOUNT]
