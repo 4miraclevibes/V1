@@ -4,7 +4,7 @@ If(
     FirstN(
         Sort(
             Filter(
-                VW_MP_CUSTOMER_COMPLETE,
+                VW_MP_CUSTOMER_COMPLETE_NEW,
                 customer_status = "active" &&
                 (IsBlank(searchDistributor.Text) || searchDistributor.Text in distributor_name) &&
                 (IsBlank(searchCode.Text) || searchCode.Text in customer_code) &&
@@ -43,7 +43,7 @@ If(
     FirstN(
         Sort(
             Filter(
-                VW_MP_CUSTOMER_COMPLETE,
+                VW_MP_CUSTOMER_COMPLETE_NEW,
                 customer_status = "active" &&
                 (IsBlank(searchDistributor.Text) || searchDistributor.Text in distributor_name) &&
                 (IsBlank(searchCode.Text) || searchCode.Text in customer_code) &&
