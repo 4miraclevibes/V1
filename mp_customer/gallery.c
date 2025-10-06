@@ -4,12 +4,13 @@ If(
     FirstN(
         Sort(
             Filter(
-                VW_MP_CUSTOMER_COMPLETE,
+                VW_MP_CUSTOMER_COMPLETE_NEW,
                 customer_status = "active" &&
                 (IsBlank(searchDistributor.Text) || searchDistributor.Text in distributor_name) &&
                 (IsBlank(searchCode.Text) || searchCode.Text in customer_code) &&
                 (IsBlank(searchName.Text) || searchName.Text in customer_name) &&
                 (IsBlank(searchAccountTrade.Text) || searchAccountTrade.Text in customer_account_trading_term) &&
+                (!isTop50 || top50 = true) &&
                 //(IsBlank(searchAccount.Text) || searchAccount.Text in account_name) &&
                 //(IsBlank(searchSubChanel.Text) || searchSubChanel.Text in sub_chanel_name) &&
                 //(IsBlank(searchChanel.Text) || searchChanel.Text in chanel_name) &&
@@ -42,7 +43,7 @@ If(
     FirstN(
         Sort(
             Filter(
-                VW_MP_CUSTOMER_COMPLETE,
+                VW_MP_CUSTOMER_COMPLETE_NEW,
                 customer_status = "active" &&
                 (IsBlank(searchDistributor.Text) || searchDistributor.Text in distributor_name) &&
                 (IsBlank(searchCode.Text) || searchCode.Text in customer_code) &&
