@@ -1,0 +1,6 @@
+SELECT [Tanggal Transaksi]
+      ,[Keterangan]
+      ,[Credit]
+      ,[Billto Party]
+      ,[created_date]
+  FROM [AFINDO].[dbo].[FA_Bank_Statement]
