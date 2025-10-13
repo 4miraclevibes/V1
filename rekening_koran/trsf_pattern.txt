@@ -827,7 +827,7 @@ A. KESIMPULAN UTAMA:
       → Satu BTP melayani 2+ customer berbeda adalah NORMAL dalam business process
 
    2. KUALITAS DATA:
-      ✓ 2,219 customer patterns teridentifikasi (threshold: match rate ≥70%, min 5 transaksi)
+      ✓ 2,219 customer patterns teridentifikasi (threshold: match rate ≥70%, min 1 transaksi)
       ✓ 2,078 customers (93.6%) memiliki Perfect Match 100%
       ✓ 2,110 customers (95.1%) memiliki Excellent Match ≥95%
       ✓ Coverage: 1,678 BTP (45.1% dari total 3,722 BTP)

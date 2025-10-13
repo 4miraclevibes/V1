@@ -1,0 +1,186 @@
+===============================================================================
+SAMPLE DESKRIPSI TRSF UNTUK TESTING
+===============================================================================
+
+Gunakan deskripsi-deskripsi ini untuk testing manual (option 1).
+Copy-paste ke program test_btp_pattern
+
+===============================================================================
+TEST CASE 1: PERFECT MATCH - 100% Confidence
+===============================================================================
+
+TRSF E-BANKING CR 0201/FTSCY/WS95011 455520.00 GF fresh 2dus 3jan 2024 RONNY YULIADY
+
+Expected Result:
+  BTP: 2300014094
+  Customer: RONNY YULIADY
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 2: PERFECT MATCH - Company Name
+===============================================================================
+
+TRSF E-BANKING CR 0301/FTSCY/WS95051 1138800.00 inv K002000009320 KN palmerah PT ARYANDA YASA UN
+
+Expected Result:
+  BTP: 2300015194
+  Customer: PT ARYANDA YASA UN
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 3: HIGH VOLUME - ASTRO TECHNOLOGIES
+===============================================================================
+
+TRSF E-BANKING CR 1501/ATSCY/WS95051 REF:24011500335381 PT Greenfields In 3222360457 ASTRO TECHNOLOGIES
+
+Expected Result:
+  BTP: 2300018516
+  Customer: ASTRO TECHNOLOGIES
+  Match %: 92.54%
+  Confidence: HIGH 🔵
+
+
+===============================================================================
+TEST CASE 4: MULTIPLE CUSTOMERS - Same BTP (Customer 1)
+===============================================================================
+
+TRSF E-BANKING CR 0501/FTSCY/WS95011 911040.00 FM 4dus 3/1 EVELYN YONA
+
+Expected Result:
+  BTP: 2300015307
+  Customer: EVELYN YONA
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 5: MULTIPLE CUSTOMERS - Same BTP (Customer 2)
+===============================================================================
+
+TRSF E-BANKING CR 0801/FTSCY/WS95011 683280.00 FM3dus OD2/1 RENITA SUSILO
+
+Expected Result:
+  BTP: 2300015307
+  Customer: RENITA SUSILO
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 6: EXCELLENT MATCH - 95%+
+===============================================================================
+
+TRSF E-BANKING CR 1001/FTSCY/WS95271 683280.00 Domu Kuncit N69065 24 10Nov23 FRANKI SEPTINUS
+
+Expected Result:
+  BTP: 2300011640
+  Customer: FRANKI SEPTINUS
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 7: GOOD MATCH - 80-89%
+===============================================================================
+
+TRSF E-BANKING CR 1601/FTSCY/WS95011 554400.00 Hom dev sahabat Inv:5222388880 ENI PURWANTI
+
+Expected Result:
+  BTP: 2300001430
+  Customer: ENI PURWANTI
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 8: NO PATTERN - Tidak Ada Customer Name
+===============================================================================
+
+TRSF E-BANKING CR 0101/FTSCY/WS95051 455520.00
+
+Expected Result:
+  ❌ NO PATTERN FOUND
+  → Manual entry required
+
+
+===============================================================================
+TEST CASE 9: NO PATTERN - Customer Name Tidak di Master
+===============================================================================
+
+TRSF E-BANKING CR 0101/FTSCY/WS95051 455520.00 CUSTOMER TIDAK ADA DI MASTER
+
+Expected Result:
+  ❌ NO PATTERN FOUND
+  → Manual entry required
+
+
+===============================================================================
+TEST CASE 10: FAIR MATCH - 70-79% (if using 70% threshold)
+===============================================================================
+
+TRSF E-BANKING CR 0901/FTSCY/WS95011 911040.00 nota 1-2 serpong JENNY LUKITA
+
+Expected Result (jika pakai 70% threshold):
+  BTP: 2300014424
+  Customer: JENNY LUKITA
+  Match %: 79.61%
+  Confidence: LOW_MEDIUM 🟠
+
+
+===============================================================================
+TEST CASE 11: Long Customer Name
+===============================================================================
+
+TRSF E-BANKING CR 1501/FTSCY/WS95051 683280.00 NATIVE HQ INV/GF/882504 NATIVE MAKMUR INOV
+
+Expected Result:
+  BTP: 2300005523
+  Customer: NATIVE MAKMUR INOV
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TEST CASE 12: With Variation
+===============================================================================
+
+TRSF E-BANKING CR 1501/FTSCY/WS95051 18904080.00 BKK-24/01/0006 CRI CHAMP RESTO INDONE
+
+Expected Result:
+  BTP: 2300011588
+  Customer: CRI CHAMP RESTO INDONE
+  Match %: 100.00%
+  Confidence: VERY_HIGH 🟢
+
+
+===============================================================================
+TIPS TESTING
+===============================================================================
+
+1. **Copy deskripsi dari TRSF.csv** untuk real-world testing
+2. **Test berbagai skenario**: perfect match, partial match, no match
+3. **Bandingkan hasil** dengan BTP original di CSV
+4. **Perhatikan confidence level** untuk decision making
+5. **Test edge cases**: nama pendek, nama panjang, typo, dll
+
+===============================================================================
+BATCH TESTING INTERPRETATION
+===============================================================================
+
+Hasil Batch Testing akan menampilkan:
+
+✅ MATCH       → BTP suggested = BTP original (CORRECT!)
+⚠️ MISMATCH    → BTP suggested ≠ BTP original (REVIEW NEEDED)
+❌ NO PATTERN  → Tidak ada pattern found (MANUAL ENTRY)
+
+**Good Accuracy Metrics:**
+- Match rate: ≥80% (8 dari 10 test match)
+- Mismatch rate: ≤10% (1 dari 10 test mismatch)
+- No pattern: ≤20% (2 dari 10 test no pattern)
+
+===============================================================================
+

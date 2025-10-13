@@ -1,8 +1,11 @@
 -- =====================================================
 -- INSERT STATEMENTS: CUSTOMER → BTP MAPPING
+-- THRESHOLD: 80% (Conservative threshold)
 -- =====================================================
 -- Generated from TRSF.csv analysis
 -- Total entries: 2201
+-- Match rate threshold: ≥80%
+-- Minimum transactions: 1
 -- =====================================================
 
 INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN] 

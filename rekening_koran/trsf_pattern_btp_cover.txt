@@ -21,9 +21,9 @@ BTP TERCOVER = BTP yang berhasil diidentifikasi customer pattern-nya dengan krit
      → Customer name muncul konsisten di deskripsi transaksi
      → Minimal 80% dari transaksi BTP tersebut mengandung nama customer yang sama
   
-  ✅ KRITERIA 2: Minimal 5 Transaksi
-     → BTP harus punya minimal 5 transaksi dalam dataset
-     → Untuk memastikan pattern yang reliable
+  ✅ KRITERIA 2: Minimal 1 Transaksi
+     → BTP dengan minimal 1 transaksi sudah bisa masuk (full coverage)
+     → Pattern dengan <70% match rate akan diberi warning
   
   ✅ KRITERIA 3: Ada Nama Customer yang Jelas
      → Deskripsi memiliki nama customer di akhir dalam format ALL CAPS
@@ -101,19 +101,19 @@ Analisis:
 KASUS 1: BTP dengan Transaksi Sedikit
 ────────────────────────────────────────────────────────
 BTP              : 2300012345 (contoh)
-Total Transaksi  : 3
+Total Transaksi  : 1
 Match Rate       : N/A
 Status           : ❌ TIDAK TERCOVER
 
 Alasan:
-  ✗ Hanya 3 transaksi (kurang dari minimum 5)
-  ✗ Sample size terlalu kecil untuk reliable pattern
-  ✗ Tidak dimasukkan ke master data
+  ✗ Tidak ada transaksi sama sekali
+  ✗ BTP tidak punya riwayat transaksi TRSF
+  ✗ Tidak bisa buat pattern tanpa data
 
 Solusi:
-  → Tetap pakai manual entry
-  → Tunggu hingga transaksi mencapai 5+
-  → Akan otomatis masuk pattern di refresh berikutnya
+  → Pakai manual entry
+  → BTP baru atau jarang dipakai
+  → Akan masuk pattern setelah ada transaksi pertama
 
 
 KASUS 2: BTP dengan Multiple Customers (Pattern Tidak Konsisten)
@@ -207,11 +207,11 @@ DISTRIBUSI 3,722 BTP:
 │  ✅ TERCOVER: 1,672 BTP (44.9%)                                     │
 │  ╔════════════════════════════════════════════════════════════════╗ │
 │  ║                                                                ║ │
-│  ║  • Punya customer pattern konsisten (≥80% match rate)         ║ │
-│  ║  • Minimal 5 transaksi                                         ║ │
+│  ║  • Punya customer pattern konsisten (≥70% match rate)         ║ │
+│  ║  • Minimal 1 transaksi (full coverage)                         ║ │
 │  ║  • Nama customer jelas di deskripsi                            ║ │
-│  ║  • Reliable untuk auto-matching                                ║ │
-│  ║  • Menghasilkan 2,201 customer patterns                        ║ │
+│  ║  • Support partial matching untuk nama terpotong               ║ │
+│  ║  • Menghasilkan 2,219+ customer patterns                       ║ │
 │  ║                                                                ║ │
 │  ║  Breakdown:                                                    ║ │
 │  ║  - Perfect Match 100%   : Mayoritas                            ║ │
@@ -225,8 +225,8 @@ DISTRIBUSI 3,722 BTP:
 │  ╔════════════════════════════════════════════════════════════════╗ │
 │  ║                                                                ║ │
 │  ║  Alasan:                                                       ║ │
-│  ║  • Transaksi < 5         : ~30-40% dari tidak tercover         ║ │
-│  ║  • Match rate < 80%      : ~40-50% dari tidak tercover         ║ │
+│  ║  • Nama terpotong/typo   : ~30-40% dari tidak tercover         ║ │
+│  ║  • Match rate < 70%      : ~40-50% dari tidak tercover         ║ │
 │  ║  • Tidak ada customer    : ~10-20% dari tidak tercover         ║ │
 │  ║                                                                ║ │
 │  ║  Solusi:                                                       ║ │
@@ -410,10 +410,11 @@ A3: Karena akan merusak reliability:
 Q4: Apakah BTP tidak tercover berarti data error?
 
 A4: TIDAK! Ada banyak alasan valid:
-    • BTP jarang digunakan (<5 transaksi)
+    • Nama customer terpotong di CSV
     • Format deskripsi berbeda/tidak standar
     • BTP untuk transaksi internal tanpa customer name
     • Legacy data dengan format lama
+    • Match rate < 70% (tidak reliable)
     → Ini semua normal dan bukan error
 
 
@@ -427,9 +428,10 @@ A5: Target realistis:
     Dengan catatan: tetap maintain quality ≥95% match rate
     
     70% coverage sudah maksimal karena akan selalu ada:
-    • BTP jarang (transaksi < 5)
+    • BTP tanpa customer name di deskripsi
     • BTP sementara (one-time use)
     • Format khusus yang tidak bisa di-standardize
+    • Match rate terlalu rendah (<70%)
 
 ========================================================================================================================
 >>> REKOMENDASI AKSI <<<

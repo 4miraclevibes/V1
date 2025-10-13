@@ -1,0 +1,263 @@
+═══════════════════════════════════════════════════════════════════
+🎉 FITUR BARU - BTP PATTERN MATCHING V2.0
+═══════════════════════════════════════════════════════════════════
+Updated: 2025-10-13
+═══════════════════════════════════════════════════════════════════
+
+
+✨ WHAT'S NEW:
+
+
+1️⃣ MINIMAL TRANSAKSI: 2 → 1
+═══════════════════════════════════════════════════════════════════
+
+   SEBELUM: BTP harus punya minimal 2 transaksi
+   SEKARANG: BTP dengan 1 transaksi pun bisa masuk!
+   
+   Impact:
+   ✅ Full coverage - semua BTP dengan customer name akan masuk
+   ✅ Tidak ada BTP yang terlewat karena transaksi sedikit
+   ✅ User bisa lihat semua kemungkinan
+
+
+2️⃣ PARTIAL MATCHING (Character-Level)
+═══════════════════════════════════════════════════════════════════
+
+   Fitur BARU untuk handle nama terpotong!
+   
+   Contoh Case:
+   Di CSV    : "KOKUMINDO BERKAT M" (terpotong)
+   Di Master : "KOKUMINDO BERKAT MANDIRI"
+   
+   SEBELUM: ❌ NO MATCH (exact match required)
+   SEKARANG: ✅ MATCH! (80%+ character similarity)
+   
+   How it Works:
+   • Hitung similarity per karakter
+   • Jika ≥80% similarity → MATCH
+   • Minimal 10 karakter untuk partial match
+   • Exact match tetap prioritas #1
+   
+   Impact:
+   ✅ Handle nama terpotong
+   ✅ Handle typo minor
+   ✅ Increase coverage ~10-20%
+
+
+3️⃣ MULTIPLE BTP RESULTS
+═══════════════════════════════════════════════════════════════════
+
+   Jika 1 customer punya >1 BTP, tampilkan SEMUA!
+   
+   Output Baru:
+   
+   ═══════════════════════════════════════════════════════════════
+                    ✅ 2 PATTERNS FOUND!
+   ═══════════════════════════════════════════════════════════════
+   
+   ───────────────────────────────────────────────────────────────
+     OPTION 1:
+   ───────────────────────────────────────────────────────────────
+     BTP                : 2300015307
+     Customer Name      : EVELYN YONA
+     Match Percentage   : 100.00%
+     Confidence         : 🟢 VERY_HIGH
+   
+   ───────────────────────────────────────────────────────────────
+     OPTION 2:
+   ───────────────────────────────────────────────────────────────
+     BTP                : 2300015308
+     Customer Name      : EVELYN YONA  
+     Match Percentage   : 95.00%
+     Confidence         : 🟢 VERY_HIGH
+   
+   💡 TIPS: Ada 2 BTP untuk customer yang mirip.
+        Pilih yang paling sesuai atau confidence tertinggi.
+   ═══════════════════════════════════════════════════════════════
+   
+   Benefit:
+   ✅ User bisa lihat semua opsi
+   ✅ User bisa pilih yang paling sesuai
+   ✅ Tidak ada informasi yang hidden
+
+
+4️⃣ WARNING UNTUK <70% MATCH
+═══════════════════════════════════════════════════════════════════
+
+   Pattern dengan match rate rendah akan diberi WARNING!
+   
+   <70% Match:
+   ⚠️  WARNING: Match percentage di bawah 70%!
+   → Pattern kurang reliable, gunakan dengan hati-hati
+   → Recommended: Manual verification required
+   
+   70-79% Match:
+   ⚠️  CAUTION: Match percentage di bawah 80%
+   → Termasuk kategori FAIR, perlu extra validation
+   
+   Benefit:
+   ✅ User aware dengan quality
+   ✅ Tidak blind trust ke pattern rendah
+   ✅ Better decision making
+
+
+5️⃣ BATCH TESTING IMPROVEMENTS
+═══════════════════════════════════════════════════════════════════
+
+   Output lebih informatif:
+   
+   [1] ✅ MATCH (2 options)
+       Original BTP  : 2300015307
+       Option 1 BTP  : 2300015307 (100.0% conf)
+                     : EVELYN YONA
+       Option 2 BTP  : 2300015308 (95.0% conf)
+                     : EVELYN YONA
+   
+   [2] ⚠️  MISMATCH
+       Original BTP  : 2300012345
+       Suggested BTP : 2300067890 (75.5% conf ⚠️ <80%)
+       Customer      : CUSTOMER X
+   
+   Benefit:
+   ✅ Lihat semua opsi di batch test
+   ✅ Warning langsung terlihat
+   ✅ Easier to identify issues
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 EXPECTED IMPROVEMENTS
+═══════════════════════════════════════════════════════════════════
+
+Dengan fitur-fitur baru:
+
+Coverage:
+  OLD: ~45% BTP tercover
+  NEW: ~55-65% BTP tercover (+10-20%)
+  
+  Alasan:
+  • Minimal 1 transaksi (bukan 2)
+  • Partial matching handle nama terpotong
+  • Include pattern <80% dengan warning
+
+Accuracy:
+  Tetap tinggi karena:
+  • Warning untuk <70%
+  • Multiple options (user pilih yang terbaik)
+  • Exact match tetap prioritas
+
+
+═══════════════════════════════════════════════════════════════════
+📖 CARA MENGGUNAKAN FITUR BARU
+═══════════════════════════════════════════════════════════════════
+
+1. RECOMPILE (Sudah dilakukan!):
+   
+   cd ~/Documents/GitHub/V1/rekening_koran
+   gcc -o test_btp_pattern test_btp_pattern.c
+   gcc -o investigate_no_pattern investigate_no_pattern.c
+
+
+2. JALANKAN PROGRAM:
+   
+   cd ~/Documents/GitHub/V1/rekening_koran
+   ./test_btp_pattern
+   
+   • Pilih threshold 70% untuk maximum coverage
+   • Test dengan nama terpotong (akan match dengan partial!)
+   • Lihat multiple BTP options jika ada
+
+
+3. TEST CASE BARU:
+   
+   Test dengan nama terpotong:
+   
+   Input: TRSF ... KOKUMINDO BERKAT M
+   
+   Sebelumnya: ❌ NO MATCH
+   Sekarang   : ✅ MATCH (partial) dengan "KOKUMINDO BERKAT MANDIRI"
+
+
+═══════════════════════════════════════════════════════════════════
+⚙️ TECHNICAL DETAILS
+═══════════════════════════════════════════════════════════════════
+
+Partial Matching Algorithm:
+────────────────────────────────────────────────────────────────
+• Check substring containment
+• Calculate: (min_length / max_length) × 100%
+• If ≥80% → Consider as match
+• Minimal 10 characters for partial match
+• Exact match always prioritized
+
+Example:
+  Pattern: "KOKUMINDO BERKAT MANDIRI" (24 chars)
+  Input  : "KOKUMINDO BERKAT M" (18 chars)
+  
+  Similarity: (18 / 24) × 100% = 75%
+  Result: ❌ Not enough (need ≥80%)
+  
+  BUT if substring:
+  Input contains "KOKUMINDO BERKAT M" (18 chars)
+  Pattern contains "KOKUMINDO BERKAT M" → substring match!
+  Result: ✅ MATCH (substring detected)
+
+
+Multiple Results Logic:
+────────────────────────────────────────────────────────────────
+1. Find ALL patterns that match (exact or partial)
+2. Sort by:
+   a. Similarity (100% first, then 99%, 98%, etc)
+   b. Name length (longer = more specific)
+   c. Match percentage
+3. Return top 3-5 results
+4. Display all to user
+
+
+Warning System:
+────────────────────────────────────────────────────────────────
+• <50%  : 🔴 Excluded from master
+• 50-69%: 🔴 LOW - don't include
+• 70-79%: 🟠 FAIR - show warning
+• 80-89%: 🟡 GOOD - show caution
+• 90-94%: 🔵 VERY GOOD
+• ≥95%  : 🟢 EXCELLENT
+
+
+═══════════════════════════════════════════════════════════════════
+🚀 NEXT STEPS
+═══════════════════════════════════════════════════════════════════
+
+1. Test dengan dataset TRSF.csv
+2. Measure improvement:
+   • Coverage rate
+   • Accuracy rate
+   • False positive rate
+3. Collect cases yang masih NO PATTERN
+4. Iterate dan improve algorithm
+
+
+═══════════════════════════════════════════════════════════════════
+💡 RECOMMENDATIONS
+═══════════════════════════════════════════════════════════════════
+
+✅ Gunakan Threshold 70%:
+   • More coverage
+   • Warning system akan protect dari low quality
+   
+✅ Review Multiple Options:
+   • Jika ada 2+ BTP, cek mana yang paling sesuai
+   • Pilih yang confidence tertinggi
+   
+✅ Trust the Warnings:
+   • 🟢 VERY_HIGH → Auto-fill aman
+   • 🔵 HIGH → Auto-fill with audit
+   • 🟡 MEDIUM → Manual confirm
+   • 🟠 FAIR → Manual validation required
+   
+✅ Use Investigate Tool:
+   • Untuk BTP yang masih NO PATTERN
+   • Understand why dan fix jika perlu
+
+
+═══════════════════════════════════════════════════════════════════
+

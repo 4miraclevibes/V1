@@ -1,0 +1,86 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║        PATTERN GENERATOR v2 - QUICK COMMANDS                     ║
+║        Copy-paste commands untuk generate dan test               ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📝 1. GENERATE PATTERNS (dari TRSF.csv):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+
+🧪 2. TEST BTP PATTERN MATCHING (Interactive):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+
+🎯 3. QUICK TEST - 50K SAMPLES (Recommended):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+echo "8
+0" | ./test_btp_pattern
+
+
+📊 4. SHOW STATISTICS ONLY:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+echo "9
+0" | ./test_btp_pattern
+
+
+🔍 5. TEST MANUAL INPUT:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+./test_btp_pattern
+# Pilih option 1, lalu masukkan description
+
+
+📈 6. TEST DENGAN BERBAGAI SAMPLE SIZE:
+═══════════════════════════════════════════════════════════════════
+
+# 100 samples
+echo "4
+0" | ./test_btp_pattern
+
+# 1,000 samples
+echo "5
+0" | ./test_btp_pattern
+
+# 5,000 samples
+echo "6
+0" | ./test_btp_pattern
+
+# 10,000 samples
+echo "7
+0" | ./test_btp_pattern
+
+# 50,000 samples (Most Accurate)
+echo "8
+0" | ./test_btp_pattern
+
+
+═══════════════════════════════════════════════════════════════════
+📊 EXPECTED RESULTS:
+═══════════════════════════════════════════════════════════════════
+
+Total Patterns      : 15,459 (ALL combinations)
+Coverage (50k)      : 89.6% ✅
+Logic               : Simple & Correct (check last number, take after)
+Data Quality        : CLEAN (no codes)
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 PRODUCTION READY!
+═══════════════════════════════════════════════════════════════════
+

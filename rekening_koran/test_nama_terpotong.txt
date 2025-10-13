@@ -1,0 +1,43 @@
+═══════════════════════════════════════════════════════════════════
+TEST CASE: NAMA CUSTOMER TERPOTONG
+═══════════════════════════════════════════════════════════════════
+
+Gunakan input ini untuk test partial matching (Menu 1):
+
+
+TEST 1: KOKUMINDO (dari BTP 2300007505)
+───────────────────────────────────────────────────────────────────
+
+TRSF E-BANKING CR 0301/FTSCY/WS95051 6518040.00 KOKUMINDO BERKAT M
+
+Expected:
+• Dengan partial matching, akan match dengan customer di master
+• Yang namanya mengandung "KOKUMINDO BERKAT"
+
+
+TEST 2: DAVID TANTRIS (dari BTP 2300014763)  
+───────────────────────────────────────────────────────────────────
+
+TRSF E-BANKING CR 0301/FTSCY/WS95031 455520.00 portos bakery inv. N7089110 DAVID TANTRIS OR F
+
+Expected:
+• Akan match dengan "DAVID" related customer
+• Mungkin multiple options karena ada variasi
+
+
+TEST 3: NG SIOE HOH (dari BTP 2300010747)
+───────────────────────────────────────────────────────────────────
+
+TRSF E-BANKING CR 0301/FTSCY/WS95051 523609.00 Ingredients N7026502 NG SIOE HOH
+
+Expected:
+• Match dengan customer NG SIOE HOH
+• Ignore invoice number N7026502
+
+
+═══════════════════════════════════════════════════════════════════
+
+Copy 3 deskripsi di atas satu per satu ke program (menu 1) untuk test!
+
+═══════════════════════════════════════════════════════════════════
+
