@@ -33,6 +33,15 @@ typedef struct {
 BTPAnalysis btp_analyses[5000];
 int btp_analysis_count = 0;
 
+// Global variables for customer totals
+typedef struct {
+    char customer_name[200];
+    int total_customer_transactions;
+} CustomerTotal;
+
+CustomerTotal customer_totals[30000];  // Increased from 10000 to 30000
+int customer_total_count = 0;
+
 void to_upper(char *s) {
     for (int i = 0; s[i]; i++) {
         s[i] = toupper((unsigned char)s[i]);
@@ -72,23 +81,29 @@ int is_all_caps(const char *str) {
     return has_letter;
 }
 
-// Extract customer name dari description dengan logic BENAR
+// Extract customer name dari description dengan logic SIMPLE & CORRECT
+// Sesuai dokumentasi FINAL_RESULTS.txt
 void extract_customer_name(const char *description, char *customer_name) {
-    char desc_upper[MAX_DESC];
-    strncpy(desc_upper, description, MAX_DESC - 1);
-    desc_upper[MAX_DESC - 1] = '\0';
-    to_upper(desc_upper);
+    // JANGAN to_upper! Biar bisa detect mapping salah (lowercase = error)
+    char desc_copy[MAX_DESC];
+    strncpy(desc_copy, description, MAX_DESC - 1);
+    desc_copy[MAX_DESC - 1] = '\0';
     
     // Split by space
     char words[MAX_WORDS][MAX_WORD_LEN];
     int word_count = 0;
     
-    char *token = strtok(desc_upper, " ");
+    char *token = strtok(desc_copy, " ");
     while (token != NULL && word_count < MAX_WORDS) {
         strncpy(words[word_count], token, MAX_WORD_LEN - 1);
         words[word_count][MAX_WORD_LEN - 1] = '\0';
         word_count++;
         token = strtok(NULL, " ");
+    }
+    
+    if (word_count == 0) {
+        strcpy(customer_name, "UNKNOWN");
+        return;
     }
     
     // Cek dari belakang, cari index terakhir yang ada angka
@@ -100,36 +115,50 @@ void extract_customer_name(const char *description, char *customer_name) {
         }
     }
     
-    // Jika tidak ada angka, ambil semua ALL CAPS words
+    // Jika tidak ada angka, return UNKNOWN
     if (last_number_index == -1) {
-        char result[200] = "";
-        int result_count = 0;
-        
-        for (int i = 0; i < word_count; i++) {
-            if (is_all_caps(words[i]) && strlen(words[i]) >= 3) {
-                if (result_count > 0) {
-                    strcat(result, " ");
-                }
-                strcat(result, words[i]);
-                result_count++;
-            }
-        }
-        
-        if (strlen(result) >= 4) {
-            strcpy(customer_name, result);
-        } else {
-            strcpy(customer_name, "UNKNOWN");
-        }
+        strcpy(customer_name, "UNKNOWN");
         return;
     }
     
-    // Ambil semua kata SETELAH last_number_index (dari index+1 sampai akhir)
-    // Hanya ambil ALL CAPS words
+    // Jika angka ada di word terakhir, tidak ada customer name
+    if (last_number_index == word_count - 1) {
+        strcpy(customer_name, "UNKNOWN");
+        return;
+    }
+    
+    // Ambil HANYA ALL CAPS words SETELAH last_number_index
+    // Sesuai dokumentasi: "Customer name = ALL CAPS words SETELAH word tsb"
+    // SKIP: prefix bulan (JAN, FEB, etc)
+    
+    // List bulan untuk di-skip sebagai prefix
+    const char *months[] = {
+        "JAN", "JANUARI", "FEB", "FEBRUARI", "MAR", "MARET", 
+        "APR", "APRIL", "MAY", "MEI", "JUN", "JUNI", 
+        "JUL", "JULI", "AUG", "AGT", "AGUSTUS", 
+        "SEP", "SEPT", "SEPTEMBER", "OCT", "OKT", "OKTOBER", 
+        "NOV", "NOVEMBER", "DEC", "DES", "DESEMBER", NULL
+    };
+    
     char result[200] = "";
     int result_count = 0;
     
     for (int i = last_number_index + 1; i < word_count; i++) {
-        if (is_all_caps(words[i]) && strlen(words[i]) >= 3) {
+        // Hanya ambil ALL CAPS words (minimal 2 chars untuk avoid typo)
+        if (is_all_caps(words[i]) && strlen(words[i]) >= 2) {
+            // Skip bulan prefix
+            int is_month = 0;
+            for (int m = 0; months[m] != NULL; m++) {
+                if (strcmp(words[i], months[m]) == 0) {
+                    is_month = 1;
+                    break;
+                }
+            }
+            
+            // Skip jika bulan
+            if (is_month) continue;
+            
+            // Tambahkan ke result
             if (result_count > 0) {
                 strcat(result, " ");
             }
@@ -138,7 +167,8 @@ void extract_customer_name(const char *description, char *customer_name) {
         }
     }
     
-    if (strlen(result) >= 4) {
+    // Minimal harus ada hasil yang valid (minimal 3 chars total)
+    if (strlen(result) >= 3) {
         strcpy(customer_name, result);
     } else {
         strcpy(customer_name, "UNKNOWN");
@@ -250,11 +280,51 @@ void analyze_trsf() {
     printf("✅ Analyzed %d transactions, found %d unique BTPs\n\n", processed, btp_analysis_count);
     
     // Generate ALL patterns (no filtering, include all customer-BTP combinations)
-    printf("🔍 Generating ALL patterns (no threshold filtering)...\n\n");
+    printf("🔍 Generating ALL patterns (no threshold filtering)...\n");
+    printf("🔍 Calculating correct match percentage (customer BTP usage vs other BTPs)...\n\n");
     
+    // First pass: Calculate total transactions per customer across ALL BTPs
+    
+    // Count total transactions per customer (simple approach first)
     for (int i = 0; i < btp_analysis_count; i++) {
         for (int j = 0; j < btp_analyses[i].unique_customers; j++) {
-            float match_rate = (btp_analyses[i].customer_counts[j] * 100.0) / btp_analyses[i].total_transactions;
+            // Find or create customer total
+            int customer_idx = -1;
+            for (int k = 0; k < customer_total_count; k++) {
+                if (strcmp(customer_totals[k].customer_name, btp_analyses[i].customer_names[j]) == 0) {
+                    customer_idx = k;
+                    break;
+                }
+            }
+            
+            if (customer_idx == -1) {
+                if (customer_total_count >= 30000) continue;  // Increased from 10000 to 30000
+                strcpy(customer_totals[customer_total_count].customer_name, btp_analyses[i].customer_names[j]);
+                customer_totals[customer_total_count].total_customer_transactions = btp_analyses[i].customer_counts[j];
+                customer_total_count++;
+            } else {
+                customer_totals[customer_idx].total_customer_transactions += btp_analyses[i].customer_counts[j];
+            }
+        }
+    }
+    
+    printf("📊 Found %d unique customers with transaction totals\n\n", customer_total_count);
+    
+    // Second pass: Generate patterns with correct match percentage
+    for (int i = 0; i < btp_analysis_count; i++) {
+        for (int j = 0; j < btp_analyses[i].unique_customers; j++) {
+            // Find customer total
+            int customer_total = 0;
+            for (int k = 0; k < customer_total_count; k++) {
+                if (strcmp(customer_totals[k].customer_name, btp_analyses[i].customer_names[j]) == 0) {
+                    customer_total = customer_totals[k].total_customer_transactions;
+                    break;
+                }
+            }
+            
+            // Calculate correct match percentage: (BTP usage / Total customer transactions) * 100
+            float match_rate = (customer_total > 0) ? 
+                (btp_analyses[i].customer_counts[j] * 100.0) / customer_total : 0.0;
             
             // Generate ALL patterns (min 1 transaction aja)
             if (btp_analyses[i].customer_counts[j] >= 1) {
@@ -271,6 +341,21 @@ void analyze_trsf() {
     }
     
     printf("✅ Generated %d patterns (ALL combinations)\n\n", pattern_count);
+}
+
+// Helper function untuk escape single quotes di SQL
+void escape_single_quotes(const char *input, char *output) {
+    int j = 0;
+    for (int i = 0; input[i] != '\0'; i++) {
+        if (input[i] == '\'') {
+            // Replace single quote dengan double single quote
+            output[j++] = '\'';
+            output[j++] = '\'';
+        } else {
+            output[j++] = input[i];
+        }
+    }
+    output[j] = '\0';
 }
 
 // Generate SQL output
@@ -295,13 +380,26 @@ void generate_sql() {
     fprintf(output, "VALUES\n");
     
     for (int i = 0; i < pattern_count; i++) {
+        // Find customer total for this pattern
+        int customer_total = 0;
+        for (int k = 0; k < customer_total_count; k++) {
+            if (strcmp(customer_totals[k].customer_name, patterns[i].customer_name) == 0) {
+                customer_total = customer_totals[k].total_customer_transactions;
+                break;
+            }
+        }
+        
+        // Escape single quotes untuk SQL
+        char escaped_name[500];
+        escape_single_quotes(patterns[i].customer_name, escaped_name);
+        
         fprintf(output, "    ('%s', '%s', %d, %d, %.2f, %d)%s\n",
-                patterns[i].customer_name,
+                escaped_name,                  // customer_name (escaped)
                 patterns[i].btp,
-                patterns[i].transaction_count,
-                patterns[i].transaction_count,
-                patterns[i].match_rate,
-                patterns[i].last_line_number,
+                patterns[i].transaction_count,  // match_count
+                customer_total,                // total_transactions (customer total)
+                patterns[i].match_rate,        // match_percentage
+                patterns[i].last_line_number,   // last_line_number
                 (i < pattern_count - 1) ? "," : ";");
     }
     

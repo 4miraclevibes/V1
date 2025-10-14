@@ -70,16 +70,14 @@ int is_all_caps(const char *str) {
 
 // Extract customer name dengan logic v2 (simple dan benar)
 void extract_customer_name(const char *description, char *customer_name) {
-    char desc_upper[MAX_DESC];
-    strncpy(desc_upper, description, MAX_DESC - 1);
-    desc_upper[MAX_DESC - 1] = '\0';
-    to_upper(desc_upper);
+    // JANGAN to_upper! Biar bisa detect mapping salah (lowercase = error)
+    char desc_copy[MAX_DESC];
+    strncpy(desc_copy, description, MAX_DESC - 1);
+    desc_copy[MAX_DESC - 1] = '\0';
     
+    // Split by space
     char words[MAX_WORDS][MAX_WORD_LEN];
     int word_count = 0;
-    
-    char desc_copy[MAX_DESC];
-    strcpy(desc_copy, desc_upper);
     
     char *token = strtok(desc_copy, " ");
     while (token != NULL && word_count < MAX_WORDS) {
@@ -89,7 +87,12 @@ void extract_customer_name(const char *description, char *customer_name) {
         token = strtok(NULL, " ");
     }
     
-    // Cek dari belakang, cari last word yang ada angka
+    if (word_count == 0) {
+        strcpy(customer_name, "UNKNOWN");
+        return;
+    }
+    
+    // Cek dari belakang, cari index terakhir yang ada angka
     int last_number_index = -1;
     for (int i = word_count - 1; i >= 0; i--) {
         if (has_number(words[i])) {
@@ -98,35 +101,50 @@ void extract_customer_name(const char *description, char *customer_name) {
         }
     }
     
-    // Jika tidak ada angka, ambil semua ALL CAPS words
+    // Jika tidak ada angka, return UNKNOWN
     if (last_number_index == -1) {
-        char result[200] = "";
-        int result_count = 0;
-        
-        for (int i = 0; i < word_count; i++) {
-            if (is_all_caps(words[i]) && strlen(words[i]) >= 3) {
-                if (result_count > 0) {
-                    strcat(result, " ");
-                }
-                strcat(result, words[i]);
-                result_count++;
-            }
-        }
-        
-        if (strlen(result) >= 4) {
-            strcpy(customer_name, result);
-        } else {
-            strcpy(customer_name, "UNKNOWN");
-        }
+        strcpy(customer_name, "UNKNOWN");
         return;
     }
     
-    // Ambil semua ALL CAPS words SETELAH last_number_index
+    // Jika angka ada di word terakhir, tidak ada customer name
+    if (last_number_index == word_count - 1) {
+        strcpy(customer_name, "UNKNOWN");
+        return;
+    }
+    
+    // Ambil HANYA ALL CAPS words SETELAH last_number_index
+    // Sesuai dokumentasi: "Customer name = ALL CAPS words SETELAH word tsb"
+    // SKIP: prefix bulan (JAN, FEB, etc)
+    
+    // List bulan untuk di-skip sebagai prefix
+    const char *months[] = {
+        "JAN", "JANUARI", "FEB", "FEBRUARI", "MAR", "MARET", 
+        "APR", "APRIL", "MAY", "MEI", "JUN", "JUNI", 
+        "JUL", "JULI", "AUG", "AGT", "AGUSTUS", 
+        "SEP", "SEPT", "SEPTEMBER", "OCT", "OKT", "OKTOBER", 
+        "NOV", "NOVEMBER", "DEC", "DES", "DESEMBER", NULL
+    };
+    
     char result[200] = "";
     int result_count = 0;
     
     for (int i = last_number_index + 1; i < word_count; i++) {
-        if (is_all_caps(words[i]) && strlen(words[i]) >= 3) {
+        // Hanya ambil ALL CAPS words (minimal 2 chars untuk avoid typo)
+        if (is_all_caps(words[i]) && strlen(words[i]) >= 2) {
+            // Skip bulan prefix
+            int is_month = 0;
+            for (int m = 0; months[m] != NULL; m++) {
+                if (strcmp(words[i], months[m]) == 0) {
+                    is_month = 1;
+                    break;
+                }
+            }
+            
+            // Skip jika bulan
+            if (is_month) continue;
+            
+            // Tambahkan ke result
             if (result_count > 0) {
                 strcat(result, " ");
             }
@@ -135,7 +153,8 @@ void extract_customer_name(const char *description, char *customer_name) {
         }
     }
     
-    if (strlen(result) >= 4) {
+    // Minimal harus ada hasil yang valid (minimal 3 chars total)
+    if (strlen(result) >= 3) {
         strcpy(customer_name, result);
     } else {
         strcpy(customer_name, "UNKNOWN");
@@ -235,6 +254,9 @@ int find_btp(const char *description, char *found_btp, char *found_customer, flo
         *match_count_out = 0;
         return 0;
     }
+    
+    // Convert to uppercase for matching
+    to_upper(customer_name);
     
     // Cari SEMUA BTP yang match dengan customer name
     CustomerPattern matches[50];
@@ -463,6 +485,127 @@ void test_from_csv(int limit) {
     printf("═══════════════════════════════════════════════════════════════════\n\n");
 }
 
+void display_btp_list() {
+    printf("\n╔═══════════════════════════════════════════════════════════════════╗\n");
+    printf("║                    DAFTAR BTP YANG TERSEDIA                      ║\n");
+    printf("╚═══════════════════════════════════════════════════════════════════╝\n\n");
+    
+    // Sort patterns by BTP untuk grouping
+    CustomerPattern sorted_patterns[MAX_PATTERNS];
+    for (int i = 0; i < pattern_count; i++) {
+        sorted_patterns[i] = patterns[i];
+    }
+    
+    // Sort by BTP, then by last_line_number (latest first)
+    for (int i = 0; i < pattern_count - 1; i++) {
+        for (int j = i + 1; j < pattern_count; j++) {
+            int should_swap = 0;
+            
+            // Primary: BTP (alphabetical)
+            if (strcmp(sorted_patterns[j].btp, sorted_patterns[i].btp) < 0) {
+                should_swap = 1;
+            }
+            // Secondary: last_line_number (latest first) - jika BTP sama
+            else if (strcmp(sorted_patterns[j].btp, sorted_patterns[i].btp) == 0) {
+                if (sorted_patterns[j].last_line_number > sorted_patterns[i].last_line_number) {
+                    should_swap = 1;
+                }
+            }
+            
+            if (should_swap) {
+                CustomerPattern temp = sorted_patterns[i];
+                sorted_patterns[i] = sorted_patterns[j];
+                sorted_patterns[j] = temp;
+            }
+        }
+    }
+    
+    // Group by BTP dan tampilkan
+    char current_btp[MAX_BTP] = "";
+    int btp_count = 0;
+    int total_btps = 0;
+    
+    printf("  Daftar BTP (dengan customer name dan info terbaru):\n");
+    printf("  ─────────────────────────────────────────────────────────────────\n");
+    
+    for (int i = 0; i < pattern_count; i++) {
+        if (strcmp(current_btp, sorted_patterns[i].btp) != 0) {
+            // New BTP found
+            if (strlen(current_btp) > 0) {
+                printf("\n");
+            }
+            
+            strcpy(current_btp, sorted_patterns[i].btp);
+            btp_count = 1;
+            total_btps++;
+            
+            printf("  BTP: %s\n", current_btp);
+            printf("    Customer: %s (%.1f%% - %d/%d trans, line %d)\n", 
+                   sorted_patterns[i].customer_name, 
+                   sorted_patterns[i].match_percentage,
+                   sorted_patterns[i].match_count,
+                   sorted_patterns[i].total_transactions,
+                   sorted_patterns[i].last_line_number);
+        } else {
+            // Same BTP, show additional customer
+            btp_count++;
+            printf("    Customer: %s (%.1f%% - %d/%d trans, line %d)\n", 
+                   sorted_patterns[i].customer_name, 
+                   sorted_patterns[i].match_percentage,
+                   sorted_patterns[i].match_count,
+                   sorted_patterns[i].total_transactions,
+                   sorted_patterns[i].last_line_number);
+        }
+    }
+    
+    printf("\n  Total BTPs: %d\n", total_btps);
+    printf("═══════════════════════════════════════════════════════════════════\n\n");
+}
+
+void display_latest_btps() {
+    printf("\n╔═══════════════════════════════════════════════════════════════════╗\n");
+    printf("║                    BTP TERBARU (LATEST USAGE)                     ║\n");
+    printf("╚═══════════════════════════════════════════════════════════════════╝\n\n");
+    
+    // Sort by last_line_number (highest = latest)
+    CustomerPattern sorted_patterns[MAX_PATTERNS];
+    for (int i = 0; i < pattern_count; i++) {
+        sorted_patterns[i] = patterns[i];
+    }
+    
+    for (int i = 0; i < pattern_count - 1; i++) {
+        for (int j = i + 1; j < pattern_count; j++) {
+            if (sorted_patterns[j].last_line_number > sorted_patterns[i].last_line_number) {
+                CustomerPattern temp = sorted_patterns[i];
+                sorted_patterns[i] = sorted_patterns[j];
+                sorted_patterns[j] = temp;
+            }
+        }
+    }
+    
+    printf("  Top 20 BTP Terbaru (berdasarkan last usage):\n");
+    printf("  ─────────────────────────────────────────────────────────────────\n");
+    
+    int shown = 0;
+    for (int i = 0; i < pattern_count && shown < 20; i++) {
+        if (sorted_patterns[i].last_line_number > 0) {
+            printf("  %2d. BTP: %s | Customer: %s | Line: %d | Match: %.1f%%\n", 
+                   shown + 1,
+                   sorted_patterns[i].btp,
+                   sorted_patterns[i].customer_name,
+                   sorted_patterns[i].last_line_number,
+                   sorted_patterns[i].match_percentage);
+            shown++;
+        }
+    }
+    
+    if (shown == 0) {
+        printf("  ❌ Tidak ada data dengan last_line_number > 0\n");
+    }
+    
+    printf("═══════════════════════════════════════════════════════════════════\n\n");
+}
+
 void display_statistics() {
     printf("\n╔═══════════════════════════════════════════════════════════════════╗\n");
     printf("║                   MASTER DATA STATISTICS                         ║\n");
@@ -550,6 +693,10 @@ void manual_test() {
         return;
     }
     
+    // Tampilkan info BTP yang tersedia untuk referensi
+    printf("\n💡 INFO: Untuk melihat daftar BTP yang tersedia, pilih menu 'A'\n");
+    printf("💡 INFO: Untuk melihat BTP terbaru, pilih menu 'B'\n\n");
+    
     char found_btp[MAX_BTP];
     char found_customer[MAX_NAME];
     float match_pct;
@@ -629,6 +776,8 @@ void print_menu() {
     printf("  7. Test batch dari TRSF.csv (10,000 sample)\n");
     printf("  8. Test batch dari TRSF.csv (50,000 sample) 🎯\n");
     printf("  9. Statistik master data\n");
+    printf("  A. Daftar BTP yang tersedia\n");
+    printf("  B. BTP terbaru (latest usage)\n");
     printf("  0. Keluar\n");
     printf("\n───────────────────────────────────────────────────────────────────\n");
     printf("  Pilih: ");
@@ -652,50 +801,67 @@ int main() {
     while (1) {
         print_menu();
         
-        int choice;
-        scanf("%d", &choice);
-        getchar();
+        char input[10];
+        fgets(input, sizeof(input), stdin);
+        trim(input);
+        
+        if (strlen(input) == 0) {
+            printf("⚠️  Pilihan tidak valid. Coba lagi.\n");
+            continue;
+        }
+        
+        char choice = input[0];
         
         switch (choice) {
-            case 0:
+            case '0':
                 printf("\n👋 Terima kasih! Bye bye...\n\n");
                 if (patterns) free(patterns);
                 return 0;
                 
-            case 1:
+            case '1':
                 manual_test();
                 break;
                 
-            case 2:
+            case '2':
                 test_from_csv(10);
                 break;
                 
-            case 3:
+            case '3':
                 test_from_csv(50);
                 break;
                 
-            case 4:
+            case '4':
                 test_from_csv(100);
                 break;
                 
-            case 5:
+            case '5':
                 test_from_csv(1000);
                 break;
                 
-            case 6:
+            case '6':
                 test_from_csv(5000);
                 break;
                 
-            case 7:
+            case '7':
                 test_from_csv(10000);
                 break;
                 
-            case 8:
+            case '8':
                 test_from_csv(50000);
                 break;
                 
-            case 9:
+            case '9':
                 display_statistics();
+                break;
+                
+            case 'A':
+            case 'a':
+                display_btp_list();
+                break;
+                
+            case 'B':
+            case 'b':
+                display_latest_btps();
                 break;
                 
             default:

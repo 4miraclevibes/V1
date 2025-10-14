@@ -46,6 +46,13 @@ Example 2:
   Last number : index 1 (911040.00)
   Result      : CAFE RSPI SARI PUSPITA PT ✅
 
+Example 3:
+  Description : TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO
+  Words       : ['TRSF', 'E-BANKING', 'CR', '1609/FTSCY/WS95011', '655200.00', 'susu', 'RW', 'PO202508250001', 'WILLIAM', 'SARSONO']
+  Array       : [0] [1] [2] [3] [4] [5] [6] [7] [8] [9]
+  Check       : Array[9] = 'SARSONO' (no number) → Array[8] = 'WILLIAM' (no number) → Array[7] = 'PO202508250001' (HAS NUMBER!)
+  Result      : WILLIAM SARSONO ✅ (from array[8] to array[9])
+
 
 📁 OUTPUT FILES
 ═══════════════════════════════════════════════════════════════════
