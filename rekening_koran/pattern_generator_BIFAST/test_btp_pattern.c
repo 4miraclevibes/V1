@@ -323,13 +323,13 @@ int find_btp(const char *description, char *found_btp, char *found_customer, flo
 }
 
 void test_from_csv(int limit) {
-    FILE *file = fopen("../BIFAST.csv", "r");
+    FILE *file = fopen("../BI-FAST.csv", "r");
     if (!file) {
-        file = fopen("BIFAST.csv", "r");
+        file = fopen("BI-FAST.csv", "r");
     }
     
     if (!file) {
-        printf("❌ Error: Tidak dapat membuka BIFAST.csv\n");
+        printf("❌ Error: Tidak dapat membuka BI-FAST.csv\n");
         return;
     }
     
@@ -768,13 +768,13 @@ void print_menu() {
     printf("║          BTP PATTERN MATCHING - TESTING TOOL v2                  ║\n");
     printf("╚═══════════════════════════════════════════════════════════════════╝\n\n");
     printf("  1. Test dengan input manual (single)\n");
-    printf("  2. Test batch dari BIFAST.csv (10 sample)\n");
-    printf("  3. Test batch dari BIFAST.csv (50 sample)\n");
-    printf("  4. Test batch dari BIFAST.csv (100 sample)\n");
-    printf("  5. Test batch dari BIFAST.csv (1,000 sample)\n");
-    printf("  6. Test batch dari BIFAST.csv (5,000 sample)\n");
-    printf("  7. Test batch dari BIFAST.csv (10,000 sample)\n");
-    printf("  8. Test batch dari BIFAST.csv (50,000 sample) 🎯\n");
+    printf("  2. Test batch dari BI-FAST.csv (10 sample)\n");
+    printf("  3. Test batch dari BI-FAST.csv (50 sample)\n");
+    printf("  4. Test batch dari BI-FAST.csv (100 sample)\n");
+    printf("  5. Test batch dari BI-FAST.csv (1,000 sample)\n");
+    printf("  6. Test batch dari BI-FAST.csv (5,000 sample)\n");
+    printf("  7. Test batch dari BI-FAST.csv (10,000 sample)\n");
+    printf("  8. Test batch dari BI-FAST.csv (50,000 sample) 🎯\n");
     printf("  9. Statistik master data\n");
     printf("  A. Daftar BTP yang tersedia\n");
     printf("  B. BTP terbaru (latest usage)\n");
@@ -793,7 +793,7 @@ int main() {
     printf("║                                                                   ║\n");
     printf("╚═══════════════════════════════════════════════════════════════════╝\n\n");
     
-    if (!load_master_data("master_customer_btp_pattern.sql")) {
+    if (!load_master_data("master_customer_btp_pattern_BIFAST.sql")) {
         printf("❌ Gagal load master data. Program dihentikan.\n");
         return 1;
     }
