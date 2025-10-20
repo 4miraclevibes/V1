@@ -1,0 +1,89 @@
+TRSF PATTERN EXTRACTION LOGIC
+=============================
+
+Format Data TRSF:
+- BTP;DESCRIPTION
+- Description format: "KR OTOMATIS LLG-TRSF [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+
+Contoh:
+- Input: "KR OTOMATIS LLG-TRSF CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"
+- Split by space: ["KR", "OTOMATIS", "LLG-TRSF", "CAHAYA", "SAKTI", "0000006726", "A000134", "62", "112923", "B", "H550"]
+
+EXTRACTION RULES:
+================
+
+1. BTP = Kolom pertama (sebelum semicolon)
+2. Customer Name = ALL CAPS words after last number (complex extraction logic)
+3. Pattern = Customer Name (sama dengan customer name)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1:
+- Input: "KR OTOMATIS LLG-TRSF CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"
+- Split: ["KR", "OTOMATIS", "LLG-TRSF", "CAHAYA", "SAKTI", "0000006726", "A000134", "62", "112923", "B", "H550"]
+- Last number: "0000006726"
+- Customer Name = "CAHAYA SAKTI"
+- Pattern = "CAHAYA SAKTI"
+
+Example 2:
+- Input: "KR OTOMATIS LLG-TRSF SMART FOOD CONCEPT -0053061777 Clearing947991"
+- Split: ["KR", "OTOMATIS", "LLG-TRSF", "SMART", "FOOD", "CONCEPT", "-0053061777", "Clearing947991"]
+- Last number: "-0053061777"
+- Customer Name = "SMART FOOD CONCEPT"
+- Pattern = "SMART FOOD CONCEPT"
+
+Example 3:
+- Input: "KR OTOMATIS LLG-TRSF RUANG MAHA KARY 2300008197"
+- Split: ["KR", "OTOMATIS", "LLG-TRSF", "RUANG", "MAHA", "KARY", "2300008197"]
+- Last number: "2300008197"
+- Customer Name = "RUANG MAHA KARY"
+- Pattern = "RUANG MAHA KARY"
+
+ALGORITHM:
+==========
+
+1. Split description by space
+2. Find last number in the array
+3. Extract ALL CAPS words before the last number
+4. Filter out month prefixes (JAN, FEB, MAR, etc.)
+5. Combine into customer name
+6. Pattern = Customer Name (sama dengan customer name)
+
+PERBEDAAN DENGAN BANK LAIN:
+===========================
+
+TRSF:
+- Customer name = ALL CAPS words SETELAH angka terakhir
+- Bisa multiple words
+- Filter bulan prefix (JAN, FEB, MAR, etc.)
+- Lebih kompleks extraction logic
+
+CIMB:
+- Format: "KR OTOMATIS LLG-CIMB NIAGA [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[4] + Array[5] (kata ke-5 dan ke-6)
+- Array length minimal: 6
+
+MANDIRI:
+- Format: "KR OTOMATIS LLG-MANDIRI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[3] + Array[4] (kata ke-4 dan ke-5)
+- Array length minimal: 5
+
+BNI:
+- Format: "KR OTOMATIS LLG-BNI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[3] + Array[4] (kata ke-4 dan ke-5)
+- Array length minimal: 5
+
+BTPN:
+- Format: "KR OTOMATIS LLG-BTPN [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[3] + Array[4] (kata ke-4 dan ke-5)
+- Array length minimal: 5
+
+VALIDATION:
+===========
+
+- Array length harus >= 5
+- Harus ada angka dalam description
+- Customer name tidak boleh kosong
+- Filter bulan prefix (JAN, FEB, MAR, etc.)
+- Semua BTP sudah numeric (tidak ada filtering BTP non-numeric)

@@ -1,0 +1,160 @@
+===========================================
+DANAMON BTP PATTERN - EXTRACTION LOGIC
+===========================================
+
+OVERVIEW
+--------
+DANAMON pattern generator extracts customer names from bank transaction 
+descriptions using a fixed array position method with smart extraction 
+for "PT" and "CV" prefixes.
+
+
+INPUT FORMAT
+------------
+Format: "KR OTOMATIS LLG-DANAMON [Word1] [Word2] [Word3] [Word4] ..."
+
+Example:
+"KR OTOMATIS LLG-DANAMON PT TRISULA ADI TEGUH BUKTI BAYAR"
+
+Split into array:
+Array[0] = "KR"
+Array[1] = "OTOMATIS"
+Array[2] = "LLG-DANAMON"
+Array[3] = "PT"
+Array[4] = "TRISULA"
+Array[5] = "ADI"
+Array[6] = "TEGUH"
+...
+
+
+EXTRACTION LOGIC
+----------------
+
+STEP 1: Split description by space into array
+STEP 2: Check if Array[3] exists and Array[4] exists
+STEP 3: Apply smart extraction:
+
+  If Array[3] == "PT" OR Array[3] == "CV":
+    → Customer Name = Array[3] + Array[4] + Array[5]
+    
+  Else:
+    → Customer Name = Array[3] + Array[4]
+
+
+EXAMPLES
+--------
+
+Example 1: PT/CV Prefix
+-----------------------
+Input:
+"KR OTOMATIS LLG-DANAMON PT TRISULA ADI TEGUH BUKTI BAYAR"
+
+Array:
+[0]=KR, [1]=OTOMATIS, [2]=LLG-DANAMON, [3]=PT, [4]=TRISULA, [5]=ADI
+
+Logic:
+Array[3] = "PT" → Take 3 words
+
+Output:
+Customer Name: "PT TRISULA ADI"
+
+
+Example 2: CV Prefix
+--------------------
+Input:
+"KR OTOMATIS LLG-DANAMON CV KARYA MANDIRI INDO BUKTI BAYAR"
+
+Array:
+[0]=KR, [1]=OTOMATIS, [2]=LLG-DANAMON, [3]=CV, [4]=KARYA, [5]=MANDIRI
+
+Logic:
+Array[3] = "CV" → Take 3 words
+
+Output:
+Customer Name: "CV KARYA MANDIRI"
+
+
+Example 3: Regular (No PT/CV)
+-----------------------------
+Input:
+"KR OTOMATIS LLG-DANAMON KOPERASI KARYAWAN GREENFIELDS INDONESIA"
+
+Array:
+[0]=KR, [1]=OTOMATIS, [2]=LLG-DANAMON, [3]=KOPERASI, [4]=KARYAWAN, [5]=GREENFIELDS
+
+Logic:
+Array[3] = "KOPERASI" (not PT or CV) → Take 2 words
+
+Output:
+Customer Name: "KOPERASI KARYAWAN"
+
+
+Example 4: Regular Company
+--------------------------
+Input:
+"KR OTOMATIS LLG-DANAMON TOKO BANGUNAN JAYA ABADI"
+
+Array:
+[0]=KR, [1]=OTOMATIS, [2]=LLG-DANAMON, [3]=TOKO, [4]=BANGUNAN, [5]=JAYA
+
+Logic:
+Array[3] = "TOKO" (not PT or CV) → Take 2 words
+
+Output:
+Customer Name: "TOKO BANGUNAN"
+
+
+BTP MATCHING
+------------
+After extracting the customer name, the system:
+
+1. Matches with existing BTP patterns in master data
+2. Calculates match percentage per BTP
+3. Tracks transaction count for each customer-BTP pair
+4. Records the last line number where BTP was used
+
+
+MATCH PERCENTAGE CALCULATION
+----------------------------
+Match Percentage = (BTP Usage Count / Total Customer Transactions) × 100%
+
+Example:
+- Customer "PT TRISULA ADI" has 50 total transactions
+- BTP "230000123" appears 45 times for this customer
+- Match Percentage = (45 / 50) × 100% = 90.00%
+
+
+KEY FEATURES
+------------
+1. Fixed array position (Array[3] + Array[4])
+2. Smart extraction for PT/CV prefixes (adds Array[5])
+3. Case-insensitive matching
+4. Handles both numeric and non-numeric BTPs
+5. Tracks latest usage via line numbers
+6. Calculates match percentage per customer-BTP pair
+
+
+EDGE CASES
+----------
+1. If Array[3] is "PT" but no Array[5] exists:
+   → Fall back to Array[3] + Array[4]
+
+2. If less than 5 tokens in description:
+   → Skip (cannot extract customer name)
+
+3. Empty words in Array[3] or Array[4]:
+   → Skip (invalid format)
+
+4. Multiple BTPs for same customer:
+   → All BTPs stored with individual match percentages
+   → Latest BTP flagged by highest line number
+
+
+IMPLEMENTATION NOTES
+-------------------
+- Uses strtok() for string splitting
+- strcmp() for PT/CV detection
+- snprintf() for safe string concatenation
+- Case-insensitive comparison using to_upper()
+- SQL-safe output with single quote escaping
+

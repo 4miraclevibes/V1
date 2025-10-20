@@ -1,0 +1,63 @@
+MUAMALAT PATTERN GENERATOR - COMMANDS
+=================================
+
+KOMPILASI:
+----------
+cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_MUAMALAT
+
+# Compile generate_patterns
+gcc -o generate_patterns generate_patterns.c
+
+# Compile test_btp_pattern
+gcc -o test_btp_pattern test_btp_pattern.c
+
+
+GENERATE PATTERNS:
+------------------
+./generate_patterns
+
+Output: master_customer_btp_pattern_MUAMALAT.sql
+
+
+TEST BTP PATTERN:
+-----------------
+./test_btp_pattern
+
+Menu options:
+1. Manual Test - Input MUAMALAT description untuk testing
+2. Load Patterns - Reload pattern dari SQL file
+3. Display All Patterns - Tampilkan semua patterns
+A. Daftar BTP yang tersedia - List semua BTP dengan customer count
+B. BTP terbaru - Top 20 BTP berdasarkan last usage
+0. Exit
+
+Contoh test input:
+KR OTOMATIS LLG-MUAMALAT INDON EMPU ANEKA PANGAN, GREENFIELDS
+KR OTOMATIS LLG-MUAMALAT INDON PRIMA GERAK KOTA,P INV57805
+KR OTOMATIS LLG-MUAMALAT INDON PT GREENFIELDS INDON
+
+
+CLEAN UP:
+---------
+# Remove compiled binaries
+rm generate_patterns test_btp_pattern
+
+# Remove generated SQL (untuk re-generate)
+rm master_customer_btp_pattern_MUAMALAT.sql
+
+
+FULL WORKFLOW:
+--------------
+# 1. Compile
+gcc -o generate_patterns generate_patterns.c
+gcc -o test_btp_pattern test_btp_pattern.c
+
+# 2. Generate patterns
+./generate_patterns
+
+# 3. Test patterns
+./test_btp_pattern
+
+# 4. Clean up (optional)
+rm generate_patterns test_btp_pattern
+

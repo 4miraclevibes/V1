@@ -1,0 +1,117 @@
+CAPITAL PATTERN GENERATOR - HASIL
+==============================
+
+SOURCE DATA:
+------------
+File: CAPITAL.csv
+Format: BTP;DESCRIPTION
+Total Lines: 39 (termasuk header)
+
+PATTERN GENERATION:
+-------------------
+Program: generate_patterns.c
+Compile: gcc -o generate_patterns generate_patterns.c
+Run: ./generate_patterns
+
+OUTPUT:
+-------
+File: master_customer_btp_pattern_CAPITAL.sql
+
+Struktur:
+- customer_name: Nama customer (extracted dari description)
+- btp: Bank Transaction Pattern (BTP code)
+- count: Jumlah transaksi dengan BTP tersebut untuk customer ini
+- total_transactions: Total semua transaksi customer ini
+- match_percentage: Persentase penggunaan BTP ini (count/total * 100%)
+- last_line_number: Nomor baris terakhir BTP ini muncul (untuk tracking latest)
+
+CONTOH DATA:
+------------
+('EMPU ANEKA', '2300013049', 12, 15, 80.00, 39)
+('PRIMA GERAK', '2300006392', 18, 18, 100.00, 38)
+('CENTRAL REZEKI', '2300000951', 1, 1, 100.00, 6)
+('HENDRA TANAYA', '2300017595', 2, 2, 100.00, 15)
+('EMPU ANEKA', 'MODERN TRADE', 3, 15, 20.00, 24)
+
+MULTIPLE BTP SUPPORT:
+--------------------
+Jika customer memiliki multiple BTPs, semua akan ditampilkan dengan info:
+- Latest BTP ditandai dengan 🌟 [LATEST BTP] 🌟
+- Setiap BTP menampilkan:
+  * Transaction Count (berapa kali BTP ini digunakan)
+  * Total Transactions (total semua transaksi customer)
+  * Match Percentage (persentase penggunaan BTP ini)
+  * Last Line Number (kapan terakhir digunakan)
+
+TESTING:
+--------
+Program: test_btp_pattern.c
+Compile: gcc -o test_btp_pattern test_btp_pattern.c
+Run: ./test_btp_pattern
+
+Menu:
+1. Manual Test - Input description untuk testing
+2. Load Patterns - Reload pattern dari SQL
+3. Display All Patterns - List semua patterns
+A. Daftar BTP - Group by BTP
+B. BTP terbaru - Sort by last usage
+0. Exit
+
+CONTOH TEST:
+------------
+Input: KR OTOMATIS LLG-CAPITAL NISP EMPU ANEKA PANGAN, GREENFIELDS
+Output:
+  Extracted customer name: 'EMPU ANEKA'
+  Found 2 BTPs for this customer
+  Latest BTP: 2300013049 (80.00% match, 12 transactions)
+  Alternative BTP: MODERN TRADE (20.00% match, 3 transactions)
+
+Input: KR OTOMATIS LLG-CAPITAL NISP PRIMA GERAK KOTA,P INV57805
+Output:
+  Extracted customer name: 'PRIMA GERAK'
+  BTP: 2300006392
+  Count: 18
+  Total Transactions: 18
+  Match Percentage: 100.00%
+
+EXTRACTION LOGIC:
+-----------------
+Array[4] + Array[5] dengan SMART EXTRACTION:
+- Jika Array[4] = "PT" atau "CV" → Ambil Array[4] + Array[5] + Array[6] (3 words)
+- Selain itu → Ambil Array[4] + Array[5] (2 words)
+
+Contoh:
+"KR OTOMATIS LLG-CAPITAL NISP EMPU ANEKA PANGAN, GREENFIELDS"
+ └─[0]  └─[1]   └─[2]    └─[3]   └─[4] └─[5]  └─[6]     └─[7]
+                            
+Array[3] = "NISP" (kata khusus CAPITAL, di-skip)
+Array[4] = "EMPU" → Default extraction: 2 words
+Customer = "EMPU ANEKA"
+
+"KR OTOMATIS LLG-CAPITAL NISP PT GREENFIELDS NISP"
+ └─[0]  └─[1]   └─[2]    └─[3]   └─[4] └─[5]      └─[6]
+
+Array[3] = "NISP" (kata khusus CAPITAL, di-skip)
+Array[4] = "PT" → Smart extraction: 3 words
+Customer = "PT GREENFIELDS NISP"
+
+SPECIAL NOTES:
+--------------
+- CAPITAL menggunakan kata "NISP" di posisi Array[3]
+- Extraction dimulai dari Array[4] (seperti CIMB, MAYBANK, HSBC)
+- BTP bisa berupa numeric code atau text (e.g., "MODERN TRADE")
+- Tidak ada filtering khusus untuk BTP (semua BTP diproses)
+- Smart extraction otomatis handle PT/CV company names
+- Customer "EMPU ANEKA" memiliki 2 BTPs berbeda (multiple BTP case)
+
+FILE STRUCTURE:
+---------------
+pattern_generator_CAPITAL/
+├── CAPITAL.csv                               # Source data
+├── generate_patterns.c                   # Pattern generator
+├── test_btp_pattern.c                   # Pattern tester
+├── master_customer_btp_pattern_CAPITAL.sql  # Generated patterns
+├── COMMANDS.txt                         # Command reference
+├── CAPITAL_EXTRACTION_LOGIC.txt            # Extraction logic documentation
+└── CAPITAL_RESULTS.txt                     # This file
+

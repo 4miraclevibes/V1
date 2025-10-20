@@ -1,6 +1,6 @@
 ╔═══════════════════════════════════════════════════════════════════╗
 ║                                                                   ║
-║        PATTERN GENERATOR v2 - QUICK COMMANDS                     ║
+║        TRSF PATTERN GENERATOR - QUICK COMMANDS                    ║
 ║        Copy-paste commands untuk generate dan test               ║
 ║                                                                   ║
 ╚═══════════════════════════════════════════════════════════════════╝
@@ -9,7 +9,7 @@
 📝 1. GENERATE PATTERNS (dari TRSF.csv):
 ═══════════════════════════════════════════════════════════════════
 
-cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_TRSF
 gcc -o generate_patterns generate_patterns.c
 ./generate_patterns
 
@@ -17,7 +17,7 @@ gcc -o generate_patterns generate_patterns.c
 🧪 2. TEST BTP PATTERN MATCHING (Interactive):
 ═══════════════════════════════════════════════════════════════════
 
-cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_v2
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_TRSF
 gcc -o test_btp_pattern test_btp_pattern.c
 ./test_btp_pattern
 

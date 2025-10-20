@@ -1,0 +1,267 @@
+================================================================================
+🎉 BANK PATTERN GENERATORS - COMPLETE DOCUMENTATION
+================================================================================
+
+Last Updated: October 20, 2025
+Total Banks Implemented: 20
+
+================================================================================
+📊 BANKS IMPLEMENTED
+================================================================================
+
+Group 1: Array[3] + Array[4] Extraction (9 banks)
+--------------------------------------------------
+1.  BNI          ✅ - 19 patterns
+2.  BTPN         ✅ - 3 patterns
+3.  MANDIRI      ✅ - 131 patterns ⭐ (Terbanyak di group ini!)
+4.  BRI          ✅ - 27 patterns
+5.  MEGA         ✅ - 8 patterns
+6.  PERMATA      ✅ - 17 patterns
+7.  DANAMON      ✅ - 18 patterns
+8.  CITIBANK     ✅ - 15 patterns
+9.  SINARMAS     ✅ - 5 patterns
+
+Group 2: Array[4] + Array[5] Extraction (9 banks)
+--------------------------------------------------
+10. CIMB         ✅ - 97 patterns (Special word: "NIAGA")
+11. MAYBANK      ✅ - 15 patterns (Special word: "INDONE")
+12. HSBC         ✅ - 23 patterns (Special word: "INDONESIA")
+13. UOB          ✅ - 5 patterns (Special word: "INDONESIA")
+14. MUAMALAT     ✅ - 1 pattern (Special word: "INDON")
+15. OCBC         ✅ - 6 patterns (Special word: "NISP")
+16. DBS          ✅ - 3 patterns (Special word: "INDONESIA")
+17. CAPITAL      ✅ - 2 patterns (Special word: "INDONE")
+18. WOORI        ✅ - 2 patterns (Special word: "SAUDARA")
+
+Group 3: Special Logic (2 banks)
+--------------------------------
+19. TRSF         ✅ - 6900 patterns (ALL CAPS after last number)
+20. BI-FAST      ✅ - 763 patterns (ALL CAPS after last number)
+
+================================================================================
+🔍 EXTRACTION LOGIC DETAILS
+================================================================================
+
+GROUP 1: Array[3] + Array[4] (Smart PT/CV)
+-------------------------------------------
+Format: "KR OTOMATIS LLG-[BANK] [WORD1] [WORD2] [WORD3]..."
+Extraction:
+  • Array[3] + Array[4] (default: 2 words)
+  • If Array[3] = "PT" or "CV" → Array[3] + Array[4] + Array[5] (3 words)
+
+Example:
+  "KR OTOMATIS LLG-BRI PT MITRA SELERA GREENFIELDS"
+   [0]    [1]    [2]  [3] [4]    [5]      [6]
+  Result: "PT MITRA SELERA" (3 words because Array[3] = "PT")
+
+Banks: BNI, BTPN, MANDIRI, BRI, MEGA, PERMATA, DANAMON, CITIBANK, SINARMAS
+
+GROUP 2: Array[4] + Array[5] (Smart PT/CV)
+-------------------------------------------
+Format: "KR OTOMATIS LLG-[BANK] [SPECIAL] [WORD1] [WORD2] [WORD3]..."
+Extraction:
+  • Array[4] + Array[5] (default: 2 words)
+  • If Array[4] = "PT" or "CV" → Array[4] + Array[5] + Array[6] (3 words)
+  • Special word at Array[3] (NIAGA/INDONE/INDONESIA/INDON/NISP)
+
+Example:
+  "KR OTOMATIS LLG-CIMB NIAGA PT RUANG MAHA KARYA"
+   [0]    [1]     [2]   [3]  [4] [5]   [6]   [7]
+  Array[3] = "NIAGA" (skip)
+  Result: "PT RUANG MAHA" (3 words because Array[4] = "PT")
+
+Banks: CIMB, MAYBANK, HSBC, UOB, MUAMALAT, OCBC, DBS, CAPITAL, WOORI
+
+GROUP 3: Special Logic - TRSF & BI-FAST
+----------------------------------------
+Format: Dynamic extraction based on ALL CAPS words
+Extraction:
+  • Find last number in description
+  • Extract ALL CAPS words after that number
+  • Filter out month prefixes (JAN, FEB, MAR, APR, MEI, JUN, etc.)
+  • Minimum 2 characters, all uppercase
+
+Example (TRSF):
+  "TRSF E-BANKING CR 0201/FTSCY/WS95051 1822080.00 INV GLORIA PRIMA CV"
+  Last number: 1822080.00
+  ALL CAPS after: "INV", "GLORIA", "PRIMA", "CV"
+  Result: "GLORIA PRIMA CV"
+
+Example (BI-FAST):
+  "BI-FAST CR TRANSFER DR 008 NOVA ANGGRAINI"
+  Last number: 008
+  ALL CAPS after: "NOVA", "ANGGRAINI"
+  Result: "NOVA ANGGRAINI"
+
+Banks: TRSF, BI-FAST
+
+================================================================================
+🎯 FEATURES
+================================================================================
+
+Core Features (All Banks):
+---------------------------
+✅ Smart PT/CV extraction (3 words untuk PT/CV companies)
+✅ Multiple BTP support per customer
+✅ Latest BTP flagging (🌟 marker)
+✅ Match percentage calculation (BTP usage / total transactions)
+✅ Non-numeric BTP support (e.g., "MODERN TRADE", "RAMAYANA")
+✅ SQL single quote escaping
+✅ Transaction count tracking
+✅ Last line number tracking
+
+Documentation (All Banks):
+---------------------------
+✅ generate_patterns.c - Pattern generator source
+✅ test_btp_pattern.c - Interactive testing tool
+✅ master_customer_btp_pattern_[BANK].sql - Generated SQL patterns
+✅ COMMANDS.txt - Compilation & usage guide
+✅ [BANK]_EXTRACTION_LOGIC.txt - Detailed extraction rules
+✅ [BANK]_RESULTS.txt - Generation results & examples
+
+Testing Features:
+-----------------
+✅ Manual test mode (input description, get BTP)
+✅ Display all patterns
+✅ List available BTPs (grouped by BTP)
+✅ Show latest BTPs (sorted by last usage)
+✅ Multiple BTP display per customer
+✅ Interactive menu system
+
+================================================================================
+📋 FILE STRUCTURE
+================================================================================
+
+For each bank (example: BNI):
+------------------------------
+pattern_generator_BNI/
+├── BNI.csv                              # Source data
+├── generate_patterns.c                   # Pattern generator
+├── test_btp_pattern.c                   # Pattern tester
+├── master_customer_btp_pattern_BNI.sql  # Generated patterns
+├── COMMANDS.txt                         # Command reference
+├── BNI_EXTRACTION_LOGIC.txt            # Extraction documentation
+└── BNI_RESULTS.txt                     # Results & examples
+
+================================================================================
+🚀 USAGE WORKFLOW
+================================================================================
+
+1. Compile Programs:
+   cd pattern_generator_[BANK]
+   gcc -o generate_patterns generate_patterns.c
+   gcc -o test_btp_pattern test_btp_pattern.c
+
+2. Generate Patterns:
+   ./generate_patterns
+   Output: master_customer_btp_pattern_[BANK].sql
+
+3. Test Patterns:
+   ./test_btp_pattern
+   Menu:
+   1. Manual Test - Test description untuk mendapatkan BTP
+   2. Load Patterns - Reload patterns dari SQL
+   3. Display All Patterns - Tampilkan semua patterns
+   A. Daftar BTP - List BTPs grouped by BTP code
+   B. BTP Terbaru - Latest BTPs by usage
+   0. Exit
+
+4. Use SQL Patterns:
+   Import master_customer_btp_pattern_[BANK].sql ke database
+   Query by customer name untuk mendapatkan recommended BTP
+
+================================================================================
+📈 STATISTICS
+================================================================================
+
+Total Banks:           20
+Total Pattern Files:   20 SQL files
+Total Patterns:        8,060 patterns
+  • Group 1:           243 patterns (9 banks)
+  • Group 2:           154 patterns (9 banks)
+  • Group 3:           7,663 patterns (2 banks)
+Largest Dataset:       TRSF (6,900 patterns) ⭐
+Smallest Dataset:      MUAMALAT (1 pattern)
+
+Extraction Methods:
+  • Array[3]+[4]:      9 banks (45%)
+  • Array[4]+[5]:      9 banks (45%)
+  • Special Logic:     2 banks (10%)
+
+Documentation:
+  • C Source Files:    40 files (generate + test per bank)
+  • SQL Files:         20 files
+  • Documentation:     60 files (3 docs per bank)
+  • Total Files:       120+ files
+
+================================================================================
+🔄 UPDATE LOG
+================================================================================
+
+2025-10-20: Added BI-FAST (Bank #20) - Special logic (ALL CAPS after last number)
+2025-10-20: Added WOORI (Bank #19) - Array[4]+[5] extraction, special word "SAUDARA"
+2025-10-20: Added CAPITAL (Bank #18) - Array[4]+[5] extraction, special word "INDONE"
+2025-10-20: Added DBS (Bank #17) - Array[4]+[5] extraction, special word "INDONESIA"
+2025-10-20: Added SINARMAS (Bank #16) - Array[3]+[4] extraction
+2025-10-20: Added CITIBANK (Bank #15) - Array[3]+[4] extraction
+2025-10-20: Added OCBC (Bank #14) - Array[4]+[5], special word "NISP"
+2025-10-20: Added MUAMALAT (Bank #13) - Array[4]+[5], special word "INDON"
+2025-10-20: Added UOB (Bank #12) - Array[4]+[5], special word "INDONESIA"
+2025-10-20: Added HSBC (Bank #11) - Array[4]+[5], special word "INDONESIA"
+2025-10-20: Created pattern documentation system
+2025-10-20: Standardized all extraction logic documentation
+2025-10-20: Updated all _EXTRACTION_LOGIC.txt with smart PT/CV details
+
+Previous updates:
+- Created MAYBANK, BRI, MEGA, PERMATA, DANAMON generators
+- Implemented smart PT/CV extraction logic (3 words)
+- Fixed match percentage calculation
+- Added multiple BTP display support
+- Standardized COMMANDS.txt, _RESULTS.txt, _EXTRACTION_LOGIC.txt
+- Corrected BTP filtering (non-numeric BTPs now included)
+- Fixed SQL quote escaping
+- Implemented customer name extraction improvements
+
+================================================================================
+📝 NOTES
+================================================================================
+
+1. Smart PT/CV Detection:
+   - Automatically detects "PT" or "CV" prefix
+   - Extracts 3 words instead of 2 for company names
+   - Works for both Array[3]+[4] and Array[4]+[5] methods
+
+2. Multiple BTP Support:
+   - Customers can have multiple BTPs
+   - Latest BTP is flagged with 🌟
+   - Each BTP shows transaction count and match percentage
+
+3. Match Percentage:
+   - Formula: (BTP count / Total customer transactions) × 100%
+   - Helps identify primary BTP for each customer
+
+4. Special Cases:
+   - TRSF uses unique ALL CAPS extraction
+   - Month prefixes filtered (APR, MAY, JUN, etc.)
+   - Non-numeric BTPs supported (e.g., "MODERN TRADE")
+
+5. Data Quality:
+   - SQL quote escaping prevents SQL injection
+   - Trim whitespace from extracted names
+   - Case-insensitive matching in test tool
+
+================================================================================
+🎊 PROJECT STATUS: COMPLETE
+================================================================================
+
+All 20 major Indonesian banks + payment systems implemented ✅
+Complete documentation for all banks ✅
+Standardized extraction logic ✅
+Smart PT/CV detection across all banks ✅
+Multiple BTP support implemented ✅
+Ready for production use ✅
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
+

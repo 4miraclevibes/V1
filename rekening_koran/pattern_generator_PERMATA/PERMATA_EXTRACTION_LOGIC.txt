@@ -1,0 +1,78 @@
+PERMATA EXTRACTION LOGIC
+========================
+
+Bank: PERMATA
+Format: KR OTOMATIS LLG-PERMATA [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]
+
+EXTRACTION RULES:
+================
+
+1. BASIC EXTRACTION:
+   - Split description by space
+   - Take Array[3] + Array[4] (kata ke-4 dan ke-5)
+   - Customer name = Array[3] + Array[4]
+
+2. SMART EXTRACTION:
+   - If Array[3] is "PT" or "CV":
+     - Take Array[3] + Array[4] + Array[5] (if available)
+     - Customer name = Array[3] + Array[4] + Array[5]
+   - Otherwise:
+     - Take Array[3] + Array[4] only
+     - Customer name = Array[3] + Array[4]
+
+EXAMPLES:
+=========
+
+Example 1: Basic Extraction
+Input:  "KR OTOMATIS LLG-PERMATA PT DAMAI INDAH GOL PT Greenfields Dai ry Indonesia DIG"
+Array:  [0]KR [1]OTOMATIS [2]LLG-PERMATA [3]PT [4]DAMAI [5]INDAH [6]GOL [7]PT [8]Greenfields...
+Result: Customer name = "PT DAMAI INDAH" (PT + DAMAI + INDAH)
+
+Example 2: Basic Extraction (No PT/CV)
+Input:  "KR OTOMATIS LLG-PERMATA KOPERASI KARYAWAN Pembayaran Barang Order FM"
+Array:  [0]KR [1]OTOMATIS [2]LLG-PERMATA [3]KOPERASI [4]KARYAWAN [5]Pembayaran...
+Result: Customer name = "KOPERASI KARYAWAN" (KOPERASI + KARYAWAN)
+
+Example 3: Smart Extraction with CV
+Input:  "KR OTOMATIS LLG-PERMATA CV BERDAYAKAN USAH INV CCM 98135"
+Array:  [0]KR [1]OTOMATIS [2]LLG-PERMATA [3]CV [4]BERDAYAKAN [5]USAH [6]INV...
+Result: Customer name = "CV BERDAYAKAN USAH" (CV + BERDAYAKAN + USAH)
+
+IMPLEMENTATION:
+==============
+
+Function: extract_customer_name()
+- Input: description string
+- Output: customer_name string
+- Logic: Array[3] + Array[4] with smart extraction for PT/CV
+
+Smart Extraction Logic:
+```c
+if (strcmp(word1, "PT") == 0 || strcmp(word1, "CV") == 0) {
+    // Take Array[3] + Array[4] + Array[5] if available
+    if (token_count >= 6) {
+        char word3[100];
+        strcpy(word3, tokens[5]);
+        if (strlen(word3) > 0) {
+            snprintf(customer_name, 200, "%s %s %s", word1, word2, word3);
+        } else {
+            snprintf(customer_name, 200, "%s %s", word1, word2);
+        }
+    } else {
+        snprintf(customer_name, 200, "%s %s", word1, word2);
+    }
+} else {
+    // Take Array[3] + Array[4] only
+    snprintf(customer_name, 200, "%s %s", word1, word2);
+}
+```
+
+NOTES:
+======
+- Array indexing starts from 0
+- Array[3] = kata ke-4 (index 3)
+- Array[4] = kata ke-5 (index 4)
+- Array[5] = kata ke-6 (index 5)
+- Smart extraction handles PT/CV company names
+- Non-numeric BTPs are processed (not skipped)
+- Single quotes in customer names are escaped for SQL

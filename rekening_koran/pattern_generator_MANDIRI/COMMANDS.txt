@@ -1,0 +1,139 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║        MANDIRI PATTERN GENERATOR - QUICK COMMANDS                 ║
+║        Copy-paste commands untuk generate dan test               ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📝 1. GENERATE PATTERNS (dari MANDIRI.csv):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+
+🧪 2. TEST BTP PATTERN MATCHING (Interactive):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+
+🎯 3. QUICK TEST - MANUAL INPUT:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+echo "1
+KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991
+0" | ./test_btp_pattern
+
+
+📊 4. SHOW ALL PATTERNS:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+echo "3
+0" | ./test_btp_pattern
+
+
+🔍 5. SHOW BTP LIST (Grouped by BTP):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+echo "A
+0" | ./test_btp_pattern
+
+
+📈 6. SHOW LATEST BTPs (Top 20):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+echo "B
+0" | ./test_btp_pattern
+
+
+🧪 7. TEST BERBAGAI MANDIRI DESCRIPTIONS:
+═══════════════════════════════════════════════════════════════════
+
+# Test 1: SMART FOOD CONCEPT
+echo "1
+KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991
+0" | ./test_btp_pattern
+
+# Test 2: SRIBOGA MARUGAME
+echo "1
+KR OTOMATIS LLG-MANDIRI SRIBOGA MARUGAME I TTF 030035 -0053061
+0" | ./test_btp_pattern
+
+# Test 3: RAJA RASA ALAMI
+echo "1
+KR OTOMATIS LLG-MANDIRI RAJA RASA ALAMI Beli FM T231214PB005 -0053061
+0" | ./test_btp_pattern
+
+# Test 4: DIPURI SELARAS
+echo "1
+KR OTOMATIS LLG-MANDIRI DIPURI SELARAS MEM Susu Green Fields -0053061
+0" | ./test_btp_pattern
+
+
+📋 8. COMPLETE WORKFLOW:
+═══════════════════════════════════════════════════════════════════
+
+# Step 1: Generate patterns
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_MANDIRI
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+# Step 2: Test patterns
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+# Step 3: Quick validation
+echo "1
+KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991
+0" | ./test_btp_pattern
+
+
+═══════════════════════════════════════════════════════════════════
+📊 EXPECTED RESULTS:
+═══════════════════════════════════════════════════════════════════
+
+Total Patterns      : 114 patterns
+Unique Customers    : 103 customers
+Data Source        : MANDIRI.csv (2,207 lines)
+Valid Transactions : 1,500+ (after filtering)
+Extraction Logic   : Array[3] + Array[4] (simple & consistent)
+Data Quality       : CLEAN (filtered non-numeric BTPs)
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 TOP 5 PATTERNS:
+═══════════════════════════════════════════════════════════════════
+
+1. GELAEL SUPERMARKET     - 239 transactions (93.36% match)
+2. SRIBOGA MARUGAME       - 130 transactions (99.24% match)
+3. SAKSI-SAKSI YEHUWA     - 89 transactions (100% match)
+4. IAS SUPPORT            - 87 transactions (87% match)
+5. MITRA BELANJA          - 80 transactions (100% match)
+
+
+═══════════════════════════════════════════════════════════════════
+🔧 MANDIRI vs CIMB vs TRSF COMPARISON:
+═══════════════════════════════════════════════════════════════════
+
+TRSF: "TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO"
+→ Customer: "WILLIAM SARSONO" (ALL CAPS after last number)
+
+CIMB: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"  
+→ Customer: "CAHAYA SAKTI" (Array[4] + Array[5])
+
+MANDIRI: "KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991"
+→ Customer: "SMART FOOD" (Array[3] + Array[4])
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 PRODUCTION READY!
+═══════════════════════════════════════════════════════════════════

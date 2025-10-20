@@ -1,0 +1,279 @@
+================================================================================
+🚀 BANK PATTERN GENERATOR LAUNCHER - USER GUIDE
+================================================================================
+
+OVERVIEW
+--------
+Pattern Launcher adalah command center untuk menjalankan dan mengelola semua
+20 bank pattern generators dari satu tempat.
+
+Dengan launcher ini, Anda bisa:
+✅ Test BTP patterns untuk bank manapun
+✅ Generate/regenerate patterns untuk bank tertentu
+✅ Lihat daftar semua bank yang tersedia
+✅ Akses dokumentasi lengkap
+
+================================================================================
+INSTALLATION & COMPILATION
+================================================================================
+
+STEP 1: Compile the Launcher
+-----------------------------
+cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_documentation
+gcc pattern_launcher.c -o pattern_launcher
+
+STEP 2: Make it Executable (Optional)
+--------------------------------------
+chmod +x pattern_launcher
+
+STEP 3: Run the Launcher
+-------------------------
+./pattern_launcher
+
+================================================================================
+MENU OPTIONS
+================================================================================
+
+1. 🔍 Test BTP Pattern (Select Bank)
+   ------------------------------------
+   - Menampilkan daftar semua 20 banks
+   - Pilih bank yang ingin di-test
+   - Launcher akan menjalankan test_btp_pattern untuk bank tersebut
+   - Anda bisa manual input description untuk dicari BTP-nya
+   
+   Contoh workflow:
+   1) Pilih menu 1
+   2) Pilih bank (misal: 3 untuk MANDIRI)
+   3) Program test akan berjalan
+   4) Masukkan description untuk dicari BTP-nya
+   5) Lihat hasil matching
+
+2. 📊 Show All Banks
+   ------------------
+   - Menampilkan daftar lengkap 20 banks
+   - Dikelompokkan berdasarkan extraction logic:
+     • Group 1: Array[3]+[4] (9 banks)
+     • Group 2: Array[4]+[5] (9 banks)
+     • Group 3: Special Logic (2 banks)
+   - Menunjukkan ID dan nama setiap bank
+
+3. 🔧 Generate Patterns (Select Bank)
+   ------------------------------------
+   - Regenerate patterns untuk bank tertentu
+   - Ada konfirmasi sebelum execute (untuk avoid accident)
+   - Launcher akan menjalankan generate_patterns untuk bank tersebut
+   - Hasil: master_customer_btp_pattern_[BANK].sql akan di-update
+   
+   ⚠️  WARNING: Ini akan overwrite file SQL yang sudah ada!
+   
+   Contoh workflow:
+   1) Pilih menu 3
+   2) Pilih bank (misal: 10 untuk CIMB)
+   3) Konfirmasi dengan 'y'
+   4) Generator akan berjalan
+   5) Check hasil di folder bank tersebut
+
+4. 📖 Show Documentation
+   ----------------------
+   - Menampilkan 100 baris pertama dari documentation.txt
+   - Overview lengkap tentang semua pattern generators
+   - Info extraction logic untuk setiap group
+   - Statistics dan feature list
+
+Q. ❌ Quit
+   -------
+   - Keluar dari launcher
+
+================================================================================
+BANK LIST (20 Systems)
+================================================================================
+
+GROUP 1: Array[3] + Array[4] Extraction
+----------------------------------------
+ 1. BNI          - 19 patterns
+ 2. BTPN         - 3 patterns
+ 3. MANDIRI      - 131 patterns ⭐ (Terbanyak di group ini!)
+ 4. BRI          - 27 patterns
+ 5. MEGA         - 8 patterns
+ 6. PERMATA      - Kompilasi siap
+ 7. DANAMON      - Kompilasi siap
+ 8. CITIBANK     - 15 patterns
+ 9. SINARMAS     - 5 patterns
+
+GROUP 2: Array[4] + Array[5] Extraction
+----------------------------------------
+10. CIMB         - 97 patterns (Special word: "NIAGA")
+11. MAYBANK      - 15 patterns (Special word: "INDONE")
+12. HSBC         - 23 patterns (Special word: "INDONESIA")
+13. UOB          - 5 patterns (Special word: "INDONESIA")
+14. MUAMALAT     - 1 pattern (Special word: "INDON")
+15. OCBC         - 6 patterns (Special word: "NISP")
+16. DBS          - 3 patterns (Special word: "INDONESIA")
+17. CAPITAL      - 2 patterns (Special word: "INDONE")
+18. WOORI        - 2 patterns (Special word: "SAUDARA")
+
+GROUP 3: Special Logic (ALL CAPS after last number)
+----------------------------------------------------
+19. TRSF         - 6900 patterns ⭐⭐⭐ (TERBESAR!)
+20. BI-FAST      - 763 patterns
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: "Executable not found"
+Solution:
+  Launcher akan memberitahu jika executable belum di-compile.
+  Ikuti instruksi yang muncul untuk compile terlebih dahulu.
+  
+  Example:
+  cd ../pattern_generator_MANDIRI
+  gcc test_btp_pattern.c -o test_btp_pattern_mandiri
+
+Problem: "Permission denied"
+Solution:
+  chmod +x pattern_launcher
+  atau run dengan: ./pattern_launcher
+
+Problem: Program tidak bisa kembali ke menu
+Solution:
+  Tekan Enter untuk continue setelah selesai menjalankan test/generator
+
+Problem: Clear screen tidak berfungsi
+Solution:
+  Ini normal di beberapa terminal. Program tetap berjalan dengan baik.
+
+================================================================================
+PREREQUISITES
+================================================================================
+
+Before using the launcher, pastikan:
+✅ All pattern generators sudah di-compile
+✅ CSV files tersedia di setiap folder bank
+✅ Anda berada di folder pattern_documentation saat run launcher
+
+Quick compile all (opsional):
+------------------------------
+for dir in ../pattern_generator_*/; do
+  cd "$dir"
+  gcc generate_patterns.c -o generate_patterns_* 2>/dev/null
+  gcc test_btp_pattern.c -o test_btp_pattern_* 2>/dev/null
+  cd -
+done
+
+================================================================================
+TIPS & TRICKS
+================================================================================
+
+💡 Tip 1: Quick Testing
+   Gunakan launcher untuk quick test berbagai bank tanpa perlu cd ke folder
+   masing-masing.
+
+💡 Tip 2: Batch Testing
+   Bisa test multiple banks secara berurutan tanpa keluar dari launcher.
+
+💡 Tip 3: Safe Regeneration
+   Menu 3 punya konfirmasi, jadi aman dari accidental regeneration.
+
+💡 Tip 4: Documentation Access
+   Menu 4 untuk quick reference tanpa perlu buka file manual.
+
+💡 Tip 5: Navigation
+   Gunakan angka 1-4 untuk menu utama
+   Gunakan angka 1-20 untuk pilih bank
+   Gunakan Q untuk quit
+
+================================================================================
+EXAMPLES
+================================================================================
+
+Example 1: Test MANDIRI Pattern
+--------------------------------
+1. Run: ./pattern_launcher
+2. Pilih: 1 (Test BTP Pattern)
+3. Pilih: 3 (MANDIRI)
+4. Input description MANDIRI untuk test
+5. Lihat hasil BTP matching
+
+Example 2: Regenerate CIMB Patterns
+------------------------------------
+1. Run: ./pattern_launcher
+2. Pilih: 3 (Generate Patterns)
+3. Pilih: 10 (CIMB)
+4. Konfirmasi: y
+5. Wait for generation complete
+6. Check: pattern_generator_CIMB/master_customer_btp_pattern_CIMB.sql
+
+Example 3: View All Banks
+--------------------------
+1. Run: ./pattern_launcher
+2. Pilih: 2 (Show All Banks)
+3. Browse list
+4. Press Enter to continue
+
+Example 4: Quick Documentation Check
+-------------------------------------
+1. Run: ./pattern_launcher
+2. Pilih: 4 (Show Documentation)
+3. Read overview
+4. Press Enter to continue
+
+================================================================================
+FILE STRUCTURE
+================================================================================
+
+pattern_documentation/
+├── pattern_launcher.c           (Source code)
+├── pattern_launcher             (Compiled executable)
+├── LAUNCHER_GUIDE.txt          (This file)
+└── documentation.txt           (Main documentation)
+
+../pattern_generator_[BANK]/
+├── generate_patterns.c
+├── test_btp_pattern.c
+├── generate_patterns_[bank]    (Executable)
+├── test_btp_pattern_[bank]     (Executable)
+└── master_customer_btp_pattern_[BANK].sql
+
+================================================================================
+UPDATES & MAINTENANCE
+================================================================================
+
+Adding New Bank:
+----------------
+1. Edit pattern_launcher.c
+2. Add new bank to banks[] array
+3. Recompile: gcc pattern_launcher.c -o pattern_launcher
+
+Updating Executable Names:
+--------------------------
+If you change executable naming convention:
+1. Update banks[] array in pattern_launcher.c
+2. Recompile
+
+================================================================================
+SUPPORT
+================================================================================
+
+For issues or questions:
+- Check documentation.txt for detailed info
+- Check individual bank COMMANDS.txt files
+- Check _EXTRACTION_LOGIC.txt for logic details
+
+================================================================================
+VERSION HISTORY
+================================================================================
+
+v1.0 (October 20, 2025)
+-----------------------
+✨ Initial release
+✨ Support for 20 banks
+✨ Test BTP Pattern functionality
+✨ Generate Patterns functionality
+✨ Bank list display
+✨ Documentation viewer
+✨ Error handling for missing executables
+✨ Confirmation for pattern regeneration
+
+================================================================================
+

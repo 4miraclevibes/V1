@@ -1,0 +1,137 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║        CIMB PATTERN GENERATOR - QUICK COMMANDS                    ║
+║        Copy-paste commands untuk generate dan test               ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📝 1. GENERATE PATTERNS (dari CMIB.csv):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+
+🧪 2. TEST BTP PATTERN MATCHING (Interactive):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+
+🎯 3. QUICK TEST - MANUAL INPUT:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+echo "1
+KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550
+0" | ./test_btp_pattern
+
+
+📊 4. SHOW ALL PATTERNS:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+echo "3
+0" | ./test_btp_pattern
+
+
+🔍 5. SHOW BTP LIST (Grouped by BTP):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+echo "A
+0" | ./test_btp_pattern
+
+
+📈 6. SHOW LATEST BTPs (Top 20):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+echo "B
+0" | ./test_btp_pattern
+
+
+🧪 7. TEST BERBAGAI CIMB DESCRIPTIONS:
+═══════════════════════════════════════════════════════════════════
+
+# Test 1: CAHAYA SAKTI
+echo "1
+KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550
+0" | ./test_btp_pattern
+
+# Test 2: BAKTIABADI INTIMAK  
+echo "1
+KR OTOMATIS LLG-CIMB NIAGA BAKTIABADI INTIMAK
+0" | ./test_btp_pattern
+
+# Test 3: SARI RASA NUSANTAR
+echo "1
+KR OTOMATIS LLG-CIMB NIAGA SARI RASA NUSANTAR 2024000767-5222373 792
+0" | ./test_btp_pattern
+
+# Test 4: ELANG ANDALAN NUSA
+echo "1
+KR OTOMATIS LLG-CIMB NIAGA ELANG ANDALAN NUSA EAN-5548 INV: 5222 354457
+0" | ./test_btp_pattern
+
+
+📋 8. COMPLETE WORKFLOW:
+═══════════════════════════════════════════════════════════════════
+
+# Step 1: Generate patterns
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_CIMB
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+# Step 2: Test patterns
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+# Step 3: Quick validation
+echo "1
+KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550
+0" | ./test_btp_pattern
+
+
+═══════════════════════════════════════════════════════════════════
+📊 EXPECTED RESULTS:
+═══════════════════════════════════════════════════════════════════
+
+Total Patterns      : 78 patterns
+Unique Customers    : 72 customers
+Data Source        : CMIB.csv (1,382 lines)
+Valid Transactions : 1,000+ (after filtering)
+Extraction Logic   : Array[4] + Array[5] (simple & consistent)
+Data Quality       : CLEAN (filtered non-numeric BTPs)
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 TOP 5 PATTERNS:
+═══════════════════════════════════════════════════════════════════
+
+1. PT.RUANG MAHA      - 93 transactions (100% match)
+2. PT.KUDO TEKNOLOGI  - 82 transactions (100% match)  
+3. PT.MATAHARI PUTRA  - 63 transactions (90% match)
+4. CV.SARI RASA       - 54 transactions (100% match)
+5. PT.PRIMA ISMAYA    - 49 transactions (92.45% match)
+
+
+═══════════════════════════════════════════════════════════════════
+🔧 CIMB vs TRSF COMPARISON:
+═══════════════════════════════════════════════════════════════════
+
+TRSF: "TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO"
+→ Customer: "WILLIAM SARSONO" (ALL CAPS after last number)
+
+CIMB: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"  
+→ Customer: "CAHAYA SAKTI" (Array[4] + Array[5])
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 PRODUCTION READY!
+═══════════════════════════════════════════════════════════════════
+

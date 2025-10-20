@@ -21,6 +21,7 @@ typedef struct {
 Pattern patterns[MAX_PATTERNS];
 int pattern_count = 0;
 
+
 typedef struct {
     char btp[MAX_BTP];
     char customer_names[100][200];

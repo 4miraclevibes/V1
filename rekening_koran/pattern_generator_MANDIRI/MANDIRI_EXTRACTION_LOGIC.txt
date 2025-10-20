@@ -1,0 +1,100 @@
+MANDIRI PATTERN EXTRACTION LOGIC
+==============================
+
+Format Data MANDIRI:
+- BTP;DESCRIPTION
+- Description format: "KR OTOMATIS LLG-MANDIRI [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+
+Contoh:
+- Input: "KR OTOMATIS LLG-MANDIRI KOPERASI KARYAWAN GREENFIELDS INDONESIA"
+- Split by space: ["KR", "OTOMATIS", "LLG-MANDIRI", "KOPERASI", "KARYAWAN", "GREENFIELDS", "INDONESIA"]
+
+EXTRACTION RULES:
+================
+
+1. BTP = Kolom pertama (sebelum semicolon)
+2. Customer Name = Array[3] + Array[4] dengan SMART EXTRACTION
+3. Pattern = Customer Name
+
+SMART EXTRACTION LOGIC:
+-----------------------
+Jika Array[3] = "PT" ATAU Array[3] = "CV":
+  → Customer Name = Array[3] + Array[4] + Array[5] (3 words)
+  
+Jika Array[3] bukan "PT" atau "CV":
+  → Customer Name = Array[3] + Array[4] (2 words, default)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1 (tanpa PT/CV):
+- Input: "KR OTOMATIS LLG-MANDIRI KOPERASI KARYAWAN GREENFIELDS INDONESIA"
+- Split: ["KR", "OTOMATIS", "LLG-MANDIRI", "KOPERASI", "KARYAWAN", "GREENFIELDS", "INDONESIA"]
+- Array[3] = "KOPERASI"
+- Array[4] = "KARYAWAN"
+- Smart Check: Array[3] = "KOPERASI" (bukan PT/CV) ✗
+- Customer Name = "KOPERASI KARYAWAN" (2 words)
+- Pattern = "KOPERASI KARYAWAN"
+
+Example 2 (dengan PT prefix):
+- Input: "KR OTOMATIS LLG-MANDIRI PT MITRA SELERA GREENFIELDS DAIRY"
+- Split: ["KR", "OTOMATIS", "LLG-MANDIRI", "PT", "MITRA", "SELERA", "GREENFIELDS", "DAIRY"]
+- Array[3] = "PT"
+- Array[4] = "MITRA"
+- Array[5] = "SELERA"
+- Smart Check: Array[3] = "PT" ✓
+- Customer Name = "PT MITRA SELERA" (3 words)
+- Pattern = "PT MITRA SELERA"
+
+Example 3 (dengan CV prefix):
+- Input: "KR OTOMATIS LLG-MANDIRI CV KARYA MANDIRI INDO BUKTI BAYAR"
+- Split: ["KR", "OTOMATIS", "LLG-MANDIRI", "CV", "KARYA", "MANDIRI", "INDO", "BUKTI", "BAYAR"]
+- Array[3] = "CV"
+- Array[4] = "KARYA"
+- Array[5] = "MANDIRI"
+- Smart Check: Array[3] = "CV" ✓
+- Customer Name = "CV KARYA MANDIRI" (3 words)
+- Pattern = "CV KARYA MANDIRI"
+
+ALGORITHM:
+==========
+
+1. Split description by space
+2. Check if array length >= 5 (minimal untuk array[3] dan array[4])
+3. Extract array[3] dan array[4]
+4. Smart Extraction Check:
+   - If array[3] == "PT" OR array[3] == "CV":
+     * Check if array[5] exists (array length >= 6)
+     * If yes: customer_name = array[3] + " " + array[4] + " " + array[5]
+     * If no: customer_name = array[3] + " " + array[4]
+   - Else:
+     * customer_name = array[3] + " " + array[4]
+5. Pattern = Customer Name (sama dengan customer name untuk MANDIRI)
+
+PERBEDAAN DENGAN BANK LAIN:
+===========================
+
+Banks menggunakan Array[3] + Array[4] (dengan smart PT/CV):
+- BNI: Array[3] + Array[4], smart PT/CV
+- MANDIRI: Array[3] + Array[4], smart PT/CV ← INI
+- MANDIRI: Array[3] + Array[4], smart PT/CV
+- BRI: Array[3] + Array[4], smart PT/CV
+- MEGA: Array[3] + Array[4], smart PT/CV
+- PERMATA: Array[3] + Array[4], smart PT/CV
+- DANAMON: Array[3] + Array[4], smart PT/CV
+
+Banks menggunakan Array[4] + Array[5] (dengan smart PT/CV):
+- CIMB: Array[4] + Array[5], smart PT/CV
+- MAYBANK: Array[4] + Array[5], smart PT/CV
+
+Banks dengan logic khusus:
+- TRSF: ALL CAPS words after last number
+
+VALIDATION:
+===========
+
+- Array length harus >= 5
+- Array[3] dan Array[4] tidak boleh kosong
+- Tidak ada filtering khusus (tidak seperti TRSF yang filter bulan)
+- BTP bisa numeric atau non-numeric (e.g., "MODERN TRADE")
+- Smart extraction otomatis handle PT/CV company names

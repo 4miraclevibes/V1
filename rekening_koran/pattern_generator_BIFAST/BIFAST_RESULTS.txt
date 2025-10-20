@@ -1,0 +1,50 @@
+================================================================================
+BI-FAST PATTERN GENERATION RESULTS
+================================================================================
+
+Generated: October 20, 2025
+Input File: BI-FAST.csv
+Output File: master_customer_btp_pattern_BIFAST.sql
+Extraction Method: Special Logic (ALL CAPS after last number)
+
+================================================================================
+SUMMARY
+================================================================================
+
+This file will be populated after running generate_patterns_bifast.
+
+Expected output format:
+- Total patterns generated: [NUMBER]
+- Total unique customers: [NUMBER]
+- Total transactions processed: [NUMBER]
+- Invalid format lines skipped: [NUMBER]
+
+The generator will:
+1. Read BI-FAST.csv line by line
+2. Extract customer names using ALL CAPS logic
+3. Count BTP usage per customer
+4. Calculate match percentages
+5. Generate SQL INSERT statements
+
+================================================================================
+SAMPLE OUTPUT STRUCTURE
+================================================================================
+
+Customer Name                    | BTP         | Count | Total | Match %
+--------------------------------|-------------|-------|-------|--------
+NOVA ANGGRAINI                  | 2300011289  |    5  |    5  | 100.00%
+KAKIATNA AGRO INDO             | 2300010936  |   15  |   15  | 100.00%
+CLASSIC FINE FOODS             | DISTRIBUTOR |    3  |    3  | 100.00%
+
+================================================================================
+NOTES
+================================================================================
+
+- Extraction logic is the same as TRSF
+- Month prefixes (JAN, FEB, etc.) are automatically filtered
+- Single quotes in names are escaped for SQL compatibility
+- Only ALL CAPS words after last number are extracted
+- Empty customer names are skipped during generation
+
+================================================================================
+
