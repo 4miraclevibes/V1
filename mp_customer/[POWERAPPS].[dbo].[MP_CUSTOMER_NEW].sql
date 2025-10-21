@@ -26,4 +26,4 @@ SELECT [code]
       ,[blok_release]
       ,[btg]
       ,[cutting]
-  FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] where distributor_id in (1, 32)
+  FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
