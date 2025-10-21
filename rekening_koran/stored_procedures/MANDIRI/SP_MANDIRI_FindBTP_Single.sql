@@ -55,20 +55,22 @@ BEGIN
     END
     
     -- Extract customer name: Array[3] + Array[4] (with PT/CV smart)
-    -- Format: "KR OTOMATIS LLG-MANDIRI [Array3] [Array4] [Array5]..."
+    -- Format: "KR OTOMATIS LLG-MANDIRI [Word4] [Word5] [Word6]..."
+    -- C array[3] = SQL WordIndex 4 (because SQL starts from 1, C starts from 0)
     IF @WordCount >= 5
     BEGIN
         DECLARE @Word3 NVARCHAR(100);
         DECLARE @Word4 NVARCHAR(100);
         DECLARE @Word5 NVARCHAR(100);
         
-        SELECT @Word3 = Word FROM @Words WHERE WordIndex = 3;
-        SELECT @Word4 = Word FROM @Words WHERE WordIndex = 4;
+        -- Array[3] in C = WordIndex 4 in SQL
+        SELECT @Word3 = Word FROM @Words WHERE WordIndex = 4;
+        SELECT @Word4 = Word FROM @Words WHERE WordIndex = 5;
         
         -- Smart PT/CV extraction
         IF @Word3 IN ('PT', 'CV') AND @WordCount >= 6
         BEGIN
-            SELECT @Word5 = Word FROM @Words WHERE WordIndex = 5;
+            SELECT @Word5 = Word FROM @Words WHERE WordIndex = 6;
             SET @CustomerName = @Word3 + ' ' + @Word4 + ' ' + @Word5;
         END
         ELSE
