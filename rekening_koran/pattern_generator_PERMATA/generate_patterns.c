@@ -204,13 +204,13 @@ void generate_sql() {
     
     fprintf(file, "-- PERMATA Customer BTP Pattern Master Data\n");
     fprintf(file, "-- Generated from PERMATA.csv\n");
-    fprintf(file, "-- Format: customer_name, btp, count, total_transactions, match_percentage, last_line_number\n\n");
+    fprintf(file, "-- Format: customer_name, btp, category, count, total_transactions, match_percentage, last_line_number\n\n");
     
     for (int i = 0; i < pattern_count; i++) {
         char escaped_customer_name[400];
         escape_single_quotes(patterns[i].customer_name, escaped_customer_name);
         
-        fprintf(file, "INSERT INTO master_customer_btp_pattern VALUES ('%s', '%s', %d, %d, %.2f, %d);\n",
+        fprintf(file, "INSERT INTO master_customer_btp_pattern VALUES ('%s', '%s', 'PERMATA', %d, %d, %.2f, %d);\n",
                 escaped_customer_name, patterns[i].btp, patterns[i].count, 
                 patterns[i].total_transactions, patterns[i].match_percentage, 
                 patterns[i].last_line_number);

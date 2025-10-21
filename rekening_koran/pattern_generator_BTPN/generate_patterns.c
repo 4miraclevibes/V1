@@ -233,13 +233,13 @@ int main() {
     fprintf(sql_file, "-- Generated from BTPN.csv\n");
     fprintf(sql_file, "-- Total patterns: %d\n\n", pattern_count);
     
-    fprintf(sql_file, "INSERT INTO master_customer_btp_pattern (customer_name, btp, count, total_transactions, match_percentage, last_line_number) VALUES\n");
+    fprintf(sql_file, "INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES\n");
     
     for (int i = 0; i < pattern_count; i++) {
         char escaped_customer[400];
         escape_single_quotes(patterns[i].customer_name, escaped_customer);
         
-        fprintf(sql_file, "('%s', '%s', %d, %d, %.2f, %d)",
+        fprintf(sql_file, "('%s', '%s', \'BTPN\', %d, %d, %.2f, %d)",
                 escaped_customer, patterns[i].btp, patterns[i].count, 
                 patterns[i].total_transactions, patterns[i].match_rate, patterns[i].last_line_number);
         

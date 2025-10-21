@@ -165,14 +165,14 @@ void generate_sql(const char* output_file) {
 
     fprintf(out_file, "-- DANAMON Customer BTP Pattern Master Data\n");
     fprintf(out_file, "-- Generated from DANAMON.csv\n");
-    fprintf(out_file, "-- Format: customer_name, btp, count, total_transactions, match_percentage, last_line_number\n\n");
+    fprintf(out_file, "-- Format: customer_name, btp, category, count, total_transactions, match_percentage, last_line_number\n\n");
 
     for (int i = 0; i < pattern_count; i++) {
         char escaped_customer_name[MAX_LINE_LENGTH * 2];
         strcpy(escaped_customer_name, patterns[i].customer_name);
         escape_single_quotes(escaped_customer_name);
 
-        fprintf(out_file, "INSERT INTO master_customer_btp_pattern VALUES ('%s', '%s', %d, %d, %.2f, %d);\n",
+        fprintf(out_file, "INSERT INTO master_customer_btp_pattern VALUES ('%s', '%s', 'DANAMON', %d, %d, %.2f, %d);\n",
                 escaped_customer_name,
                 patterns[i].btp,
                 patterns[i].count,

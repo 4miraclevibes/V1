@@ -377,7 +377,7 @@ void generate_sql() {
     fprintf(output, "-- Logic: Check from last word, find last word with number, pattern starts from next word\n");
     fprintf(output, "-- =====================================================\n\n");
     fprintf(output, "INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]\n");
-    fprintf(output, "    ([customer_name], [btp], [match_count], [total_transactions], [match_percentage], [last_line_number])\n");
+    fprintf(output, "    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])\n");
     fprintf(output, "VALUES\n");
     
     for (int i = 0; i < pattern_count; i++) {
@@ -394,7 +394,7 @@ void generate_sql() {
         char escaped_name[500];
         escape_single_quotes(patterns[i].customer_name, escaped_name);
         
-        fprintf(output, "    ('%s', '%s', %d, %d, %.2f, %d)%s\n",
+        fprintf(output, "    ('%s', '%s', \'TRSF\', %d, %d, %.2f, %d)%s\n",
                 escaped_name,                  // customer_name (escaped)
                 patterns[i].btp,
                 patterns[i].transaction_count,  // match_count
