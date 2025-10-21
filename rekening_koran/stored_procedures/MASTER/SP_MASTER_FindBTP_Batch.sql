@@ -159,14 +159,16 @@ BEGIN
         
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
-            SELECT TransactionID, Description
+            SELECT 
+                TransactionID AS transaction_id, 
+                Description AS description
             FROM @Transactions
             WHERE BankType = 'TRSF'
             FOR JSON PATH
         );
         
         CREATE TABLE #TRSF_Results (
-            TransactionID INT, Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -175,10 +177,13 @@ BEGIN
         );
         
         INSERT INTO #TRSF_Results
-        EXEC SP_TRSF_FindBTP_Batch @TransactionsJSON = @TRSF_JSON;
+        EXEC SP_TRSF_FindBTP_Batch @InputJSON = @TRSF_JSON;
         
         INSERT INTO @AllResults
-        SELECT *, 'TRSF' FROM #TRSF_Results;
+        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'TRSF' AS BankType, ProcessedAt
+        FROM #TRSF_Results;
         
         DROP TABLE #TRSF_Results;
         
@@ -192,14 +197,16 @@ BEGIN
         
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
-            SELECT TransactionID, Description
+            SELECT 
+                TransactionID AS transaction_id, 
+                Description AS description
             FROM @Transactions
             WHERE BankType = 'BIFAST'
             FOR JSON PATH
         );
         
         CREATE TABLE #BIFAST_Results (
-            TransactionID INT, Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -208,10 +215,13 @@ BEGIN
         );
         
         INSERT INTO #BIFAST_Results
-        EXEC SP_BIFAST_FindBTP_Batch @TransactionsJSON = @BIFAST_JSON;
+        EXEC SP_BIFAST_FindBTP_Batch @InputJSON = @BIFAST_JSON;
         
         INSERT INTO @AllResults
-        SELECT *, 'BIFAST' FROM #BIFAST_Results;
+        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'BIFAST' AS BankType, ProcessedAt
+        FROM #BIFAST_Results;
         
         DROP TABLE #BIFAST_Results;
         
@@ -225,14 +235,16 @@ BEGIN
         
         DECLARE @MANDIRI_JSON NVARCHAR(MAX);
         SELECT @MANDIRI_JSON = (
-            SELECT TransactionID, Description
+            SELECT 
+                TransactionID AS transaction_id, 
+                Description AS description
             FROM @Transactions
             WHERE BankType = 'MANDIRI'
             FOR JSON PATH
         );
         
         CREATE TABLE #MANDIRI_Results (
-            TransactionID INT, Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -241,10 +253,13 @@ BEGIN
         );
         
         INSERT INTO #MANDIRI_Results
-        EXEC SP_MANDIRI_FindBTP_Batch @TransactionsJSON = @MANDIRI_JSON;
+        EXEC SP_MANDIRI_FindBTP_Batch @InputJSON = @MANDIRI_JSON;
         
         INSERT INTO @AllResults
-        SELECT *, 'MANDIRI' FROM #MANDIRI_Results;
+        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'MANDIRI' AS BankType, ProcessedAt
+        FROM #MANDIRI_Results;
         
         DROP TABLE #MANDIRI_Results;
         
@@ -277,7 +292,10 @@ BEGIN
         EXEC SP_BNI_FindBTP_Batch @TransactionsJSON = @BNI_JSON;
         
         INSERT INTO @AllResults
-        SELECT *, 'BNI' FROM #BNI_Results;
+        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'BNI' AS BankType, ProcessedAt
+        FROM #BNI_Results;
         
         DROP TABLE #BNI_Results;
         
@@ -310,7 +328,10 @@ BEGIN
         EXEC SP_BTPN_FindBTP_Batch @TransactionsJSON = @BTPN_JSON;
         
         INSERT INTO @AllResults
-        SELECT *, 'BTPN' FROM #BTPN_Results;
+        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'BTPN' AS BankType, ProcessedAt
+        FROM #BTPN_Results;
         
         DROP TABLE #BTPN_Results;
         
@@ -343,7 +364,10 @@ BEGIN
         EXEC SP_BRI_FindBTP_Batch @TransactionsJSON = @BRI_JSON;
         
         INSERT INTO @AllResults
-        SELECT *, 'BRI' FROM #BRI_Results;
+        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'BRI' AS BankType, ProcessedAt
+        FROM #BRI_Results;
         
         DROP TABLE #BRI_Results;
         
