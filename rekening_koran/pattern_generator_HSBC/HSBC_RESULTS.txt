@@ -1,0 +1,118 @@
+HSBC PATTERN GENERATOR - HASIL
+===============================
+
+SOURCE DATA:
+------------
+File: HSBC.csv
+Format: BTP;DESCRIPTION
+Total Lines: 519 (termasuk header)
+
+PATTERN GENERATION:
+-------------------
+Program: generate_patterns.c
+Compile: gcc -o generate_patterns generate_patterns.c
+Run: ./generate_patterns
+
+OUTPUT:
+-------
+File: master_customer_btp_pattern_HSBC.sql
+
+Struktur:
+- customer_name: Nama customer (extracted dari description)
+- btp: Bank Transaction Pattern (BTP code)
+- count: Jumlah transaksi dengan BTP tersebut untuk customer ini
+- total_transactions: Total semua transaksi customer ini
+- match_percentage: Persentase penggunaan BTP ini (count/total * 100%)
+- last_line_number: Nomor baris terakhir BTP ini muncul (untuk tracking latest)
+
+CONTOH DATA:
+------------
+('PT AMERTA INDAH', '2300010748', 10, 12, 83.33, 502)
+('PT SARI PIZZA', '2300001682', 15, 20, 75.00, 489)
+('YAYASAN BRITISH', '2300001531', 8, 8, 100.00, 511)
+('PT LULU GROUP', 'MODERN TRADE', 12, 12, 100.00, 236)
+('PT SARI ICECREAM', '2300000970', 25, 30, 83.33, 514)
+('PT SARI FOOD', '2300003860', 18, 22, 81.82, 517)
+
+MULTIPLE BTP SUPPORT:
+--------------------
+Jika customer memiliki multiple BTPs, semua akan ditampilkan dengan info:
+- Latest BTP ditandai dengan 🌟 [LATEST BTP] 🌟
+- Setiap BTP menampilkan:
+  * Transaction Count (berapa kali BTP ini digunakan)
+  * Total Transactions (total semua transaksi customer)
+  * Match Percentage (persentase penggunaan BTP ini)
+  * Last Line Number (kapan terakhir digunakan)
+
+TESTING:
+--------
+Program: test_btp_pattern.c
+Compile: gcc -o test_btp_pattern test_btp_pattern.c
+Run: ./test_btp_pattern
+
+Menu:
+1. Manual Test - Input description untuk testing
+2. Load Patterns - Reload pattern dari SQL
+3. Display All Patterns - List semua patterns
+A. Daftar BTP - Group by BTP
+B. BTP terbaru - Sort by last usage
+0. Exit
+
+CONTOH TEST:
+------------
+Input: KR OTOMATIS LLG-HSBC INDONESIA PT AMERTA INDAH OT 3300000508
+Output:
+  Extracted customer name: 'PT AMERTA INDAH'
+  BTP: 2300010748
+  Count: 10
+  Total Transactions: 12
+  Match Percentage: 83.33%
+
+Input: KR OTOMATIS LLG-HSBC INDONESIA YAYASAN BRITISH SC 5222346076
+Output:
+  Extracted customer name: 'YAYASAN BRITISH'
+  BTP: 2300001531
+  Count: 8
+  Total Transactions: 8
+  Match Percentage: 100.00%
+
+EXTRACTION LOGIC:
+-----------------
+Array[4] + Array[5] dengan SMART EXTRACTION:
+- Jika Array[4] = "PT" atau "CV" → Ambil Array[4] + Array[5] + Array[6] (3 words)
+- Selain itu → Ambil Array[4] + Array[5] (2 words)
+
+Contoh:
+"KR OTOMATIS LLG-HSBC INDONESIA PT AMERTA INDAH OT"
+ └─[0]  └─[1]    └─[2]     └─[3]   └─[4] └─[5]  └─[6]
+                            
+Array[3] = "INDONESIA" (kata khusus HSBC, di-skip)
+Array[4] = "PT" → Smart extraction: 3 words
+Customer = "PT AMERTA INDAH"
+
+"KR OTOMATIS LLG-HSBC INDONESIA YAYASAN BRITISH SC"
+ └─[0]  └─[1]    └─[2]     └─[3]    └─[4]   └─[5]  └─[6]
+
+Array[3] = "INDONESIA" (kata khusus HSBC, di-skip)
+Array[4] = "YAYASAN" → Default extraction: 2 words
+Customer = "YAYASAN BRITISH"
+
+SPECIAL NOTES:
+--------------
+- HSBC menggunakan kata "INDONESIA" di posisi Array[3]
+- Extraction dimulai dari Array[4] (seperti CIMB dan MAYBANK)
+- BTP bisa berupa numeric code atau text (e.g., "MODERN TRADE", "LULU GROUP", "DISTRIBUTOR GREENFIELDS")
+- Tidak ada filtering khusus untuk BTP (semua BTP diproses)
+- Smart extraction otomatis handle PT/CV company names
+
+FILE STRUCTURE:
+---------------
+pattern_generator_HSBC/
+├── HSBC.csv                              # Source data
+├── generate_patterns.c                    # Pattern generator
+├── test_btp_pattern.c                    # Pattern tester
+├── master_customer_btp_pattern_HSBC.sql  # Generated patterns
+├── COMMANDS.txt                          # Command reference
+├── HSBC_EXTRACTION_LOGIC.txt            # Extraction logic documentation
+└── HSBC_RESULTS.txt                     # This file
+

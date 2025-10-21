@@ -1,0 +1,148 @@
+===========================================
+DANAMON BTP PATTERN GENERATOR - QUICK COMMANDS
+===========================================
+
+LOKASI FOLDER:
+--------------
+/Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON/
+
+
+1. COMPILE GENERATE_PATTERNS
+   --------------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   gcc -o generate_patterns generate_patterns.c
+
+
+2. RUN GENERATE_PATTERNS
+   ----------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   ./generate_patterns
+
+   Output: master_customer_btp_pattern_DANAMON.sql
+
+
+3. COMPILE TEST_BTP_PATTERN
+   -------------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   gcc -o test_btp_pattern test_btp_pattern.c
+
+
+4. RUN TEST_BTP_PATTERN
+   --------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   ./test_btp_pattern
+
+   Menu options:
+   1 - Manual Test (test single description)
+   2 - Reload Patterns
+   3 - Display All Patterns
+   A - Daftar BTP yang tersedia (grouped by BTP)
+   B - BTP terbaru (latest 20 by line number)
+   0 - Exit
+
+
+5. ONE-LINER: COMPILE & RUN ALL
+   -----------------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON && gcc -o generate_patterns generate_patterns.c && ./generate_patterns && gcc -o test_btp_pattern test_btp_pattern.c && ./test_btp_pattern
+
+
+6. QUICK TEST WITH EXAMPLE
+   ------------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   ./test_btp_pattern
+   # Pilih option 1
+   # Masukkan contoh description:
+   KR OTOMATIS LLG-DANAMON PT TRISULA ADI TEGUH BUKTI BAYAR
+
+
+7. VIEW MASTER DATA
+   -----------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   cat master_customer_btp_pattern_DANAMON.sql | grep INSERT | head -20
+
+
+8. COUNT PATTERNS
+   --------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   grep -c "INSERT INTO" master_customer_btp_pattern_DANAMON.sql
+
+
+9. CLEAN BUILD FILES
+   ------------------
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+   rm -f generate_patterns test_btp_pattern master_customer_btp_pattern_DANAMON.sql
+
+
+10. VIEW SOURCE DATA
+    ----------------
+    cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_DANAMON
+    head -20 DANAMON.csv
+    wc -l DANAMON.csv
+
+
+===========================================
+EXTRACTION LOGIC
+===========================================
+
+DANAMON uses Array[3] + Array[4] extraction:
+
+Format: "KR OTOMATIS LLG-DANAMON [Array3] [Array4] [AdditionalInfo]"
+
+Smart Extraction:
+-----------------
+- If Array[3] is "PT" or "CV":
+  → Take Array[3] + Array[4] + Array[5]
+  
+- Otherwise:
+  → Take Array[3] + Array[4]
+
+Examples:
+---------
+Input:  "KR OTOMATIS LLG-DANAMON PT TRISULA ADI TEGUH BUKTI BAYAR"
+Output: "PT TRISULA ADI"
+        (Array[3]="PT" → takes 3 words)
+
+Input:  "KR OTOMATIS LLG-DANAMON KOPERASI KARYAWAN GREENFIELDS INDONESIA"
+Output: "KOPERASI KARYAWAN"
+        (Array[3]≠"PT/CV" → takes 2 words)
+
+
+===========================================
+TROUBLESHOOTING
+===========================================
+
+Problem: Compilation errors
+Solution: Check if gcc is installed: gcc --version
+
+Problem: File not found when running
+Solution: Make sure you're in the correct directory:
+          pwd
+          Should show: .../pattern_generator_DANAMON
+
+Problem: No patterns generated
+Solution: Check if DANAMON.csv exists and has data:
+          head DANAMON.csv
+          wc -l DANAMON.csv
+
+Problem: test_btp_pattern shows "NO PATTERN FOUND"
+Solution: 
+1. Check if master_customer_btp_pattern_DANAMON.sql was generated
+2. Verify the description format matches:
+   "KR OTOMATIS LLG-DANAMON [WORD1] [WORD2] ..."
+3. Use option 'A' to see all available BTPs
+4. Use option 'B' to see latest BTPs
+
+
+===========================================
+NOTES
+===========================================
+
+- CSV format: BTP;Description
+- Separator: semicolon (;)
+- First line is header (skipped)
+- BTP can be numeric or non-numeric (e.g., "MODERN TRADE")
+- Customer names are case-insensitive for matching
+- Match percentage = (BTP count / Total customer transactions) × 100%
+- Last line number tracks the most recent usage of each BTP
+- Smart extraction handles "PT" and "CV" prefixes automatically
+

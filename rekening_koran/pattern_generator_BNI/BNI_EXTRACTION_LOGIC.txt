@@ -1,0 +1,104 @@
+BNI PATTERN EXTRACTION LOGIC
+=============================
+
+Format Data BNI:
+- BTP;DESCRIPTION
+- Description format: "KR OTOMATIS LLG-BNI [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+
+Contoh:
+- Input: "KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15"
+- Split by space: ["KR", "OTOMATIS", "LLG-BNI", "AEROFOOD", "INDONESIA", "GREENFIELDS", "DAIRY", "|02", "012024-15"]
+
+EXTRACTION RULES:
+================
+
+1. BTP = Kolom pertama (sebelum semicolon)
+2. Customer Name = Array[3] + Array[4] dengan SMART EXTRACTION
+3. Pattern = Customer Name
+
+SMART EXTRACTION LOGIC:
+-----------------------
+Jika Array[3] = "PT" ATAU Array[3] = "CV":
+  → Customer Name = Array[3] + Array[4] + Array[5] (3 words)
+  
+Jika Array[3] bukan "PT" atau "CV":
+  → Customer Name = Array[3] + Array[4] (2 words, default)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1:
+- Input: "KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "AEROFOOD", "INDONESIA", "GREENFIELDS", "DAIRY", "|02", "012024-15"]
+- Array[3] = "AEROFOOD"
+- Array[4] = "INDONESIA" 
+- Customer Name = "AEROFOOD INDONESIA"
+- Pattern = "AEROFOOD INDONESIA"
+
+Example 2 (dengan PT prefix):
+- Input: "KR OTOMATIS LLG-BNI PT MITRA SELERA GREENFIELDS DAIRY"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "PT", "MITRA", "SELERA", "GREENFIELDS", "DAIRY"]
+- Array[3] = "PT"
+- Array[4] = "MITRA"
+- Array[5] = "SELERA"
+- Smart Check: Array[3] = "PT" ✓
+- Customer Name = "PT MITRA SELERA" (3 words)
+- Pattern = "PT MITRA SELERA"
+
+Example 2b (tanpa PT/CV):
+- Input: "KR OTOMATIS LLG-BNI LION SUPERINDO PT TXN1000330846 |10 00330846"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "LION", "SUPERINDO", "PT", "TXN1000330846", "|10", "00330846"]
+- Array[3] = "LION"
+- Array[4] = "SUPERINDO"
+- Smart Check: Array[3] = "LION" (bukan PT/CV) ✗
+- Customer Name = "LION SUPERINDO" (2 words)
+- Pattern = "LION SUPERINDO"
+
+Example 3:
+- Input: "KR OTOMATIS LLG-BNI SUDO BREW NARATAMA"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "SUDO", "BREW", "NARATAMA"]
+- Array[3] = "SUDO"
+- Array[4] = "BREW"
+- Customer Name = "SUDO BREW"
+- Pattern = "SUDO BREW"
+
+ALGORITHM:
+==========
+
+1. Split description by space
+2. Check if array length >= 5 (minimal untuk array[3] dan array[4])
+3. Extract array[3] dan array[4]
+4. Smart Extraction Check:
+   - If array[3] == "PT" OR array[3] == "CV":
+     * Check if array[5] exists (array length >= 6)
+     * If yes: customer_name = array[3] + " " + array[4] + " " + array[5]
+     * If no: customer_name = array[3] + " " + array[4]
+   - Else:
+     * customer_name = array[3] + " " + array[4]
+5. Pattern = Customer Name (sama dengan customer name untuk BNI)
+
+PERBEDAAN DENGAN MANDIRI DAN CIMB:
+==================================
+
+CIMB:
+- Format: "KR OTOMATIS LLG-CIMB NIAGA [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[4] + Array[5] (kata ke-5 dan ke-6)
+- Array length minimal: 6
+
+MANDIRI:
+- Format: "KR OTOMATIS LLG-MANDIRI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[3] + Array[4] (kata ke-4 dan ke-5)
+- Array length minimal: 5
+
+BNI:
+- Format: "KR OTOMATIS LLG-BNI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Customer name = Array[3] + Array[4] (kata ke-4 dan ke-5)
+- Array length minimal: 5
+
+VALIDATION:
+===========
+
+- Array length harus >= 5
+- Array[3] dan Array[4] tidak boleh kosong
+- Tidak ada filtering khusus (tidak seperti TRSF yang filter bulan)
+- Filter BTP non-numeric (seperti "MODERN TRADE")

@@ -1,0 +1,161 @@
+================================================================================
+BI-FAST CUSTOMER NAME EXTRACTION LOGIC
+================================================================================
+
+Overview:
+---------
+BI-FAST menggunakan special extraction logic yang sama dengan TRSF.
+Logic ini mengekstrak ALL CAPS words yang muncul SETELAH angka terakhir
+dalam description.
+
+================================================================================
+EXTRACTION ALGORITHM
+================================================================================
+
+Input Format:
+-------------
+"BI-FAST CR TRANSFER DR [BANK_CODE] [CUSTOMER_NAME_ALL_CAPS]"
+
+Example:
+--------
+"BI-FAST CR TRANSFER DR 008 NOVA ANGGRAINI"
+                           ^^^  ^^^^^^^^^^^^^^^^^^^^
+                           |    Customer Name (ALL CAPS)
+                           Bank Code (last number before name)
+
+Step-by-Step Process:
+----------------------
+1. Split description by space into array of words
+2. Iterate through each word from left to right
+3. Find the LAST word that contains a digit
+4. Starting from the NEXT word after that last digit word:
+   - Take ALL words that are ALL CAPS (uppercase only)
+   - Each word must:
+     a) Be ALL CAPS (A-Z only, no lowercase)
+     b) Have length >= 2 characters
+     c) NOT be a month prefix (JAN, FEB, MAR, APR, MAY, JUN, 
+        JUL, AUG, SEP, OCT, NOV, DEC, AGT, MEI)
+5. Concatenate all qualifying words with space separator
+6. Result: Customer Name
+
+================================================================================
+DETAILED EXAMPLES
+================================================================================
+
+Example 1: Simple Case
+----------------------
+Input:  "BI-FAST CR TRANSFER DR 008 NOVA ANGGRAINI"
+Split:  ["BI-FAST", "CR", "TRANSFER", "DR", "008", "NOVA", "ANGGRAINI"]
+                                             ^^^   ^^^^  ^^^^^^^^^^
+                                             |     ALL CAPS words after last number
+                                             Last number word
+Result: "NOVA ANGGRAINI"
+
+Example 2: With PT/CV
+----------------------
+Input:  "BI-FAST CR TRANSFER DR 022 KAKIATNA AGRO INDO"
+Split:  ["BI-FAST", "CR", "TRANSFER", "DR", "022", "KAKIATNA", "AGRO", "INDO"]
+                                             ^^^   ^^^^^^^^^  ^^^^  ^^^^
+                                             |     ALL CAPS words
+                                             Last number
+Result: "KAKIATNA AGRO INDO"
+
+Example 3: Month Prefix Filter
+-------------------------------
+Input:  "BI-FAST CR TRANSFER DR 535 JAN YEREMIA"
+Split:  ["BI-FAST", "CR", "TRANSFER", "DR", "535", "JAN", "YEREMIA"]
+                                             ^^^   ^^^  ^^^^^^^^
+                                             |     |    Valid word
+                                             |     Filtered out (month)
+                                             Last number
+Result: "YEREMIA"
+
+Example 4: Mixed Case (should skip lowercase)
+----------------------------------------------
+Input:  "BI-FAST CR TRANSFER DR 501 Herlina. H."
+Split:  ["BI-FAST", "CR", "TRANSFER", "DR", "501", "Herlina.", "H."]
+                                             ^^^   ^^^^^^^^^  ^^^
+                                             |     Not all caps (skip)
+                                             Last number
+Result: "H" (only if H is all caps and length >= 2, otherwise empty)
+
+Example 5: Complex Name
+-----------------------
+Input:  "BI-FAST CR TRANSFER DR 022 CLASSIC FINE FOODS"
+Split:  ["BI-FAST", "CR", "TRANSFER", "DR", "022", "CLASSIC", "FINE", "FOODS"]
+                                             ^^^   ^^^^^^^  ^^^^  ^^^^^
+                                             |     ALL CAPS words
+                                             Last number
+Result: "CLASSIC FINE FOODS"
+
+================================================================================
+FILTER RULES
+================================================================================
+
+1. ALL CAPS Check:
+   - Word must contain ONLY uppercase letters (A-Z)
+   - Must NOT contain lowercase letters
+   - Numbers, dots, commas are allowed but word must have uppercase letters
+
+2. Minimum Length:
+   - Word must be >= 2 characters
+   - Single letter words are skipped
+
+3. Month Prefix Filter:
+   - Skip if word matches: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, 
+                           SEP, OCT, NOV, DEC, AGT, MEI
+   - Case sensitive (must be exact match in uppercase)
+
+4. After Last Number:
+   - Only process words that come AFTER the last word containing a digit
+   - This ensures we skip bank codes and only get customer names
+
+================================================================================
+SPECIAL CASES
+================================================================================
+
+Case 1: No ALL CAPS words found
+--------------------------------
+If no qualifying words found, the customer name will be empty.
+This entry will likely be skipped during pattern generation.
+
+Case 2: Single word name
+-------------------------
+Input:  "BI-FAST CR TRANSFER DR 535 YEREMIA"
+Result: "YEREMIA"
+
+Case 3: Very long names
+------------------------
+All qualifying ALL CAPS words are taken, no limit on word count.
+
+Case 4: Names with dots/punctuation
+------------------------------------
+Punctuation is preserved in the word.
+Example: "H." stays as "H." if it meets other criteria.
+
+================================================================================
+COMPARISON WITH ARRAY-BASED LOGIC
+================================================================================
+
+TRSF/BIFAST Logic:
+- Dynamic: Finds last number, then takes ALL CAPS words after it
+- Flexible: Works regardless of number of words before customer name
+- Smart: Filters out month prefixes automatically
+
+Array[3]+[4] or Array[4]+[5] Logic:
+- Fixed: Always takes specific array positions
+- Simple: Direct word extraction
+- Position-dependent: Requires consistent format
+
+================================================================================
+IMPLEMENTATION NOTES
+================================================================================
+
+1. The extract_customer_name() function implements this logic
+2. No upper-casing is done initially to preserve original case for checking
+3. to_upper() is called AFTER extraction for consistency
+4. Single quotes are escaped in SQL output (' becomes '')
+5. This logic does NOT use smart PT/CV detection (not needed for TRSF/BIFAST)
+
+================================================================================
+

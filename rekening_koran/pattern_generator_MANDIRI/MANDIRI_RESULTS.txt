@@ -1,0 +1,127 @@
+MANDIRI PATTERN GENERATION RESULTS
+==================================
+
+GENERATION SUMMARY:
+==================
+- Total patterns generated: 114
+- Total unique customers: 103
+- Data source: MANDIRI.csv (2,207 lines)
+- Valid transactions processed: 1,500+ (after filtering non-numeric BTPs)
+
+EXTRACTION LOGIC:
+================
+Format: "KR OTOMATIS LLG-MANDIRI [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+Customer Name = Array[3] + " " + Array[4] (kata ke-4 dan ke-5 setelah split)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1:
+- Input: "KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991"
+- Split: ["KR", "OTOMATIS", "LLG-MANDIRI", "SMART", "FOOD", "CONCEPT", "-0053061777", "Clearing947991"]
+- Array[3] = "SMART"
+- Array[4] = "FOOD"
+- Customer Name = "SMART FOOD"
+- Pattern = "SMART FOOD"
+
+Example 2:
+- Input: "KR OTOMATIS LLG-MANDIRI SRIBOGA MARUGAME I TTF 030035 -0053061"
+- Split: ["KR", "OTOMATIS", "LLG-MANDIRI", "SRIBOGA", "MARUGAME", "I", "TTF", "030035", "-0053061"]
+- Array[3] = "SRIBOGA"
+- Array[4] = "MARUGAME"
+- Customer Name = "SRIBOGA MARUGAME"
+- Pattern = "SRIBOGA MARUGAME"
+
+Example 3:
+- Input: "KR OTOMATIS LLG-MANDIRI RAJA RASA ALAMI Beli FM T231214PB005 -0053061"
+- Split: ["KR", "OTOMATIS", "LLG-MANDIRI", "RAJA", "RASA", "ALAMI", "Beli", "FM", "T231214PB005", "-0053061"]
+- Array[3] = "RAJA"
+- Array[4] = "RASA"
+- Customer Name = "RAJA RASA"
+- Pattern = "RAJA RASA"
+
+TOP 10 PATTERNS BY TRANSACTION COUNT:
+=====================================
+Customer Name                    | BTP         | Count | Total | Match %
+--------------------------------|-------------|-------|-------|--------
+GELAEL SUPERMARKET             | 2300001162  |   239 |   256 |  93.36%
+SRIBOGA MARUGAME               | 2300005019  |   130 |   131 |  99.24%
+SAKSI-SAKSI YEHUWA             | 2300015404  |    89 |    89 | 100.00%
+IAS SUPPORT                    | 2300017756  |    87 |   100 |  87.00%
+MITRA BELANJA                  | 2300012656  |    80 |    80 | 100.00%
+MAHATI KARAWANG                | 2300006238  |    52 |    52 | 100.00%
+HOKKY TE                       | 2300001185  |    46 |    46 | 100.00%
+SUMBER SELERA                  | 2300012554  |    41 |    41 | 100.00%
+EMA INTI                       | 2300005515  |    37 |    41 |  90.24%
+FASTFOOD INDONESIA             | 2300010852  |    33 |    33 | 100.00%
+
+DATA FILTERING:
+===============
+- Skipped non-numeric BTPs: "DISTRIBUTOR GREENFIELDS", "MODERN TRADE", "FARMERS MARKET", "GRAND LUCKY", "HOKKY", "FAMILY MART"
+- Only processed lines with numeric BTP (starting with digit)
+- Total valid transactions: ~1,500 out of 2,207 lines
+
+FILES GENERATED:
+================
+1. master_customer_btp_pattern_MANDIRI.sql - SQL file dengan 114 patterns
+2. generate_patterns - Executable untuk generate patterns
+3. test_btp_pattern - Executable untuk testing patterns
+4. MANDIRI_EXTRACTION_LOGIC.txt - Dokumentasi extraction logic
+
+TESTING FEATURES:
+=================
+- Manual test dengan input description
+- Display semua patterns
+- Daftar BTP yang tersedia (grouped by BTP)
+- BTP terbaru (top 20 by last line number)
+- Pattern matching dengan case-insensitive search
+
+PERBEDAAN DENGAN CIMB DAN TRSF:
+===============================
+
+TRSF Pattern Generator:
+- Customer name = ALL CAPS words SETELAH angka terakhir
+- Bisa multiple words
+- Filter bulan prefix (JAN, FEB, MAR, etc.)
+- Lebih kompleks extraction logic
+
+CIMB Pattern Generator:
+- Customer name = Array[4] + Array[5] (fixed 2 words)
+- Format: "KR OTOMATIS LLG-CIMB NIAGA [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Tidak perlu filter bulan
+- Lebih sederhana dan konsisten
+
+MANDIRI Pattern Generator:
+- Customer name = Array[3] + Array[4] (fixed 2 words)
+- Format: "KR OTOMATIS LLG-MANDIRI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Tidak perlu filter bulan
+- Lebih sederhana dan konsisten
+
+ALGORITHM COMPARISON:
+=====================
+
+TRSF: "TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO"
+- Find last number index
+- Extract ALL CAPS words after that
+- Filter month prefixes
+- Result: "WILLIAM SARSONO"
+
+CIMB: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"
+- Split by space
+- Take array[4] and array[5]
+- No filtering needed
+- Result: "CAHAYA SAKTI"
+
+MANDIRI: "KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991"
+- Split by space
+- Take array[3] and array[4]
+- No filtering needed
+- Result: "SMART FOOD"
+
+STATUS: COMPLETED ✅
+===================
+- ✅ Pattern generation working
+- ✅ SQL file generated (114 patterns)
+- ✅ Test tool working
+- ✅ Documentation complete
+- ✅ All features implemented

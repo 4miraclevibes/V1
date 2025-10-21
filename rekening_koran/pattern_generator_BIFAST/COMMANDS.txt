@@ -1,0 +1,64 @@
+================================================================================
+BI-FAST PATTERN GENERATOR - COMMAND REFERENCE
+================================================================================
+
+STEP 1: COMPILE THE PROGRAMS
+-----------------------------
+cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_BIFAST
+
+# Compile pattern generator
+gcc generate_patterns.c -o generate_patterns_bifast
+
+# Compile test tool
+gcc test_btp_pattern.c -o test_btp_pattern_bifast
+
+
+STEP 2: GENERATE MASTER PATTERNS
+---------------------------------
+# Run the generator to create master_customer_btp_pattern_BIFAST.sql
+./generate_patterns_bifast
+
+# Output: master_customer_btp_pattern_BIFAST.sql will be created
+
+
+STEP 3: TEST BTP PATTERN MATCHING
+----------------------------------
+# Interactive mode - test with manual input
+./test_btp_pattern_bifast
+
+# Menu Options:
+# 1 - Manual test (enter description to find BTP)
+# 2 - Display all available BTPs
+# 3 - Display latest BTPs for each customer
+# Q - Quit
+
+# Example test input:
+# "BI-FAST CR TRANSFER DR 008 NOVA ANGGRAINI"
+# Expected: Should find BTP for NOVA ANGGRAINI
+
+
+STEP 4: VERIFY RESULTS
+----------------------
+# Check generated SQL file
+cat master_customer_btp_pattern_BIFAST.sql | head -20
+
+# Count total patterns
+grep "INSERT INTO" master_customer_btp_pattern_BIFAST.sql | wc -l
+
+# View statistics
+grep "Total patterns:" master_customer_btp_pattern_BIFAST.sql
+
+
+================================================================================
+NOTES
+================================================================================
+- Input CSV: BI-FAST.csv
+- Output SQL: master_customer_btp_pattern_BIFAST.sql
+- Extraction Logic: Special Logic (ALL CAPS after last number)
+- Similar to TRSF pattern generator
+- Month prefixes (JAN, FEB, MAR, etc.) are filtered out
+- Single quotes in names are escaped for SQL compatibility
+- Smart PT/CV detection is NOT used (TRSF logic doesn't need it)
+
+================================================================================
+

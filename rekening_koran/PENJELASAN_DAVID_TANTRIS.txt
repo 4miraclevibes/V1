@@ -1,0 +1,185 @@
+═══════════════════════════════════════════════════════════════════
+KENAPA "DAVID TANTRIS OR F" TIDAK MATCH?
+═══════════════════════════════════════════════════════════════════
+
+
+❓ PERTANYAAN:
+
+Deskripsi ini kenapa NO PATTERN?
+
+"TRSF E-BANKING CR 2401/FTSCY/WS95031 455520.00 Portos bakery Inv. N7159289 DAVID TANTRIS OR F"
+
+
+═══════════════════════════════════════════════════════════════════
+💡 JAWABAN:
+═══════════════════════════════════════════════════════════════════
+
+Customer "DAVID TANTRIS OR F" memang TIDAK ADA di master data!
+
+
+BUKAN karena nama terpotong!
+BUKAN karena program error!
+
+TAPI karena: Match rate terlalu rendah saat generate master data
+
+
+═══════════════════════════════════════════════════════════════════
+🔍 ROOT CAUSE ANALYSIS:
+═══════════════════════════════════════════════════════════════════
+
+BTP 2300014763 punya 136 transaksi dengan pattern:
+
+  97 transaksi (71.3%):
+  → "... DAVID TANTRIS OR F"
+  
+  39 transaksi (28.7%):
+  → "... N7159289 DAVID TANTRIS OR F"  
+  → "... N7148815 DAVID TANTRIS OR F"
+  → "... K002000026399 DAVID TANTRIS OR F"
+  ... dll (setiap transaksi beda invoice!)
+
+
+Program analisis original:
+────────────────────────────────────────────────────────────────
+
+1. Baca semua 136 transaksi
+2. Extract customer name dari akhir
+3. Detect 40 customer "berbeda":
+   • DAVID TANTRIS OR F → 97x
+   • N7159289 DAVID TANTRIS OR F → 1x
+   • N7148815 DAVID TANTRIS OR F → 1x
+   • ... (37 lagi dengan invoice berbeda)
+
+4. Hitung match rate:
+   Customer dominan: 97/136 = 71.3%
+
+5. Check threshold:
+   71.3% < 80% → ❌ TIDAK MASUK master 80%
+   71.3% > 70% → ✅ HARUSNYA masuk master 70%
+   
+   TAPI... program generation mungkin exclude karena
+   ada 40 "unique customers" (red flag untuk inconsistency)
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 KENAPA INI TERJADI?
+═══════════════════════════════════════════════════════════════════
+
+Issue: INVOICE NUMBER masuk ke pattern extraction!
+
+Format deskripsi:
+  • 97 transaksi: "... Portos bakery Inv. DAVID TANTRIS OR F"
+  • 39 transaksi: "... Portos bakery Inv. N7159289 DAVID TANTRIS OR F"
+                                           ^^^^^^^^ invoice!
+
+Program extraction:
+  → Ambil ALL CAPS words dari belakang
+  → "N7159289 DAVID TANTRIS OR F" → detected sebagai customer name
+  → Setiap invoice berbeda → detected sebagai customer berbeda
+  → 40 unique "customers"!
+
+
+═══════════════════════════════════════════════════════════════════
+✅ SOLUSI UNTUK TEST SEKARANG:
+═══════════════════════════════════════════════════════════════════
+
+Saya sudah buatkan file PLUS dengan manual additions!
+
+
+FILE: insert_customer_btp_pattern_70pct_PLUS.sql
+
+Added entries:
+  • DAVID TANTRIS OR F → BTP 2300014763 (71.32%) ⚠️
+  • NG SIOE HOH → BTP 2300010747 (100%)
+  • KOKUMINDO BERKAT M → BTP 2300007505 (100%)
+  • KOKUMINDO BERKAT MANDIRI → BTP 2300007505 (100%)
+
+
+═══════════════════════════════════════════════════════════════════
+🚀 CARA TEST DENGAN FILE PLUS:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran
+./test_btp_pattern
+
+Pilih: 3 (PLUS version) ⭐
+
+Menu: 1 (test manual)
+
+Paste:
+TRSF E-BANKING CR 2401/FTSCY/WS95031 455520.00 Portos bakery Inv. N7159289 DAVID TANTRIS OR F
+
+
+Expected Result:
+═══════════════════════════════════════════════════════════════
+                     ✅ PATTERN FOUND!
+═══════════════════════════════════════════════════════════════
+
+  BTP                : 2300014763
+  Customer Name      : DAVID TANTRIS OR F
+  Match Percentage   : 71.32%
+  Confidence         : 🟠 LOW_MEDIUM
+  
+  ⚠️  CAUTION: Match percentage di bawah 80%
+  → Termasuk kategori FAIR, perlu extra validation
+
+═══════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════════
+🔧 SOLUSI JANGKA PANJANG:
+═══════════════════════════════════════════════════════════════════
+
+1. IMPROVE EXTRACTION ALGORITHM:
+   ────────────────────────────────────────────────────────────
+   Before: Ambil semua ALL CAPS dari belakang
+   After : Strip invoice pattern dulu:
+           • N[0-9]{7} → remove
+           • K00[0-9]+ → remove
+           • Terus baru ambil customer name
+   
+   Result setelah fix:
+   • "DAVID TANTRIS OR F" → 136/136 = 100%!
+   • Akan masuk master dengan confidence tinggi
+
+
+2. DATA CLEANSING:
+   ────────────────────────────────────────────────────────────
+   • Standardize format: invoice di field terpisah
+   • Customer name di format konsisten
+   • Remove variasi penulisan
+
+
+3. REGENERATE MASTER DATA:
+   ────────────────────────────────────────────────────────────
+   • Pakai extraction algorithm yang sudah diperbaiki
+   • Re-analyze TRSF.csv
+   • Generate master data baru
+   • Expected: +100-200 BTP tercover
+
+
+═══════════════════════════════════════════════════════════════════
+📊 IMPACT JIKA FIX INVOICE ISSUE:
+═══════════════════════════════════════════════════════════════════
+
+Estimated:
+  • 20-30% dari NO PATTERN karena invoice issue
+  • ~500-700 BTP bisa masuk setelah fix
+  • Coverage: 45% → 55-60%
+  • Accuracy tetap tinggi (karena real customer konsisten)
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 TEST NOW:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran
+./test_btp_pattern
+
+→ Pilih 3 (PLUS version)
+→ Menu 1
+→ Paste deskripsi DAVID TANTRIS
+→ Akan MATCH dengan WARNING 🟠
+
+═══════════════════════════════════════════════════════════════════
+

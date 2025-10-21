@@ -1,0 +1,107 @@
+CIMB NIAGA PATTERN GENERATION RESULTS
+=====================================
+
+GENERATION SUMMARY:
+==================
+- Total patterns generated: 78
+- Total unique customers: 72
+- Data source: CMIB.csv (1,382 lines)
+- Valid transactions processed: 1,000+ (after filtering non-numeric BTPs)
+
+EXTRACTION LOGIC:
+================
+Format: "KR OTOMATIS LLG-CIMB NIAGA [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+Customer Name = Array[4] + " " + Array[5] (kata ke-5 dan ke-6 setelah split)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1:
+- Input: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"
+- Split: ["KR", "OTOMATIS", "LLG-CIMB", "NIAGA", "CAHAYA", "SAKTI", "0000006726", ...]
+- Array[4] = "CAHAYA"
+- Array[5] = "SAKTI"
+- Customer Name = "CAHAYA SAKTI"
+- Pattern = "CAHAYA SAKTI"
+
+Example 2:
+- Input: "KR OTOMATIS LLG-CIMB NIAGA BAKTIABADI INTIMAK"
+- Split: ["KR", "OTOMATIS", "LLG-CIMB", "NIAGA", "BAKTIABADI", "INTIMAK"]
+- Array[4] = "BAKTIABADI"
+- Array[5] = "INTIMAK"
+- Customer Name = "BAKTIABADI INTIMAK"
+- Pattern = "BAKTIABADI INTIMAK"
+
+TOP 10 PATTERNS BY TRANSACTION COUNT:
+=====================================
+Customer Name                    | BTP         | Count | Total | Match %
+--------------------------------|-------------|-------|-------|--------
+PT.RUANG MAHA                  | 2300009976  |    93 |    93 | 100.00%
+PT.KUDO TEKNOLOGI              | 2300013695  |    82 |    82 | 100.00%
+PT.MATAHARI PUTRA              | 2300005696  |    63 |    70 |  90.00%
+CV.SARI RASA                   | 2300000168  |    54 |    54 | 100.00%
+PT.PRIMA ISMAYA                | 2300000925  |    49 |    53 |  92.45%
+SYA PT.ESPAY                   | 2300017084  |    39 |    51 |  76.47%
+PT.MAKEN BANSAN                | 2300017882  |    33 |    33 | 100.00%
+PT.KARTA MAS                   | 2300015447  |    32 |    32 | 100.00%
+PT.MENSANA ANEKA               | 2300008197  |    30 |    30 | 100.00%
+PT.KREASI ANUGRAH              | 2300016045  |    29 |    29 | 100.00%
+
+DATA FILTERING:
+===============
+- Skipped non-numeric BTPs: "DISTRIBUTOR GREENFIELDS", "MODERN TRADE", "ALL FRESH", "PAPAYA", "refund", "REFUND"
+- Only processed lines with numeric BTP (starting with digit)
+- Total valid transactions: ~1,000 out of 1,382 lines
+
+FILES GENERATED:
+================
+1. master_customer_btp_pattern_CIMB.sql - SQL file dengan 78 patterns
+2. generate_patterns - Executable untuk generate patterns
+3. test_btp_pattern - Executable untuk testing patterns
+4. CIMB_EXTRACTION_LOGIC.txt - Dokumentasi extraction logic
+
+TESTING FEATURES:
+=================
+- Manual test dengan input description
+- Display semua patterns
+- Daftar BTP yang tersedia (grouped by BTP)
+- BTP terbaru (top 20 by last line number)
+- Pattern matching dengan case-insensitive search
+
+PERBEDAAN DENGAN TRSF:
+======================
+
+TRSF Pattern Generator:
+- Customer name = ALL CAPS words SETELAH angka terakhir
+- Bisa multiple words
+- Filter bulan prefix (JAN, FEB, MAR, etc.)
+- Lebih kompleks extraction logic
+
+CIMB Pattern Generator:
+- Customer name = Array[4] + Array[5] (fixed 2 words)
+- Tidak perlu filter bulan
+- Lebih sederhana dan konsisten
+- Format lebih predictable
+
+ALGORITHM COMPARISON:
+=====================
+
+TRSF: "TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO"
+- Find last number index
+- Extract ALL CAPS words after that
+- Filter month prefixes
+- Result: "WILLIAM SARSONO"
+
+CIMB: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"
+- Split by space
+- Take array[4] and array[5]
+- No filtering needed
+- Result: "CAHAYA SAKTI"
+
+STATUS: COMPLETED ✅
+===================
+- ✅ Pattern generation working
+- ✅ SQL file generated (78 patterns)
+- ✅ Test tool working
+- ✅ Documentation complete
+- ✅ All features implemented

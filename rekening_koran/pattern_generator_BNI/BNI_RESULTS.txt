@@ -1,0 +1,139 @@
+BNI PATTERN GENERATION RESULTS
+==============================
+
+GENERATION SUMMARY:
+==================
+- Total patterns generated: 19
+- Total unique customers: 16
+- Data source: BNI.csv (462 lines)
+- Valid transactions processed: 400+ (after filtering non-numeric BTPs)
+
+EXTRACTION LOGIC:
+================
+Format: "KR OTOMATIS LLG-BNI [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+Customer Name = Array[3] + " " + Array[4] (kata ke-4 dan ke-5 setelah split)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1:
+- Input: "KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "AEROFOOD", "INDONESIA", "GREENFIELDS", "DAIRY", "|02", "012024-15"]
+- Array[3] = "AEROFOOD"
+- Array[4] = "INDONESIA"
+- Customer Name = "AEROFOOD INDONESIA"
+- Pattern = "AEROFOOD INDONESIA"
+
+Example 2:
+- Input: "KR OTOMATIS LLG-BNI LION SUPERINDO PT TXN1000330846 |10 00330846"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "LION", "SUPERINDO", "PT", "TXN1000330846", "|10", "00330846"]
+- Array[3] = "LION"
+- Array[4] = "SUPERINDO"
+- Customer Name = "LION SUPERINDO"
+- Pattern = "LION SUPERINDO"
+
+Example 3:
+- Input: "KR OTOMATIS LLG-BNI SUDO BREW NARATAMA"
+- Split: ["KR", "OTOMATIS", "LLG-BNI", "SUDO", "BREW", "NARATAMA"]
+- Array[3] = "SUDO"
+- Array[4] = "BREW"
+- Customer Name = "SUDO BREW"
+- Pattern = "SUDO BREW"
+
+TOP 10 PATTERNS BY TRANSACTION COUNT:
+=====================================
+Customer Name                    | BTP         | Count | Total | Match %
+--------------------------------|-------------|-------|-------|--------
+LION SUPERINDO                 | 2300012930  |   120 |   137 |  87.59%
+AEROFOOD INDONESIA             | 2300000541  |    92 |    92 | 100.00%
+YUMMY FOOD                     | 2000066431  |    62 |    62 | 100.00%
+SWALAYAN SUKSES                | 2300016812  |    49 |    55 |  89.09%
+RESKA MULTI                    | 2300015975  |    27 |    27 | 100.00%
+KPN BUDI                       | 2300008905  |    26 |    26 | 100.00%
+LION SUPERINDO                 | 2300000848  |    17 |   137 |  12.41%
+JASA RUMAH                     | 2300010194  |    10 |    10 | 100.00%
+BPG 019                       | 2300017815  |     7 |     7 | 100.00%
+SWALAYAN SUKSES                | 2300000910  |     6 |    55 |  10.91%
+
+DATA FILTERING:
+===============
+- Skipped non-numeric BTPs: "MODERN TRADE", "DISTRIBUTOR GREENFIELDS"
+- Only processed lines with numeric BTP (starting with digit)
+- Total valid transactions: ~400 out of 462 lines
+
+FILES GENERATED:
+================
+1. master_customer_btp_pattern_BNI.sql - SQL file dengan 19 patterns
+2. generate_patterns - Executable untuk generate patterns
+3. test_btp_pattern - Executable untuk testing patterns
+4. BNI_EXTRACTION_LOGIC.txt - Dokumentasi extraction logic
+
+TESTING FEATURES:
+=================
+- Manual test dengan input description
+- Display semua patterns
+- Daftar BTP yang tersedia (grouped by BTP)
+- BTP terbaru (top 20 by last line number)
+- Pattern matching dengan case-insensitive search
+
+PERBEDAAN DENGAN BANK LAIN:
+===========================
+
+TRSF Pattern Generator:
+- Customer name = ALL CAPS words SETELAH angka terakhir
+- Bisa multiple words
+- Filter bulan prefix (JAN, FEB, MAR, etc.)
+- Lebih kompleks extraction logic
+
+CIMB Pattern Generator:
+- Customer name = Array[4] + Array[5] (fixed 2 words)
+- Format: "KR OTOMATIS LLG-CIMB NIAGA [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Tidak perlu filter bulan
+- Lebih sederhana dan konsisten
+
+MANDIRI Pattern Generator:
+- Customer name = Array[3] + Array[4] (fixed 2 words)
+- Format: "KR OTOMATIS LLG-MANDIRI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Tidak perlu filter bulan
+- Lebih sederhana dan konsisten
+
+BNI Pattern Generator:
+- Customer name = Array[3] + Array[4] (fixed 2 words)
+- Format: "KR OTOMATIS LLG-BNI [WORD1] [WORD2] [ADDITIONAL_INFO]"
+- Tidak perlu filter bulan
+- Lebih sederhana dan konsisten
+
+ALGORITHM COMPARISON:
+=====================
+
+TRSF: "TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO"
+- Find last number index
+- Extract ALL CAPS words after that
+- Filter month prefixes
+- Result: "WILLIAM SARSONO"
+
+CIMB: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"
+- Split by space
+- Take array[4] and array[5]
+- No filtering needed
+- Result: "CAHAYA SAKTI"
+
+MANDIRI: "KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991"
+- Split by space
+- Take array[3] and array[4]
+- No filtering needed
+- Result: "SMART FOOD"
+
+BNI: "KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15"
+- Split by space
+- Take array[3] and array[4]
+- No filtering needed
+- Result: "AEROFOOD INDONESIA"
+
+STATUS: COMPLETED ✅
+===================
+- ✅ Pattern generation working
+- ✅ SQL file generated (19 patterns)
+- ✅ Test tool working
+- ✅ Documentation complete
+- ✅ All features implemented

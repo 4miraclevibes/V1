@@ -1,0 +1,42 @@
+═══════════════════════════════════════════════════════════════════
+COPY-PASTE COMMANDS - BTP PATTERN TESTING
+═══════════════════════════════════════════════════════════════════
+
+🚀 JALANKAN PROGRAM TESTING (Copy 2 baris ini ke Terminal):
+
+cd ~/Documents/GitHub/V1/rekening_koran
+./test_btp_pattern
+
+
+📝 ATAU PAKAI SCRIPT:
+
+cd ~/Documents/GitHub/V1/rekening_koran
+./run_test.sh
+
+
+═══════════════════════════════════════════════════════════════════
+
+🔍 INVESTIGATE NO PATTERN (Cari tahu kenapa BTP tidak match):
+
+cd ~/Documents/GitHub/V1/rekening_koran
+./investigate_no_pattern
+
+
+ATAU quick check 1 BTP:
+
+cd ~/Documents/GitHub/V1/rekening_koran
+./investigate_no_pattern 2300010747
+
+
+═══════════════════════════════════════════════════════════════════
+
+✨ QUICK TESTING - Copy deskripsi ini untuk menu 1:
+
+TRSF E-BANKING CR 0201/FTSCY/WS95011 455520.00 GF fresh 2dus 3jan 2024 RONNY YULIADY
+
+TRSF E-BANKING CR 0301/FTSCY/WS95051 1138800.00 inv K002000009320 KN palmerah PT ARYANDA YASA UN
+
+TRSF E-BANKING CR 1001/FTSCY/WS95271 683280.00 Domu Kuncit N69065 24 10Nov23 FRANKI SEPTINUS
+
+═══════════════════════════════════════════════════════════════════
+

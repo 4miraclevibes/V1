@@ -1,0 +1,131 @@
+PERMATA PATTERN GENERATOR COMMANDS
+===================================
+
+QUICK COMMANDS:
+===============
+
+1. COMPILE & RUN GENERATOR:
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_PERMATA
+   gcc -o generate_patterns generate_patterns.c
+   ./generate_patterns
+
+2. COMPILE & RUN TESTER:
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_PERMATA
+   gcc -o test_btp_pattern test_btp_pattern.c
+   ./test_btp_pattern
+
+3. GENERATE PATTERNS:
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_PERMATA
+   ./generate_patterns
+
+4. TEST PATTERNS:
+   cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_PERMATA
+   ./test_btp_pattern
+
+DETAILED STEPS:
+===============
+
+STEP 1: GENERATE PATTERNS
+-------------------------
+cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_PERMATA
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+Expected Output:
+- Processing PERMATA.csv...
+- SQL file generated: master_customer_btp_pattern_PERMATA.sql
+- Total lines processed: [number]
+- Unique customers: [number]
+- Patterns generated: [number]
+
+STEP 2: TEST PATTERNS
+---------------------
+cd /Users/balian/Documents/GitHub/V1/rekening_koran/pattern_generator_PERMATA
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+Menu Options:
+1. Manual Test (test description)
+2. Load Patterns
+3. Display All Patterns
+A. Daftar BTP yang tersedia
+B. BTP terbaru (latest usage)
+0. Exit
+
+STEP 3: MANUAL TESTING
+----------------------
+Select option 1, then enter PERMATA description:
+Example: KR OTOMATIS LLG-PERMATA PT DAMAI INDAH GOL PT Greenfields Dai ry Indonesia DIG
+
+Expected Output:
+- Extracted customer name: 'PT DAMAI INDAH'
+- BTP: [BTP_NUMBER]
+- Count: [number] transactions
+- Total Customer Transactions: [number]
+- Match Percentage: [percentage]%
+- Last Line Number: [number]
+
+STEP 4: VIEW ALL BTPs
+---------------------
+Select option A to see all available BTPs grouped by BTP
+
+STEP 5: VIEW LATEST BTPs
+------------------------
+Select option B to see top 20 latest BTPs
+
+FILES GENERATED:
+================
+
+1. master_customer_btp_pattern_PERMATA.sql
+   - Contains all customer-BTP patterns
+   - Format: customer_name, btp, count, total_transactions, match_percentage, last_line_number
+
+2. PERMATA_RESULTS.txt
+   - Summary of pattern generation results
+   - Statistics and analysis
+
+TROUBLESHOOTING:
+===============
+
+1. If compilation fails:
+   - Check if gcc is installed
+   - Check file permissions
+   - Verify all source files exist
+
+2. If PERMATA.csv not found:
+   - Ensure PERMATA.csv is in the same directory
+   - Check file permissions
+
+3. If SQL file not generated:
+   - Check write permissions
+   - Verify PERMATA.csv format is correct
+
+4. If test_btp_pattern shows "NO PATTERN FOUND":
+   - Ensure master_customer_btp_pattern_PERMATA.sql exists
+   - Check if patterns were generated successfully
+   - Verify customer name extraction logic
+
+EXTRACTION LOGIC:
+=================
+
+Format: KR OTOMATIS LLG-PERMATA [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]
+
+Basic Extraction:
+- Array[3] + Array[4] (kata ke-4 dan ke-5)
+
+Smart Extraction:
+- If Array[3] is "PT" or "CV": Array[3] + Array[4] + Array[5]
+- Otherwise: Array[3] + Array[4]
+
+Examples:
+- "KR OTOMATIS LLG-PERMATA PT DAMAI INDAH GOL..." → "PT DAMAI INDAH"
+- "KR OTOMATIS LLG-PERMATA KOPERASI KARYAWAN..." → "KOPERASI KARYAWAN"
+- "KR OTOMATIS LLG-PERMATA CV BERDAYAKAN USAH..." → "CV BERDAYAKAN USAH"
+
+NOTES:
+======
+- Non-numeric BTPs are processed (not skipped)
+- Single quotes in customer names are escaped for SQL
+- Smart extraction handles PT/CV company names
+- Multiple BTPs per customer are supported
+- Latest BTP is flagged in test results

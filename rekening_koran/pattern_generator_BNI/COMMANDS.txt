@@ -1,0 +1,142 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║        BNI PATTERN GENERATOR - QUICK COMMANDS                    ║
+║        Copy-paste commands untuk generate dan test               ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📝 1. GENERATE PATTERNS (dari BNI.csv):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+
+🧪 2. TEST BTP PATTERN MATCHING (Interactive):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+
+🎯 3. QUICK TEST - MANUAL INPUT:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+echo "1
+KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15
+0" | ./test_btp_pattern
+
+
+📊 4. SHOW ALL PATTERNS:
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+echo "3
+0" | ./test_btp_pattern
+
+
+🔍 5. SHOW BTP LIST (Grouped by BTP):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+echo "A
+0" | ./test_btp_pattern
+
+
+📈 6. SHOW LATEST BTPs (Top 20):
+═══════════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+echo "B
+0" | ./test_btp_pattern
+
+
+🧪 7. TEST BERBAGAI BNI DESCRIPTIONS:
+═══════════════════════════════════════════════════════════════════
+
+# Test 1: AEROFOOD INDONESIA
+echo "1
+KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15
+0" | ./test_btp_pattern
+
+# Test 2: LION SUPERINDO
+echo "1
+KR OTOMATIS LLG-BNI LION SUPERINDO PT TXN1000330846 |10 00330846
+0" | ./test_btp_pattern
+
+# Test 3: SUDO BREW
+echo "1
+KR OTOMATIS LLG-BNI SUDO BREW NARATAMA
+0" | ./test_btp_pattern
+
+# Test 4: YUMMY FOOD
+echo "1
+KR OTOMATIS LLG-BNI YUMMY FOOD INDONESIA TXN123456789
+0" | ./test_btp_pattern
+
+
+📋 8. COMPLETE WORKFLOW:
+═══════════════════════════════════════════════════════════════════
+
+# Step 1: Generate patterns
+cd ~/Documents/GitHub/V1/rekening_koran/pattern_generator_BNI
+gcc -o generate_patterns generate_patterns.c
+./generate_patterns
+
+# Step 2: Test patterns
+gcc -o test_btp_pattern test_btp_pattern.c
+./test_btp_pattern
+
+# Step 3: Quick validation
+echo "1
+KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15
+0" | ./test_btp_pattern
+
+
+═══════════════════════════════════════════════════════════════════
+📊 EXPECTED RESULTS:
+═══════════════════════════════════════════════════════════════════
+
+Total Patterns      : 19 patterns
+Unique Customers    : 16 customers
+Data Source        : BNI.csv (462 lines)
+Valid Transactions : 400+ (after filtering)
+Extraction Logic   : Array[3] + Array[4] (simple & consistent)
+Data Quality       : CLEAN (filtered non-numeric BTPs)
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 TOP 5 PATTERNS:
+═══════════════════════════════════════════════════════════════════
+
+1. LION SUPERINDO         - 120 transactions (87.59% match)
+2. AEROFOOD INDONESIA     - 92 transactions (100% match)
+3. YUMMY FOOD             - 62 transactions (100% match)
+4. SWALAYAN SUKSES        - 49 transactions (89.09% match)
+5. RESKA MULTI            - 27 transactions (100% match)
+
+
+═══════════════════════════════════════════════════════════════════
+🔧 BNI vs MANDIRI vs CIMB vs TRSF COMPARISON:
+═══════════════════════════════════════════════════════════════════
+
+TRSF: "TRSF E-BANKING CR 1609/FTSCY/WS95011 655200.00 susu RW PO202508250001 WILLIAM SARSONO"
+→ Customer: "WILLIAM SARSONO" (ALL CAPS after last number)
+
+CIMB: "KR OTOMATIS LLG-CIMB NIAGA CAHAYA SAKTI 0000006726 A000134 62 112923 B H550"  
+→ Customer: "CAHAYA SAKTI" (Array[4] + Array[5])
+
+MANDIRI: "KR OTOMATIS LLG-MANDIRI SMART FOOD CONCEPT -0053061777 Clearing947991"
+→ Customer: "SMART FOOD" (Array[3] + Array[4])
+
+BNI: "KR OTOMATIS LLG-BNI AEROFOOD INDONESIA GREENFIELDS DAIRY |02 012024-15"
+→ Customer: "AEROFOOD INDONESIA" (Array[3] + Array[4])
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 PRODUCTION READY!
+═══════════════════════════════════════════════════════════════════

@@ -1,0 +1,21 @@
+-- CITIBANK Customer BTP Patterns
+-- Generated from CITIBANK.csv
+-- Total patterns: 15
+-- Skipped invalid format: 0 lines
+
+INSERT INTO master_customer_btp_pattern (customer_name, btp, count, total_transactions, match_percentage, last_line_number) VALUES
+('PT TROUW NUTRITION', '2300007334', 1, 1, 100.00, 2),
+('PT.RAMAYANA LESTAR', 'MODERN TRADE', 2, 2, 100.00, 215),
+('PT GOTO SOLUSI', '2300015836', 22, 24, 91.67, 225),
+('PT. NOVO', '2300011371', 57, 57, 100.00, 227),
+('PT.MULTI BINTANG', '2300009205', 40, 40, 100.00, 222),
+('PT ECART SERVICES', '2300013789', 15, 29, 51.72, 219),
+('PT.RAMAYANA LESTAR', 'MODERN TRADE', 12, 19, 63.16, 218),
+('PT GOTO SOLUSI', '2300012772', 2, 24, 8.33, 18),
+('PT. TROUW', '2300007334', 20, 20, 100.00, 226),
+('PT. MULTI', '2300009205', 16, 16, 100.00, 214),
+('PT GOTO GOJEK', '2300016117', 2, 2, 100.00, 116),
+('PT ECART SERVICES', '2300012960', 14, 29, 48.28, 193),
+('PT. ADM', '2300017310', 16, 16, 100.00, 195),
+('PT.RAMAYANA LESTAR', 'RAMAYANA', 1, 19, 5.26, 147),
+('PT.RAMAYANA LESTAR', '2300014696', 6, 19, 31.58, 187);

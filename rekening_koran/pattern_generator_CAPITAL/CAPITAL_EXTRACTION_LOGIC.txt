@@ -1,0 +1,124 @@
+CAPITAL PATTERN EXTRACTION LOGIC
+=============================
+
+Format Data CAPITAL:
+- BTP;DESCRIPTION
+- Description format: "KR OTOMATIS LLG-CAPITAL INDONE [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+
+Contoh:
+- Input: "KR OTOMATIS LLG-CAPITAL INDONE EMPU ANEKA PANGAN, GREENFIELDS"
+- Split by space: ["KR", "OTOMATIS", "LLG-CAPITAL", "INDONE", "EMPU", "ANEKA", "PANGAN,", "GREENFIELDS"]
+
+EXTRACTION RULES:
+================
+
+1. BTP = Kolom pertama (sebelum semicolon)
+2. Customer Name = Array[4] + Array[5] dengan SMART EXTRACTION
+3. Pattern = Customer Name
+
+SMART EXTRACTION LOGIC:
+-----------------------
+Jika Array[4] = "PT" ATAU Array[4] = "CV":
+  → Customer Name = Array[4] + Array[5] + Array[6] (3 words)
+  
+Jika Array[4] bukan "PT" atau "CV":
+  → Customer Name = Array[4] + Array[5] (2 words, default)
+
+CONTOH EXTRACTION:
+==================
+
+Example 1 (tanpa PT/CV):
+- Input: "KR OTOMATIS LLG-CAPITAL INDONE EMPU ANEKA PANGAN, GREENFIELDS"
+- Split: ["KR", "OTOMATIS", "LLG-CAPITAL", "INDONE", "EMPU", "ANEKA", "PANGAN,", "GREENFIELDS"]
+- Array[4] = "EMPU"
+- Array[5] = "ANEKA"
+- Smart Check: Array[4] = "EMPU" (bukan PT/CV) ✗
+- Customer Name = "EMPU ANEKA" (2 words)
+- Pattern = "EMPU ANEKA"
+
+Example 2 (tanpa PT/CV):
+- Input: "KR OTOMATIS LLG-CAPITAL INDONE PRIMA GERAK KOTA,P INV57805"
+- Split: ["KR", "OTOMATIS", "LLG-CAPITAL", "INDONE", "PRIMA", "GERAK", "KOTA,P", "INV57805"]
+- Array[4] = "PRIMA"
+- Array[5] = "GERAK"
+- Smart Check: Array[4] = "PRIMA" (bukan PT/CV) ✗
+- Customer Name = "PRIMA GERAK" (2 words)
+- Pattern = "PRIMA GERAK"
+
+Example 3 (dengan PT prefix):
+- Input: "KR OTOMATIS LLG-CAPITAL INDONE PT GREENFIELDS INDONE 5210149423GRN"
+- Split: ["KR", "OTOMATIS", "LLG-CAPITAL", "INDONE", "PT", "GREENFIELDS", "INDONE", "5210149423GRN"]
+- Array[4] = "PT"
+- Array[5] = "GREENFIELDS"
+- Array[6] = "INDONE"
+- Smart Check: Array[4] = "PT" ✓
+- Customer Name = "PT GREENFIELDS INDONE" (3 words)
+- Pattern = "PT GREENFIELDS INDONE"
+
+Example 4 (dengan CV prefix):
+- Input: "KR OTOMATIS LLG-CAPITAL INDONE CV KARYA MANDIRI INDO BUKTI"
+- Split: ["KR", "OTOMATIS", "LLG-CAPITAL", "INDONE", "CV", "KARYA", "MANDIRI", "INDO", "BUKTI"]
+- Array[4] = "CV"
+- Array[5] = "KARYA"
+- Array[6] = "MANDIRI"
+- Smart Check: Array[4] = "CV" ✓
+- Customer Name = "CV KARYA MANDIRI" (3 words)
+- Pattern = "CV KARYA MANDIRI"
+
+ALGORITHM:
+==========
+
+1. Split description by space
+2. Check if array length >= 6 (minimal untuk array[4] dan array[5])
+3. Extract array[4] dan array[5]
+4. Smart Extraction Check:
+   - If array[4] == "PT" OR array[4] == "CV":
+     * Check if array[6] exists (array length >= 7)
+     * If yes: customer_name = array[4] + " " + array[5] + " " + array[6]
+     * If no: customer_name = array[4] + " " + array[5]
+   - Else:
+     * customer_name = array[4] + " " + array[5]
+5. Pattern = Customer Name (sama dengan customer name untuk CAPITAL)
+
+PERBEDAAN DENGAN BANK LAIN:
+===========================
+
+Banks menggunakan Array[3] + Array[4] (dengan smart PT/CV):
+- BNI: Array[3] + Array[4], smart PT/CV
+- BTPN: Array[3] + Array[4], smart PT/CV
+- MANDIRI: Array[3] + Array[4], smart PT/CV
+- BRI: Array[3] + Array[4], smart PT/CV
+- MEGA: Array[3] + Array[4], smart PT/CV
+- PERMATA: Array[3] + Array[4], smart PT/CV
+- DANAMON: Array[3] + Array[4], smart PT/CV
+
+Banks menggunakan Array[4] + Array[5] (dengan smart PT/CV):
+- CIMB: Array[4] + Array[5], smart PT/CV
+- MAYBANK: Array[4] + Array[5], smart PT/CV
+- HSBC: Array[4] + Array[5], smart PT/CV
+- CAPITAL: Array[4] + Array[5], smart PT/CV ← INI
+
+Banks dengan logic khusus:
+- TRSF: ALL CAPS words after last number
+
+CATATAN PENTING:
+===============
+
+CAPITAL memiliki kata "INDONE" di Array[3], sehingga extraction dimulai dari Array[4]:
+- Array[0] = "KR"
+- Array[1] = "OTOMATIS"
+- Array[2] = "LLG-CAPITAL"
+- Array[3] = "INDONE" ← Kata khusus CAPITAL
+- Array[4] = [WORD1] ← Extraction dimulai di sini
+- Array[5] = [WORD2]
+- Array[6] = [WORD3] (jika PT/CV)
+
+VALIDATION:
+===========
+
+- Array length harus >= 6
+- Array[4] dan Array[5] tidak boleh kosong
+- Tidak ada filtering khusus (tidak seperti TRSF yang filter bulan)
+- BTP bisa numeric atau non-numeric (e.g., "MODERN TRADE")
+- Smart extraction otomatis handle PT/CV company names
+

@@ -1,0 +1,419 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_LINE_LENGTH 1000
+#define MAX_PATTERNS 1000
+
+// Structure to store customer patterns
+typedef struct {
+    char customer_name[200];
+    char btp[50];
+    int count;
+    int total_transactions;
+    double match_percentage;
+    int last_line_number;
+} CustomerPattern;
+
+// Global variables
+CustomerPattern patterns[MAX_PATTERNS];
+int pattern_count = 0;
+
+// Function to convert string to uppercase
+void to_upper(char* str) {
+    while (*str) {
+        *str = toupper(*str);
+        str++;
+    }
+}
+
+// Function to extract customer name from PERMATA description
+// Format: "KR OTOMATIS LLG-PERMATA [CUSTOMER_WORD1] [CUSTOMER_WORD2] [ADDITIONAL_INFO]"
+// Smart extraction: If Array[3] is "PT" or "CV", take Array[3] + Array[4] + Array[5]
+// Otherwise, take Array[3] + Array[4]
+int extract_customer_name(const char* description, char* customer_name) {
+    char desc_copy[MAX_LINE_LENGTH];
+    strcpy(desc_copy, description);
+    
+    // Split by space
+    char* tokens[100];
+    int token_count = 0;
+    char* token = strtok(desc_copy, " ");
+    
+    while (token != NULL && token_count < 100) {
+        tokens[token_count] = token;
+        token_count++;
+        token = strtok(NULL, " ");
+    }
+    
+    // Check if we have at least 5 tokens (array[3] and array[4] exist)
+    if (token_count < 5) {
+        return 0; // Not enough tokens
+    }
+    
+    // Extract array[3] and array[4] (index 3 and 4)
+    char word1[100], word2[100];
+    strcpy(word1, tokens[3]);
+    strcpy(word2, tokens[4]);
+    
+    // Check if words are not empty
+    if (strlen(word1) == 0 || strlen(word2) == 0) {
+        return 0;
+    }
+    
+    // Smart extraction: Check if Array[3] is "PT" or "CV"
+    if (strcmp(word1, "PT") == 0 || strcmp(word1, "CV") == 0) {
+        // Take Array[3] + Array[4] + Array[5] if available
+        if (token_count >= 6) {
+            char word3[100];
+            strcpy(word3, tokens[5]);
+            if (strlen(word3) > 0) {
+                snprintf(customer_name, 200, "%s %s %s", word1, word2, word3);
+            } else {
+                snprintf(customer_name, 200, "%s %s", word1, word2);
+            }
+        } else {
+            snprintf(customer_name, 200, "%s %s", word1, word2);
+        }
+    } else {
+        // Take Array[3] + Array[4] only
+        snprintf(customer_name, 200, "%s %s", word1, word2);
+    }
+    
+    return 1; // Success
+}
+
+// Function to load patterns from SQL file
+int load_patterns() {
+    FILE* file = fopen("master_customer_btp_pattern_PERMATA.sql", "r");
+    if (!file) {
+        printf("Error: Cannot open master_customer_btp_pattern_PERMATA.sql\n");
+        return 0;
+    }
+    
+    char line[MAX_LINE_LENGTH];
+    pattern_count = 0;
+    
+    while (fgets(line, sizeof(line), file) && pattern_count < MAX_PATTERNS) {
+        // Skip comment lines
+        if (line[0] == '-' || line[0] == '\n') {
+            continue;
+        }
+        
+        // Parse INSERT statement
+        // Format: INSERT INTO master_customer_btp_pattern VALUES ('customer_name', 'btp', count, total_transactions, match_percentage, last_line_number);
+        char* start = strstr(line, "VALUES (");
+        if (start) {
+            start += 8; // Skip "VALUES ("
+            
+            // Find first quote and last quote for customer_name
+            char* first_quote = strchr(start, '\'');
+            if (first_quote) {
+                first_quote++; // Skip opening quote
+                char* second_quote = strchr(first_quote, '\'');
+                if (second_quote) {
+                    *second_quote = '\0'; // Terminate customer_name
+                    char* customer_name = first_quote;
+                    
+                    // Find btp after the comma
+                    char* btp_start = second_quote + 1;
+                    while (*btp_start == ',' || *btp_start == ' ') btp_start++;
+                    if (*btp_start == '\'') btp_start++;
+                    char* btp_end = strchr(btp_start, '\'');
+                    if (btp_end) {
+                        *btp_end = '\0';
+                        char* btp = btp_start;
+                        
+                        // Find remaining fields
+                        char* remaining = btp_end + 1;
+                        while (*remaining == ',' || *remaining == ' ') remaining++;
+                        
+                        char* count_str = strtok(remaining, ",");
+                        char* total_str = strtok(NULL, ",");
+                        char* match_str = strtok(NULL, ",");
+                        char* line_str = strtok(NULL, ",");
+                        
+                        if (customer_name && btp && count_str && total_str && match_str && line_str) {
+                            // Clean customer_name
+                            while (*customer_name == ' ') customer_name++;
+                            char* end = customer_name + strlen(customer_name) - 1;
+                            while (end > customer_name && (*end == ' ' || *end == '\'')) *end-- = '\0';
+                            
+                            // Clean btp
+                            while (*btp == ' ') btp++;
+                            end = btp + strlen(btp) - 1;
+                            while (end > btp && (*end == ' ' || *end == '\'')) *end-- = '\0';
+                            
+                            strcpy(patterns[pattern_count].customer_name, customer_name);
+                            strcpy(patterns[pattern_count].btp, btp);
+                            patterns[pattern_count].count = atoi(count_str);
+                            patterns[pattern_count].total_transactions = atoi(total_str);
+                            patterns[pattern_count].match_percentage = atof(match_str);
+                            patterns[pattern_count].last_line_number = atoi(line_str);
+                            pattern_count++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    fclose(file);
+    return 1;
+}
+
+// Find all BTPs for a given customer name
+int find_all_btps(const char* customer_name, CustomerPattern* found_patterns, int* found_count) {
+    char search_name[200];
+    strcpy(search_name, customer_name);
+    to_upper(search_name);
+    
+    *found_count = 0;
+    
+    for (int i = 0; i < pattern_count; i++) {
+        char pattern_name[200];
+        strcpy(pattern_name, patterns[i].customer_name);
+        to_upper(pattern_name);
+        
+        if (strcmp(pattern_name, search_name) == 0) {
+            found_patterns[*found_count] = patterns[i];
+            (*found_count)++;
+        }
+    }
+    
+    return (*found_count > 0) ? 1 : 0;
+}
+
+// Find BTP for a given customer name (backward compatibility)
+int find_btp(const char* customer_name, char* btp, int* count, int* total_transactions, double* match_percentage, int* last_line_number) {
+    CustomerPattern found_patterns[100];
+    int found_count = 0;
+    
+    if (find_all_btps(customer_name, found_patterns, &found_count)) {
+        // Return the first match for backward compatibility
+        strcpy(btp, found_patterns[0].btp);
+        *count = found_patterns[0].count;
+        *total_transactions = found_patterns[0].total_transactions;
+        *match_percentage = found_patterns[0].match_percentage;
+        *last_line_number = found_patterns[0].last_line_number;
+        return 1;
+    }
+    return 0;
+}
+
+// Display all available BTPs
+void display_btp_list() {
+    printf("\n=== DAFTAR BTP YANG TERSEDIA ===\n");
+    printf("Total patterns: %d\n\n", pattern_count);
+    
+    // Group by BTP
+    char current_btp[50] = "";
+    int btp_count = 0;
+    
+    for (int i = 0; i < pattern_count; i++) {
+        if (strcmp(current_btp, patterns[i].btp) != 0) {
+            if (btp_count > 0) {
+                printf("\n");
+            }
+            strcpy(current_btp, patterns[i].btp);
+            btp_count++;
+            printf("BTP: %s\n", current_btp);
+            printf("----------------------------------------\n");
+        }
+        
+        printf("  Customer: %s\n", patterns[i].customer_name);
+        printf("  Match: %.2f%% (%d/%d transactions)\n", 
+               patterns[i].match_percentage, patterns[i].count, patterns[i].total_transactions);
+        printf("  Last Line: %d\n", patterns[i].last_line_number);
+    }
+    
+    printf("\nTotal BTPs: %d\n", btp_count);
+}
+
+// Display latest BTPs
+void display_latest_btps() {
+    printf("\n=== BTP TERBARU (LATEST USAGE) ===\n");
+    printf("Top 20 BTPs berdasarkan last_line_number:\n\n");
+    
+    // Sort by last_line_number (descending)
+    CustomerPattern sorted_patterns[MAX_PATTERNS];
+    int sorted_count = 0;
+    
+    for (int i = 0; i < pattern_count; i++) {
+        sorted_patterns[sorted_count] = patterns[i];
+        sorted_count++;
+    }
+    
+    // Bubble sort by last_line_number
+    for (int i = 0; i < sorted_count - 1; i++) {
+        for (int j = 0; j < sorted_count - i - 1; j++) {
+            if (sorted_patterns[j].last_line_number < sorted_patterns[j + 1].last_line_number) {
+                CustomerPattern temp = sorted_patterns[j];
+                sorted_patterns[j] = sorted_patterns[j + 1];
+                sorted_patterns[j + 1] = temp;
+            }
+        }
+    }
+    
+    // Display top 20
+    int display_count = (sorted_count < 20) ? sorted_count : 20;
+    for (int i = 0; i < display_count; i++) {
+        printf("%d. BTP: %s\n", i + 1, sorted_patterns[i].btp);
+        printf("   Customer: %s\n", sorted_patterns[i].customer_name);
+        printf("   Match: %.2f%% (%d/%d transactions)\n", 
+               sorted_patterns[i].match_percentage, sorted_patterns[i].count, sorted_patterns[i].total_transactions);
+        printf("   Last Line: %d\n", sorted_patterns[i].last_line_number);
+        printf("\n");
+    }
+}
+
+// Manual test function
+void manual_test() {
+    char description[MAX_LINE_LENGTH];
+    char customer_name[200];
+    CustomerPattern found_patterns[100];
+    int found_count = 0;
+    
+    printf("\n=== MANUAL TEST PERMATA PATTERN ===\n");
+    printf("Masukkan description PERMATA (format: KR OTOMATIS LLG-PERMATA ...):\n");
+    printf("Contoh: KR OTOMATIS LLG-PERMATA PT DAMAI INDAH GOL PT Greenfields Dai ry Indonesia DIG\n");
+    printf("Atau ketik 'quit' untuk keluar\n\n");
+    printf("Description: ");
+    
+    if (fgets(description, sizeof(description), stdin)) {
+        // Remove newline
+        description[strcspn(description, "\n")] = 0;
+        
+        if (strcmp(description, "quit") == 0) {
+            return;
+        }
+        
+        if (extract_customer_name(description, customer_name)) {
+            printf("\nExtracted customer name: '%s'\n", customer_name);
+            
+            if (find_all_btps(customer_name, found_patterns, &found_count)) {
+                printf("\n=== ALL MATCHES FOUND ===\n");
+                printf("Customer Name: %s\n", customer_name);
+                printf("Total BTPs found: %d\n\n", found_count);
+                
+                // Sort by last_line_number to find latest
+                for (int i = 0; i < found_count - 1; i++) {
+                    for (int j = 0; j < found_count - i - 1; j++) {
+                        if (found_patterns[j].last_line_number < found_patterns[j + 1].last_line_number) {
+                            CustomerPattern temp = found_patterns[j];
+                            found_patterns[j] = found_patterns[j + 1];
+                            found_patterns[j + 1] = temp;
+                        }
+                    }
+                }
+                
+                printf("BTP Details:\n");
+                printf("------------\n");
+                for (int i = 0; i < found_count; i++) {
+                    printf("BTP: %s", found_patterns[i].btp);
+                    if (i == 0) {
+                        printf(" [LATEST]");
+                    }
+                    printf("\n");
+                    printf("  Count: %d transactions\n", found_patterns[i].count);
+                    printf("  Total Customer Transactions: %d\n", found_patterns[i].total_transactions);
+                    printf("  Match Percentage: %.2f%%\n", found_patterns[i].match_percentage);
+                    printf("  Last Line Number: %d\n", found_patterns[i].last_line_number);
+                    if (i < found_count - 1) {
+                        printf("\n");
+                    }
+                }
+            } else {
+                printf("\nNO PATTERN FOUND for customer: %s\n", customer_name);
+                printf("Available options:\n");
+                printf("- Ketik 'A' untuk melihat daftar BTP yang tersedia\n");
+                printf("- Ketik 'B' untuk melihat BTP terbaru\n");
+            }
+        } else {
+            printf("\nERROR: Cannot extract customer name from description\n");
+            printf("Format yang benar: KR OTOMATIS LLG-PERMATA [WORD1] [WORD2] [ADDITIONAL_INFO]\n");
+        }
+    }
+}
+
+// Print menu
+void print_menu() {
+    printf("\n=== PERMATA BTP PATTERN TESTER ===\n");
+    printf("1. Manual Test (test description)\n");
+    printf("2. Load Patterns\n");
+    printf("3. Display All Patterns\n");
+    printf("A. Daftar BTP yang tersedia\n");
+    printf("B. BTP terbaru (latest usage)\n");
+    printf("0. Exit\n");
+    printf("Pilih menu: ");
+}
+
+// Main function
+int main() {
+    printf("=== PERMATA BTP PATTERN TESTER ===\n");
+    printf("Loading patterns...\n");
+    
+    if (!load_patterns()) {
+        printf("Failed to load patterns. Make sure master_customer_btp_pattern_PERMATA.sql exists.\n");
+        return 1;
+    }
+    
+    printf("Patterns loaded: %d\n", pattern_count);
+    
+    int choice;
+    char input[10];
+    
+    while (1) {
+        print_menu();
+        
+        if (fgets(input, sizeof(input), stdin)) {
+            // Remove newline
+            input[strcspn(input, "\n")] = 0;
+            
+            // Check if input is a single character (A, B, etc.)
+            if (strlen(input) == 1 && (input[0] == 'A' || input[0] == 'B' || input[0] == 'a' || input[0] == 'b')) {
+                choice = input[0];
+            } else {
+                choice = atoi(input);
+            }
+            
+            switch (choice) {
+                case 1:
+                    manual_test();
+                    break;
+                case 2:
+                    if (load_patterns()) {
+                        printf("Patterns reloaded: %d\n", pattern_count);
+                    } else {
+                        printf("Failed to reload patterns.\n");
+                    }
+                    break;
+                case 3:
+                    printf("\n=== ALL PATTERNS ===\n");
+                    for (int i = 0; i < pattern_count; i++) {
+                        printf("%d. Customer: %s, BTP: %s, Count: %d, Total: %d, Match: %.2f%%, Line: %d\n",
+                               i + 1, patterns[i].customer_name, patterns[i].btp, patterns[i].count,
+                               patterns[i].total_transactions, patterns[i].match_percentage, patterns[i].last_line_number);
+                    }
+                    break;
+                case 'A':
+                case 'a':
+                    display_btp_list();
+                    break;
+                case 'B':
+                case 'b':
+                    display_latest_btps();
+                    break;
+                case 0:
+                    printf("Goodbye!\n");
+                    return 0;
+                default:
+                    printf("Invalid choice. Please try again.\n");
+                    break;
+            }
+        }
+    }
+    
+    return 0;
+}

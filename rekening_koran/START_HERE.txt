@@ -1,0 +1,155 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║           BTP PATTERN MATCHING - QUICK START GUIDE               ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📋 CARA MENJALANKAN PROGRAM:
+
+Ada 2 cara (pilih salah satu):
+
+
+═══════════════════════════════════════════════════════════════════
+CARA 1: PAKAI SCRIPT (RECOMMENDED) ⭐
+═══════════════════════════════════════════════════════════════════
+
+1. Buka Terminal
+2. Jalankan perintah ini:
+
+   cd ~/Documents/GitHub/V1/rekening_koran
+   ./run_test.sh
+
+   (copy-paste 2 baris di atas)
+
+
+═══════════════════════════════════════════════════════════════════
+CARA 2: LANGSUNG RUN PROGRAM
+═══════════════════════════════════════════════════════════════════
+
+1. Buka Terminal
+2. Jalankan perintah ini:
+
+   cd ~/Documents/GitHub/V1/rekening_koran
+   ./test_btp_pattern
+
+   (copy-paste 2 baris di atas)
+
+
+═══════════════════════════════════════════════════════════════════
+‼️ PENTING
+═══════════════════════════════════════════════════════════════════
+
+⚠️  HARUS cd ke folder rekening_koran DULU!
+
+   Jika langsung jalankan dengan:
+   /Users/balian/Documents/GitHub/V1/rekening_koran/test_btp_pattern
+   
+   Akan error karena program tidak bisa menemukan file SQL!
+
+✅ CARA YANG BENAR:
+   
+   cd ~/Documents/GitHub/V1/rekening_koran
+   ./test_btp_pattern
+
+
+═══════════════════════════════════════════════════════════════════
+📖 SETELAH PROGRAM JALAN
+═══════════════════════════════════════════════════════════════════
+
+1. Pilih master data file (1 atau 2):
+   • 1 = Threshold 70% (2219 patterns) - MORE COVERAGE
+   • 2 = Threshold 80% (2201 patterns) - MORE CONSERVATIVE
+
+2. Pilih menu testing:
+   • 1 = Test manual (input deskripsi sendiri)
+   • 2 = Test batch 10 sample dari TRSF.csv
+   • 3 = Test batch 50 sample
+   • 4 = Test batch 100 sample
+   • 5 = Lihat statistik master data
+   • 0 = Keluar
+
+
+═══════════════════════════════════════════════════════════════════
+🧪 TESTING MANUAL (Menu 1)
+═══════════════════════════════════════════════════════════════════
+
+Buka file: test_samples.txt
+
+Di file itu ada 12 contoh deskripsi TRSF yang bisa langsung 
+copy-paste untuk testing.
+
+Contoh:
+TRSF E-BANKING CR 0201/FTSCY/WS95011 455520.00 GF fresh 2dus 3jan 2024 RONNY YULIADY
+
+Result:
+✅ PATTERN FOUND!
+BTP                : 2300014094
+Customer Name      : RONNY YULIADY
+Match Percentage   : 100.00%
+Confidence         : 🟢 VERY_HIGH
+
+
+═══════════════════════════════════════════════════════════════════
+📊 TESTING BATCH (Menu 2/3/4)
+═══════════════════════════════════════════════════════════════════
+
+Program akan:
+1. Baca TRSF.csv
+2. Ambil N sample (10/50/100)
+3. Test pattern matching
+4. Bandingkan dengan BTP original
+5. Tampilkan summary:
+   - ✅ MATCH (correct)
+   - ⚠️ MISMATCH (needs review)
+   - ❌ NO PATTERN (manual entry)
+
+
+═══════════════════════════════════════════════════════════════════
+📈 EXPECTED ACCURACY
+═══════════════════════════════════════════════════════════════════
+
+Berdasarkan analisis sebelumnya:
+
+• Pattern Found Rate : ~40-45%
+• Accuracy (jika found): ~95%+
+• Perfect Match      : ~94% dengan 100% consistency
+
+
+═══════════════════════════════════════════════════════════════════
+❓ TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+❌ Error: "Tidak dapat membuka file"
+   
+   Solusi:
+   → cd ~/Documents/GitHub/V1/rekening_koran
+   → ls (pastikan file .sql dan .csv ada)
+   → ./test_btp_pattern
+
+
+❌ Pattern tidak ketemu
+
+   Kemungkinan:
+   → Customer name memang tidak ada di master data
+   → Typo atau variasi penulisan
+   → Deskripsi tidak ada customer name
+   
+   Solusi:
+   → Cek dengan menu 5 (statistik) apakah customer ada
+   → Coba dengan threshold 70% (lebih banyak patterns)
+
+
+═══════════════════════════════════════════════════════════════════
+📞 SUPPORT
+═══════════════════════════════════════════════════════════════════
+
+Jika ada masalah atau butuh bantuan, check:
+• TEST_README.md - dokumentasi lengkap
+• test_samples.txt - contoh test cases
+
+═══════════════════════════════════════════════════════════════════
+
+Happy Testing! 🚀
+
+═══════════════════════════════════════════════════════════════════
+
