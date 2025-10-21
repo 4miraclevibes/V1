@@ -2,7 +2,9 @@
 -- Generated from MANDIRI.csv
 -- Total patterns: 131
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('INTAN SUKSES', 'DISTRIBUTOR GREENFIELDS', 'MANDIRI', 3, 3, 100.00, 248),
 ('SMART FOOD', '2300012084', 'MANDIRI', 11, 11, 100.00, 950),
 ('SRIBOGA MARUGAME', '2300005019', 'MANDIRI', 130, 131, 99.24, 2203),

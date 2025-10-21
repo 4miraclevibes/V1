@@ -3,7 +3,9 @@
 -- Total patterns: 27
 -- Skipped invalid format: 3 lines
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('KARYAWAN ISS', '2300008406', 'BRI', 54, 54, 100.00, 762),
 ('PT MITRA SELERA', '2300016290', 'BRI', 259, 271, 95.57, 774),
 ('ASHARIA KARYA', '2300011626', 'BRI', 248, 248, 100.00, 773),

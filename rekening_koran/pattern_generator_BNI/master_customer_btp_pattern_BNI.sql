@@ -2,7 +2,9 @@
 -- Generated from BNI.csv
 -- Total patterns: 19
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('AEROFOOD INDONESIA', '2300000541', 'BNI', 92, 92, 100.00, 462),
 ('LION SUPERINDO', '2300012930', 'BNI', 120, 137, 87.59, 403),
 ('SUDO BREW', '2300012171', 'BNI', 2, 2, 100.00, 210),

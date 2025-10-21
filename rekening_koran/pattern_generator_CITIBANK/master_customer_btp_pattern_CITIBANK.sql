@@ -3,7 +3,9 @@
 -- Total patterns: 15
 -- Skipped invalid format: 0 lines
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('PT TROUW NUTRITION', '2300007334', 'CITIBANK', 1, 1, 100.00, 2),
 ('PT.RAMAYANA LESTAR', 'MODERN TRADE', 'CITIBANK', 2, 2, 100.00, 215),
 ('PT GOTO SOLUSI', '2300015836', 'CITIBANK', 22, 24, 91.67, 225),

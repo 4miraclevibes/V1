@@ -3,7 +3,9 @@
 -- Total patterns: 15
 -- Skipped non-numeric BTPs: 55 lines
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('JADDI GLOBALINDO', '2300004538', 'MAYBANK', 29, 32, 90.62, 612),
 ('VICTORY RETAILINDO', 'MODERN TRADE', 'MAYBANK', 219, 377, 58.09, 322),
 ('JADDI MILLENIAL', '2300015751', 'MAYBANK', 41, 42, 97.62, 626),

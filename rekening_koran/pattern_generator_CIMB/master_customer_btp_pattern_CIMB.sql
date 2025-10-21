@@ -2,7 +2,9 @@
 -- Generated from CMIB.csv
 -- Total patterns: 97
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('CAHAYA SAKTI', '2300003094', 'CIMB', 6, 6, 100.00, 1314),
 ('PUJI SURYA', 'DISTRIBUTOR GREENFIELDS', 'CIMB', 13, 13, 100.00, 1379),
 ('ELANG ANDALAN', '2300013043', 'CIMB', 18, 18, 100.00, 1371),

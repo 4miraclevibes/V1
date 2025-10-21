@@ -3,7 +3,9 @@
 -- Total patterns: 6
 -- Skipped non-numeric BTPs: 0 lines
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('PERSEKUTUAN PERDAT', '2300016366', 'OCBC', 21, 22, 95.45, 59),
 ('PESCA ANUGERAH', '2300001294', 'OCBC', 18, 18, 100.00, 57),
 ('PERSEKUTUAN PERDAT', '2300018765', 'OCBC', 1, 22, 4.55, 5),

@@ -3,7 +3,9 @@
 -- Total patterns: 23
 -- Skipped non-numeric BTPs: 0 lines
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('PT AMERTA INDAH', '2300010748', 'HSBC', 18, 18, 100.00, 506),
 ('PT SARI PIZZA', '2300001682', 'HSBC', 40, 40, 100.00, 516),
 ('YAYASAN BRITISH', '2300001531', 'HSBC', 8, 8, 100.00, 511),

@@ -3,7 +3,9 @@
 -- Total patterns: 8
 -- Skipped invalid format: 0 lines
 
-INSERT INTO master_customer_btp_pattern (customer_name, btp, category, count, total_transactions, match_percentage, last_line_number) VALUES
+INSERT INTO [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
+    ([customer_name], [btp], [category], [match_count], [total_transactions], [match_percentage], [last_line_number])
+VALUES
 ('TRANS COFFEE', '2300001043', 'MEGA', 10, 10, 100.00, 59),
 ('SUSPEN HUB', '2300013577', 'MEGA', 30, 31, 96.77, 51),
 ('TRANS RETAIL', '2300001044', 'MEGA', 14, 14, 100.00, 68),
