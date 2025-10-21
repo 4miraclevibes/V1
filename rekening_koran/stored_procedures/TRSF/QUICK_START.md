@@ -13,13 +13,10 @@
 ```sql
 -- Run in order:
 1. SP_TRSF_FindBTP_Single.sql    -- Single search
-2. SP_TRSF_FindBTP_Batch.sql     -- Batch search (simple output)
-3. SP_TRSF_FindBTP_Batch_v2.sql  -- Batch search (with ALL BTP options) ⭐ NEW!
+2. SP_TRSF_FindBTP_Batch.sql     -- Batch search (returns multiple rows for multiple BTPs)
 ```
 
-**Choose your batch SP:**
-- Use `v1` (original) for simple automation
-- Use `v2` (enhanced) to see ALL BTP options like C code
+**Key Feature:** Batch SP returns multiple rows when customer has multiple BTPs
 
 ### Step 3: Test
 ```sql
@@ -63,23 +60,23 @@ EXEC [dbo].[SP_TRSF_FindBTP_Batch]
 -- Result: Table with BTP untuk semua 100 transactions
 ```
 
-### Use Case 2b: Batch Import dengan All BTP Options (v2) ⭐ NEW!
+### Use Case 2b: View ALL BTP Options (Multiple Rows)
 ```sql
--- Same as above, but see ALL BTP options for manual review
+-- If customer has multiple BTPs, returns multiple rows
 DECLARE @BatchJSON NVARCHAR(MAX) = N'[
     {"transaction_id": "INV001", "description": "TRSF 12345 CHRISTIAN"},
     {"transaction_id": "INV002", "description": "TRSF 67890 RONNY YULIADY"}
 ]';
 
-EXEC [dbo].[SP_TRSF_FindBTP_Batch_v2] 
+EXEC [dbo].[SP_TRSF_FindBTP_Batch] 
     @InputJSON = @BatchJSON,
     @Debug = 0;
 
--- Result Set 1: Main results (BEST BTP)
--- Result Set 2: ALL BTP options (if multiple found)
---   TransactionID | OptionNumber | BTP | MatchPercentage | BestFlag | LatestFlag | Label
---   INV001       | 1           | 2300014842 | 98.81 | ✅ BEST |          | BEST
---   INV001       | 2           | 2300015678 | 95.24 |         | 🕒 LATEST | LATEST
+-- Result: Multiple rows for CHRISTIAN (if has 2 BTPs)
+--   TransactionID | BTP        | MatchPercentage | OptionNumber | BestFlag | LatestFlag | Label
+--   INV001       | 2300014842 | 98.81          | 1           | YES      |            | BEST
+--   INV001       | 2300015678 | 95.24          | 2           |          | YES        | LATEST
+--   INV002       | 2300016055 | 100.00         | 1           | YES      | YES        | BEST + LATEST
 ```
 
 ### Use Case 3: Nightly Batch Job
@@ -345,8 +342,7 @@ EXEC [dbo].[SP_TRSF_FindBTP_Single]
 
 - [ ] Master data imported (6,900 patterns)
 - [ ] SP_TRSF_FindBTP_Single created
-- [ ] SP_TRSF_FindBTP_Batch created (v1 simple)
-- [ ] SP_TRSF_FindBTP_Batch_v2 created (v2 with all options) ⭐ Optional
+- [ ] SP_TRSF_FindBTP_Batch created (returns multiple rows for multiple BTPs)
 - [ ] Test script executed successfully
 - [ ] Integration code ready
 - [ ] Ready for production! 🚀
@@ -355,44 +351,32 @@ EXEC [dbo].[SP_TRSF_FindBTP_Single]
 
 ## 📚 Additional Documentation
 
-### New in v2: ALL BTP Options Feature
+### Multiple Rows Feature
 
-**Need to see all BTP options like in C code?**
+**When customer has multiple BTPs, SP returns multiple rows!**
 
-📖 **[V1_vs_V2_COMPARISON.md](V1_vs_V2_COMPARISON.md)**
-- Detailed comparison v1 vs v2
-- When to use which version
-- Migration guide
-- Performance comparison
+📖 **[MULTIPLE_ROWS_GUIDE.md](MULTIPLE_ROWS_GUIDE.md)**
+- How multiple rows work
+- Before/After comparison
+- Usage scenarios
+- Client code examples (C#, Python, PowerApps)
 
-📖 **[EXAMPLE_v2_OUTPUT.md](EXAMPLE_v2_OUTPUT.md)**
-- Real output examples
-- Visual comparison
-- Your exact test case explained
-- Flag interpretation guide
-
-📖 **[Test_SP_TRSF_v2.sql](Test_SP_TRSF_v2.sql)**
-- Comprehensive test suite for v2
-- Flag examples (BEST, LATEST, BEST + LATEST)
-- Comparison tests v1 vs v2
-
-**Key Features in v2:**
-- ✅ Return 2 result sets (main + all options)
-- ✅ Show BEST flag (highest match %)
-- ✅ Show LATEST flag (most recent usage)
-- ✅ Combined label (BEST + LATEST)
-- ✅ Same behavior as C code `test_btp_pattern.c`
+**Key Features:**
+- ✅ Multiple rows for customers with multiple BTPs
+- ✅ BestFlag column ('YES' for highest match %)
+- ✅ LatestFlag column ('YES' for most recent usage)
+- ✅ Label column ('BEST + LATEST', 'BEST', 'LATEST')
+- ✅ Easy filtering: `WHERE BestFlag = 'YES'` for automation
 
 **Quick Example:**
 ```sql
-EXEC SP_TRSF_FindBTP_Batch_v2 @InputJSON = N'[
+EXEC SP_TRSF_FindBTP_Batch @InputJSON = N'[
     {"transaction_id": "1", "description": "TRSF 12345 CHRISTIAN"}
 ]';
 
--- Result Set 1: Main (BEST BTP: 2300014842)
--- Result Set 2: All Options
---   Option 1: 2300014842 (98.81%) ✅ BEST
---   Option 2: 2300015678 (95.24%) 🕒 LATEST
+-- Result: 2 rows if CHRISTIAN has 2 BTPs
+--   Row 1: BTP 2300014842, OptionNumber=1, BestFlag='YES', Label='BEST'
+--   Row 2: BTP 2300015678, OptionNumber=2, LatestFlag='YES', Label='LATEST'
 ```
 
 ---

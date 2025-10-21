@@ -46,7 +46,11 @@ BEGIN
         MatchPercentage DECIMAL(5,2),
         MatchCount INT,
         TotalTransactions INT,
+        LastLineNumber INT,
         TotalBTPOptions INT,
+        OptionNumber INT,
+        IsBest BIT,
+        IsLatest BIT,
         Status NVARCHAR(20),
         ProcessedAt DATETIME DEFAULT GETDATE()
     );
@@ -144,63 +148,125 @@ BEGIN
         END
         
         -- =====================================================
-        -- Find BTP dari Master Pattern
+        -- Find ALL BTP Options dari Master Pattern
         -- =====================================================
         
-        SET @BestBTP = NULL;
-        SET @BestMatchPct = NULL;
-        SET @BestMatchCount = NULL;
-        SET @BestTotalTrans = NULL;
         SET @TotalOptions = 0;
         
         IF @CustomerName IS NOT NULL AND LEN(@CustomerName) >= 3
         BEGIN
-            -- Find BEST match
-            SELECT TOP 1
-                @BestBTP = m.btp,
-                @BestMatchPct = m.match_percentage,
-                @BestMatchCount = m.match_count,
-                @BestTotalTrans = m.total_transactions
-            FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
-            WHERE m.category = 'TRSF'
-                AND UPPER(m.customer_name) = UPPER(@CustomerName)
-            ORDER BY 
-                m.match_percentage DESC,
-                m.total_transactions DESC,
-                m.last_line_number DESC;
-            
             -- Count total options
-            SELECT @TotalOptions = COUNT(*)
+            SELECT @TotalOptions = COUNT(DISTINCT btp)
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
             WHERE m.category = 'TRSF'
                 AND UPPER(m.customer_name) = UPPER(@CustomerName);
-        END
-        
-        -- Insert result
-        INSERT INTO @Results (
-            RowID, TransactionID, Description, CustomerName, 
-            BTP, MatchPercentage, MatchCount, TotalTransactions, 
-            TotalBTPOptions, Status
-        )
-        VALUES (
-            @CurrentRowID,
-            @CurrentTransactionID,
-            @CurrentDescription,
-            @CustomerName,
-            @BestBTP,
-            @BestMatchPct,
-            @BestMatchCount,
-            @BestTotalTrans,
-            @TotalOptions,
-            CASE 
-                WHEN @BestBTP IS NULL AND @CustomerName IS NULL THEN 'NO_PATTERN'
-                WHEN @BestBTP IS NULL THEN 'NO_MATCH'
-                WHEN @BestMatchPct >= 95 THEN 'EXCELLENT'
-                WHEN @BestMatchPct >= 80 THEN 'GOOD'
-                WHEN @BestMatchPct >= 70 THEN 'FAIR'
-                ELSE 'LOW'
+            
+            -- Insert ALL BTP options (multiple rows for same customer)
+            IF @TotalOptions > 0
+            BEGIN
+                -- Temp table untuk ranking
+                DECLARE @TempOptions TABLE (
+                    BTP NVARCHAR(100),
+                    MatchPercentage DECIMAL(5,2),
+                    MatchCount INT,
+                    TotalTransactions INT,
+                    LastLineNumber INT,
+                    OptionNumber INT
+                );
+                
+                -- Get all options dengan ranking
+                INSERT INTO @TempOptions
+                SELECT 
+                    m.btp,
+                    m.match_percentage,
+                    m.match_count,
+                    m.total_transactions,
+                    m.last_line_number,
+                    ROW_NUMBER() OVER (
+                        ORDER BY 
+                            m.match_percentage DESC,
+                            m.total_transactions DESC,
+                            m.last_line_number DESC
+                    ) AS OptionNumber
+                FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
+                WHERE m.category = 'TRSF'
+                    AND UPPER(m.customer_name) = UPPER(@CustomerName);
+                
+                -- Find LATEST (highest line number)
+                DECLARE @LatestBTP NVARCHAR(100);
+                SELECT TOP 1 @LatestBTP = BTP
+                FROM @TempOptions
+                ORDER BY LastLineNumber DESC;
+                
+                -- Insert ALL options sebagai rows terpisah
+                INSERT INTO @Results (
+                    RowID, TransactionID, Description, CustomerName, 
+                    BTP, MatchPercentage, MatchCount, TotalTransactions, 
+                    LastLineNumber, TotalBTPOptions, OptionNumber, 
+                    IsBest, IsLatest, Status
+                )
+                SELECT 
+                    @CurrentRowID,
+                    @CurrentTransactionID,
+                    @CurrentDescription,
+                    @CustomerName,
+                    t.BTP,
+                    t.MatchPercentage,
+                    t.MatchCount,
+                    t.TotalTransactions,
+                    t.LastLineNumber,
+                    @TotalOptions,
+                    t.OptionNumber,
+                    CASE WHEN t.OptionNumber = 1 THEN 1 ELSE 0 END AS IsBest,
+                    CASE WHEN t.BTP = @LatestBTP THEN 1 ELSE 0 END AS IsLatest,
+                    CASE 
+                        WHEN t.MatchPercentage >= 95 THEN 'EXCELLENT'
+                        WHEN t.MatchPercentage >= 80 THEN 'GOOD'
+                        WHEN t.MatchPercentage >= 70 THEN 'FAIR'
+                        ELSE 'LOW'
+                    END
+                FROM @TempOptions t
+                ORDER BY t.OptionNumber;
+                
+                DELETE FROM @TempOptions;
             END
-        );
+            ELSE
+            BEGIN
+                -- No match found
+                INSERT INTO @Results (
+                    RowID, TransactionID, Description, CustomerName, 
+                    BTP, MatchPercentage, MatchCount, TotalTransactions, 
+                    LastLineNumber, TotalBTPOptions, OptionNumber, 
+                    IsBest, IsLatest, Status
+                )
+                VALUES (
+                    @CurrentRowID,
+                    @CurrentTransactionID,
+                    @CurrentDescription,
+                    @CustomerName,
+                    NULL, NULL, NULL, NULL, NULL,
+                    0, NULL, 0, 0, 'NO_MATCH'
+                );
+            END
+        END
+        ELSE
+        BEGIN
+            -- Customer name not extracted
+            INSERT INTO @Results (
+                RowID, TransactionID, Description, CustomerName, 
+                BTP, MatchPercentage, MatchCount, TotalTransactions, 
+                LastLineNumber, TotalBTPOptions, OptionNumber, 
+                IsBest, IsLatest, Status
+            )
+            VALUES (
+                @CurrentRowID,
+                @CurrentTransactionID,
+                @CurrentDescription,
+                @CustomerName,
+                NULL, NULL, NULL, NULL, NULL,
+                0, NULL, 0, 0, 'NO_PATTERN'
+            );
+        END;
         
         FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentDescription;
     END
@@ -209,7 +275,7 @@ BEGIN
     DEALLOCATE desc_cursor;
     
     -- =====================================================
-    -- Return Results
+    -- Return Results (ALL BTP OPTIONS as separate rows)
     -- =====================================================
     
     SELECT 
@@ -220,12 +286,23 @@ BEGIN
         MatchPercentage,
         MatchCount,
         TotalTransactions,
+        LastLineNumber,
         TotalBTPOptions,
+        OptionNumber,
+        CASE WHEN IsBest = 1 THEN 'YES' ELSE '' END AS BestFlag,
+        CASE WHEN IsLatest = 1 THEN 'YES' ELSE '' END AS LatestFlag,
+        CASE 
+            WHEN IsBest = 1 AND IsLatest = 1 THEN 'BEST + LATEST'
+            WHEN IsBest = 1 THEN 'BEST'
+            WHEN IsLatest = 1 THEN 'LATEST'
+            ELSE ''
+        END AS Label,
         Status,
         CASE 
             WHEN Status = 'NO_PATTERN' THEN 'Customer name not found in description'
             WHEN Status = 'NO_MATCH' THEN 'Customer "' + CustomerName + '" not found in master data'
-            WHEN TotalBTPOptions > 1 THEN 'Found ' + CAST(TotalBTPOptions AS VARCHAR) + ' BTP options. Returning BEST.'
+            WHEN TotalBTPOptions > 1 AND OptionNumber = 1 THEN 'Found ' + CAST(TotalBTPOptions AS VARCHAR) + ' BTP options. This is BEST (Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR) + ')'
+            WHEN TotalBTPOptions > 1 THEN 'Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR)
             WHEN Status IN ('EXCELLENT', 'GOOD') THEN 'High confidence match'
             WHEN Status = 'FAIR' THEN 'Medium confidence match'
             WHEN Status = 'LOW' THEN 'Low confidence match - verify manually'
@@ -233,16 +310,18 @@ BEGIN
         END AS Message,
         ProcessedAt
     FROM @Results
-    ORDER BY RowID;
+    ORDER BY TransactionID, OptionNumber;
     
     -- Summary statistics
     IF @Debug = 1
     BEGIN
         PRINT '=== Summary Statistics ===';
         SELECT 
-            COUNT(*) AS TotalProcessed,
+            COUNT(DISTINCT TransactionID) AS TotalTransactions,
+            COUNT(*) AS TotalRows,
             SUM(CASE WHEN BTP IS NOT NULL THEN 1 ELSE 0 END) AS FoundBTP,
             SUM(CASE WHEN BTP IS NULL THEN 1 ELSE 0 END) AS NotFound,
+            SUM(CASE WHEN TotalBTPOptions > 1 THEN 1 ELSE 0 END) AS MultipleOptions,
             AVG(CASE WHEN BTP IS NOT NULL THEN MatchPercentage ELSE NULL END) AS AvgMatchPercentage
         FROM @Results;
         
@@ -251,20 +330,26 @@ BEGIN
         FROM @Results
         GROUP BY Status
         ORDER BY COUNT(*) DESC;
+        
+        PRINT '=== Transactions with Multiple BTPs ===';
+        SELECT TransactionID, CustomerName, TotalBTPOptions
+        FROM @Results
+        WHERE TotalBTPOptions > 1
+        GROUP BY TransactionID, CustomerName, TotalBTPOptions;
     END
 END
 GO
 
 -- =====================================================
--- USAGE EXAMPLES
+-- USAGE EXAMPLES (Returns ALL BTP options as multiple rows)
 -- =====================================================
 
--- Example 1: Simple batch (2 descriptions)
+-- Example 1: Simple test with customer having multiple BTPs
 /*
 DECLARE @JSON NVARCHAR(MAX) = N'[
     {
         "transaction_id": "TRX001",
-        "description": "TRSF E-BANKING CR 0201/FTSCY/WS95011 455520.00 RONNY YULIADY"
+        "description": "TRSF E-BANKING CR 1304/FTSCY/WS95011 683280.00 fresh milk 36pcs 15/04/2024 CHRISTIAN"
     },
     {
         "transaction_id": "TRX002",
@@ -275,42 +360,71 @@ DECLARE @JSON NVARCHAR(MAX) = N'[
 EXEC [dbo].[SP_TRSF_FindBTP_Batch] 
     @InputJSON = @JSON,
     @Debug = 1;
+
+-- Expected Output:
+-- TRX001 will return 2 ROWS (CHRISTIAN has 2 BTPs):
+--   Row 1: BTP 2300014842, 98.81%, BestFlag='YES', Label='BEST'
+--   Row 2: BTP 2300015678, 95.24%, LatestFlag='YES', Label='LATEST'
+-- TRX002 will return 1 ROW (HARDI PUTRA MUHARR has 1 BTP)
 */
 
--- Example 2: Large batch (without transaction_id, will auto-generate)
+-- Example 2: Large batch showing multiple options behavior
 /*
 DECLARE @JSON NVARCHAR(MAX) = N'[
-    {"description": "TRSF E-BANKING CR 0201/FTSCY/WS95011 455520.00 RONNY YULIADY"},
-    {"description": "TRSF FROM BCA 123456789 HARDI PUTRA MUHARR"},
-    {"description": "TRSF ONLINE PAYMENT 555.00 BROOKLYN BOGA UTAM"},
-    {"description": "TRSF ATM 100000 PANCIOUS TIRTA JAY"},
-    {"description": "TRSF MOBILE 250000 SUPER NORMAL SISTE"}
+    {"transaction_id": "T1", "description": "TRSF E-BANKING CR 0201 455520.00 RONNY YULIADY"},
+    {"transaction_id": "T2", "description": "TRSF FROM BCA 123456789 CHRISTIAN"},
+    {"transaction_id": "T3", "description": "TRSF ONLINE PAYMENT 555.00 BROOKLYN BOGA UTAM"},
+    {"transaction_id": "T4", "description": "TRSF ATM 100000 PANCIOUS TIRTA JAY"}
 ]';
 
 EXEC [dbo].[SP_TRSF_FindBTP_Batch] 
     @InputJSON = @JSON,
     @Debug = 0;
+
+-- If T2 (CHRISTIAN) has 2 BTPs, output will be:
+-- T1: 1 row
+-- T2: 2 rows (Option 1 and Option 2)
+-- T3: 1 row
+-- T4: 1 row
+-- Total: 5 rows (not 4)
 */
 
--- Example 3: Production format dengan response handling
+-- Example 3: Filter for BEST options only
 /*
 DECLARE @JSON NVARCHAR(MAX) = N'[
-    {"transaction_id": "TRX001", "description": "TRSF E-BANKING CR 0201 455520.00 RONNY YULIADY"},
-    {"transaction_id": "TRX002", "description": "TRSF FROM BCA 123456789 HARDI PUTRA MUHARR"}
+    {"transaction_id": "TX1", "description": "TRSF 12345 CHRISTIAN"},
+    {"transaction_id": "TX2", "description": "TRSF 67890 RONNY YULIADY"}
 ]';
 
-DECLARE @Results TABLE (
-    TransactionID NVARCHAR(50),
-    BTP NVARCHAR(100),
-    Status NVARCHAR(20),
-    Confidence DECIMAL(5,2)
-);
+-- Get all options
+SELECT * 
+INTO #AllResults
+FROM [dbo].[SP_TRSF_FindBTP_Batch](@JSON, 0);
 
-INSERT INTO @Results
-SELECT TransactionID, BTP, Status, MatchPercentage
-FROM [dbo].[SP_TRSF_FindBTP_Batch](@InputJSON, 0);
+-- Filter: BEST options only (for automation)
+SELECT TransactionID, CustomerName, BTP, MatchPercentage, Label
+FROM #AllResults
+WHERE BestFlag = 'YES' OR TotalBTPOptions = 1;
 
--- Process results
-SELECT * FROM @Results;
+-- View: ALL options (for manual review)
+SELECT TransactionID, CustomerName, BTP, MatchPercentage, OptionNumber, Label
+FROM #AllResults
+ORDER BY TransactionID, OptionNumber;
+
+DROP TABLE #AllResults;
+*/
+
+-- Example 4: Count how many transactions have multiple BTP options
+/*
+DECLARE @JSON NVARCHAR(MAX) = N'[
+    {"description": "TRSF 001 CUSTOMER A"},
+    {"description": "TRSF 002 CUSTOMER B"},
+    {"description": "TRSF 003 CUSTOMER C"}
+]';
+
+SELECT 
+    COUNT(DISTINCT TransactionID) AS TotalTransactions,
+    SUM(CASE WHEN TotalBTPOptions > 1 THEN 1 ELSE 0 END) AS TransWithMultipleBTPs
+FROM [dbo].[SP_TRSF_FindBTP_Batch](@JSON, 0);
 */
 
