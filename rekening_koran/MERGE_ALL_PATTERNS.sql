@@ -88,7 +88,11 @@ CREATE TABLE master_customer_btp_pattern (
 
 -- GROUP 3: Special Logic (ALL CAPS after last number)
 -- ----------------------------------------------------
--- TRSF (6900 patterns) ⭐
+-- TRSF (6900 patterns) ⭐ LARGE FILE - USE SPLIT VERSION!
+-- Option 1 (RECOMMENDED): Use split file (7 batches of ~1000 rows)
+-- :r pattern_generator_TRSF/master_customer_btp_pattern_TRSF_SPLIT.sql
+-- 
+-- Option 2: Use original file (1 large INSERT - may timeout)
 -- :r pattern_generator_TRSF/master_customer_btp_pattern_TRSF.sql
 
 -- BIFAST (763 patterns)
