@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCA Statement Converter - HTML to JSON</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0049A2 0%, #003875 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .upload-section {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: #0049A2;
+            background: #f0f2ff;
+        }
+
+        .upload-section.drag-over {
+            border-color: #28a745;
+            background: #e8f5e9;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: #0049A2;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .info-card {
+            background: #f8f9ff;
+            border-left: 4px solid #0049A2;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .info-card h3 {
+            color: #0049A2;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            text-align: right;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .transactions-table thead {
+            background: linear-gradient(135deg, #0049A2 0%, #003875 100%);
+            color: white;
+        }
+
+        .transactions-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .transactions-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .transactions-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        .transactions-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .amount-cr {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .amount-db {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+        }
+
+        .code-preview {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin-top: 20px;
+            display: none;
+            max-height: 400px;
+        }
+
+        .code-preview.show {
+            display: block;
+        }
+
+        .code-preview pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 BCA Statement Converter</h1>
+            <p>Konversi HTML Rekening Koran ke JSON untuk Power Apps & SQL Server</p>
+        </div>
+
+        <div class="main-content">
+            <div class="upload-section" id="uploadSection">
+                <div class="icon">📁</div>
+                <h2>Upload File HTML Rekening Koran</h2>
+                <p style="margin: 15px 0; color: #666;">
+                    Drag & drop file HTML atau klik tombol di bawah
+                </p>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".html,.htm">
+                    <label for="fileInput" class="file-input-label">
+                        Pilih File HTML
+                    </label>
+                </div>
+                <div class="file-name" id="fileName"></div>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="results" id="results">
+                <div class="info-card fade-in">
+                    <h3>📋 Informasi Rekening</h3>
+                    <div class="info-row">
+                        <span class="info-label">No. Rekening:</span>
+                        <span class="info-value" id="accountNumber">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nama:</span>
+                        <span class="info-value" id="accountName">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Periode:</span>
+                        <span class="info-value" id="period">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mata Uang:</span>
+                        <span class="info-value" id="currency">-</span>
+                    </div>
+                </div>
+
+                <div class="info-card fade-in">
+                    <h3>💰 Ringkasan</h3>
+                    <div class="info-row">
+                        <span class="info-label">Saldo Awal:</span>
+                        <span class="info-value" id="saldoAwal">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mutasi Debet:</span>
+                        <span class="info-value amount-db" id="mutasiDebet">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mutasi Kredit:</span>
+                        <span class="info-value amount-cr" id="mutasiKredit">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Saldo Akhir:</span>
+                        <span class="info-value" id="saldoAkhir">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Transaksi:</span>
+                        <span class="info-value" id="totalTransactions">-</span>
+                    </div>
+                </div>
+
+                <div class="info-card fade-in">
+                    <h3>📊 Data Transaksi</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="transactions-table" id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Jumlah</th>
+                                    <th>Tipe</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadFullJSON()">
+                        <span>💾</span> Download Full JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSQLFormat()">
+                        <span>🔄</span> Download untuk Stored Procedure
+                    </button>
+                    <button class="btn btn-warning" onclick="copyToClipboard()">
+                        <span>📋</span> Copy JSON ke Clipboard
+                    </button>
+                </div>
+
+                <div class="code-preview" id="codePreview">
+                    <pre id="jsonPreview"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="parser.js"></script>
+    <script>
+        let parsedData = null;
+        let parser = null;
+
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+        // Drag and drop handlers
+        const uploadSection = document.getElementById('uploadSection');
+        
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('drag-over');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('drag-over');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            const fileName = document.getElementById('fileName');
+            fileName.textContent = `📄 ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const htmlContent = e.target.result;
+                parseHTML(htmlContent, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseHTML(htmlContent, fileName) {
+            try {
+                parser = new BCAStatementParser(htmlContent);
+                const result = parser.parse();
+
+                if (result.success) {
+                    parsedData = result.data;
+                    displayResults();
+                    showAlert('success', `✅ File ${fileName} berhasil di-parse!`);
+                } else {
+                    showAlert('error', `❌ Error parsing: ${result.error}`);
+                }
+            } catch (error) {
+                showAlert('error', `❌ Error: ${error.message}`);
+            }
+        }
+
+        function displayResults() {
+            // Show results section
+            document.getElementById('results').classList.add('show');
+
+            // Display account info
+            document.getElementById('accountNumber').textContent = parsedData.accountInfo.accountNumber || '-';
+            document.getElementById('accountName').textContent = parsedData.accountInfo.accountName || '-';
+            document.getElementById('period').textContent = parsedData.accountInfo.period || '-';
+            document.getElementById('currency').textContent = parsedData.accountInfo.currency || '-';
+
+            // Display summary
+            document.getElementById('saldoAwal').textContent = formatCurrency(parsedData.summary.saldoAwal);
+            document.getElementById('mutasiDebet').textContent = formatCurrency(parsedData.summary.mutasiDebet);
+            document.getElementById('mutasiKredit').textContent = formatCurrency(parsedData.summary.mutasiKredit);
+            document.getElementById('saldoAkhir').textContent = formatCurrency(parsedData.summary.saldoAkhir);
+            document.getElementById('totalTransactions').textContent = parsedData.transactions.length;
+
+            // Display transactions table
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+
+            parsedData.transactions.forEach(t => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${t.TransactionID}</td>
+                    <td>${t.TransactionDate}</td>
+                    <td>${t.Description}</td>
+                    <td class="${t.TransactionType === 'CR' ? 'amount-cr' : 'amount-db'}">
+                        ${formatCurrency(t.Amount)}
+                    </td>
+                    <td><span style="background: ${t.TransactionType === 'CR' ? '#d4edda' : '#f8d7da'}; padding: 3px 10px; border-radius: 5px; font-weight: 600; color: ${t.TransactionType === 'CR' ? '#155724' : '#721c24'};">${t.TransactionType}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Show preview
+            const preview = document.getElementById('jsonPreview');
+            preview.textContent = JSON.stringify(parsedData, null, 2);
+            document.getElementById('codePreview').classList.add('show');
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2
+            }).format(value);
+        }
+
+        function downloadFullJSON() {
+            downloadJSON(parsedData, 'statement_full.json');
+        }
+
+        function downloadSQLFormat() {
+            const sqlData = parser.getTransactionsForStoredProcedure();
+            downloadJSON(sqlData, 'statement_for_sp.json');
+        }
+
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('success', `✅ File ${filename} berhasil di-download!`);
+        }
+
+        function copyToClipboard() {
+            const sqlData = parser.getTransactionsForStoredProcedure();
+            const jsonString = JSON.stringify(sqlData, null, 2);
+            
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ JSON berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function showAlert(type, message) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} fade-in`;
+            alert.textContent = message;
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
+
