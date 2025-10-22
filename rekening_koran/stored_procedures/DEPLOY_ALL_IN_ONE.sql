@@ -25,13 +25,12 @@ PRINT '════════════════════════�
 PRINT 'DEPLOYING ALL 5 STORED PROCEDURES...';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 PRINT '';
+GO
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. TRSF
 -- ═══════════════════════════════════════════════════════════════════════════
-
-PRINT '📦 Deploying TRSF...';
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_TRSF_FindBTP_Batch]
     @InputJSON NVARCHAR(MAX),
@@ -379,13 +378,12 @@ GO
 
 PRINT '✅ TRSF deployed!';
 PRINT '';
+GO
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. BIFAST
 -- ═══════════════════════════════════════════════════════════════════════════
-
-PRINT '📦 Deploying BIFAST...';
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_BIFAST_FindBTP_Batch]
     @InputJSON NVARCHAR(MAX),
@@ -733,13 +731,12 @@ GO
 
 PRINT '✅ BIFAST deployed!';
 PRINT '';
+GO
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. MANDIRI
 -- ═══════════════════════════════════════════════════════════════════════════
-
-PRINT '📦 Deploying MANDIRI...';
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_MANDIRI_FindBTP_Batch]
     @InputJSON NVARCHAR(MAX),
@@ -1070,13 +1067,12 @@ GO
 
 PRINT '✅ MANDIRI deployed!';
 PRINT '';
+GO
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 4. MASTER
 -- ═══════════════════════════════════════════════════════════════════════════
-
-PRINT '📦 Deploying MASTER...';
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_MASTER_FindBTP_Batch]
     @TransactionsJSON NVARCHAR(MAX)
@@ -1493,13 +1489,12 @@ GO
 
 PRINT '✅ MASTER deployed!';
 PRINT '';
+GO
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 5. MASTER ToStaging
 -- ═══════════════════════════════════════════════════════════════════════════
-
-PRINT '📦 Deploying MASTER ToStaging...';
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_MASTER_FindBTP_Batch_ToStaging]
     @TransactionsJSON NVARCHAR(MAX),
@@ -1646,6 +1641,7 @@ GO
 
 PRINT '✅ MASTER ToStaging deployed!';
 PRINT '';
+GO
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
