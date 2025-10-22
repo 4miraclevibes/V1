@@ -156,8 +156,17 @@ BEGIN
             PRINT '✅ Partial results saved: ' + CAST(@@ROWCOUNT AS VARCHAR) + ' rows';
         END
         
-        -- Re-raise error
-        THROW;
+        -- Re-raise error using RAISERROR for compatibility
+        DECLARE @ErrorMessage NVARCHAR(4000);
+        DECLARE @ErrorSeverity INT;
+        DECLARE @ErrorState INT;
+        
+        SELECT 
+            @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE();
+        
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
     
     -- Cleanup
