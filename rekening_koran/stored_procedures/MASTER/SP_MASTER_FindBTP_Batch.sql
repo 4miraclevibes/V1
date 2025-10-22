@@ -143,15 +143,12 @@ BEGIN
     PRINT 'Bank Type Distribution:';
     PRINT '─────────────────────────────────────────────────────────────────────';
     
-    -- Distribution SELECT (commented out for compatibility with SP_MASTER_FindBTP_And_Save)
-    /*
     SELECT 
         BankType,
         COUNT(*) as TransactionCount
     FROM @Transactions
     GROUP BY BankType
     ORDER BY COUNT(*) DESC;
-    */
     
     PRINT '';
     
@@ -176,7 +173,7 @@ BEGIN
         );
         
         CREATE TABLE #TRSF_Results (
-            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), TransactionDate NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -215,7 +212,7 @@ BEGIN
         );
         
         CREATE TABLE #BIFAST_Results (
-            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), TransactionDate NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -254,7 +251,7 @@ BEGIN
         );
         
         CREATE TABLE #MANDIRI_Results (
-            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), TransactionDate NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -442,9 +439,6 @@ BEGIN
     PRINT '';
     PRINT 'Banks Processed:';
     
-    -- Summary result set (commented out for compatibility with SP_MASTER_FindBTP_And_Save)
-    -- Uncomment if you want to see summary when calling MASTER SP directly
-    /*
     SELECT 
         BankType,
         COUNT(DISTINCT TransactionID) as Transactions,
@@ -452,7 +446,6 @@ BEGIN
     FROM @AllResults
     GROUP BY BankType
     ORDER BY BankType;
-    */
     
     PRINT '═══════════════════════════════════════════════════════════════════════';
 END;
