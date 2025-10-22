@@ -381,9 +381,517 @@ BEGIN
         PRINT '✅ BRI completed';
     END
     
-    -- Add similar blocks for remaining banks (MEGA, PERMATA, DANAMON, CITIBANK, SINARMAS)
-    -- and Group 2 banks (CIMB, MAYBANK, HSBC, UOB, MUAMALAT, OCBC, DBS, CAPITAL, WOORI)
-    -- For brevity, showing pattern - you can copy-paste and modify bank names
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- GROUP 1 BANKS (Array[3] + Array[4])
+    -- ═══════════════════════════════════════════════════════════════════════
+    
+    -- MEGA
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'MEGA')
+    BEGIN
+        PRINT '🔄 Processing MEGA transactions...';
+        
+        DECLARE @MEGA_JSON NVARCHAR(MAX);
+        SELECT @MEGA_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'MEGA'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #MEGA_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #MEGA_Results
+        EXEC SP_MEGA_FindBTP_Batch @TransactionsJSON = @MEGA_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'MEGA' AS BankType, ProcessedAt
+        FROM #MEGA_Results;
+        
+        DROP TABLE #MEGA_Results;
+        
+        PRINT '✅ MEGA completed';
+    END
+    
+    -- PERMATA
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'PERMATA')
+    BEGIN
+        PRINT '🔄 Processing PERMATA transactions...';
+        
+        DECLARE @PERMATA_JSON NVARCHAR(MAX);
+        SELECT @PERMATA_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'PERMATA'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #PERMATA_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #PERMATA_Results
+        EXEC SP_PERMATA_FindBTP_Batch @TransactionsJSON = @PERMATA_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'PERMATA' AS BankType, ProcessedAt
+        FROM #PERMATA_Results;
+        
+        DROP TABLE #PERMATA_Results;
+        
+        PRINT '✅ PERMATA completed';
+    END
+    
+    -- DANAMON
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'DANAMON')
+    BEGIN
+        PRINT '🔄 Processing DANAMON transactions...';
+        
+        DECLARE @DANAMON_JSON NVARCHAR(MAX);
+        SELECT @DANAMON_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'DANAMON'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #DANAMON_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #DANAMON_Results
+        EXEC SP_DANAMON_FindBTP_Batch @TransactionsJSON = @DANAMON_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'DANAMON' AS BankType, ProcessedAt
+        FROM #DANAMON_Results;
+        
+        DROP TABLE #DANAMON_Results;
+        
+        PRINT '✅ DANAMON completed';
+    END
+    
+    -- CITIBANK
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'CITIBANK')
+    BEGIN
+        PRINT '🔄 Processing CITIBANK transactions...';
+        
+        DECLARE @CITIBANK_JSON NVARCHAR(MAX);
+        SELECT @CITIBANK_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'CITIBANK'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #CITIBANK_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #CITIBANK_Results
+        EXEC SP_CITIBANK_FindBTP_Batch @TransactionsJSON = @CITIBANK_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'CITIBANK' AS BankType, ProcessedAt
+        FROM #CITIBANK_Results;
+        
+        DROP TABLE #CITIBANK_Results;
+        
+        PRINT '✅ CITIBANK completed';
+    END
+    
+    -- SINARMAS
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'SINARMAS')
+    BEGIN
+        PRINT '🔄 Processing SINARMAS transactions...';
+        
+        DECLARE @SINARMAS_JSON NVARCHAR(MAX);
+        SELECT @SINARMAS_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'SINARMAS'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #SINARMAS_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #SINARMAS_Results
+        EXEC SP_SINARMAS_FindBTP_Batch @TransactionsJSON = @SINARMAS_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'SINARMAS' AS BankType, ProcessedAt
+        FROM #SINARMAS_Results;
+        
+        DROP TABLE #SINARMAS_Results;
+        
+        PRINT '✅ SINARMAS completed';
+    END
+    
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- GROUP 2 BANKS (Array[4] + Array[5])
+    -- ═══════════════════════════════════════════════════════════════════════
+    
+    -- CIMB
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'CIMB')
+    BEGIN
+        PRINT '🔄 Processing CIMB transactions...';
+        
+        DECLARE @CIMB_JSON NVARCHAR(MAX);
+        SELECT @CIMB_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'CIMB'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #CIMB_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #CIMB_Results
+        EXEC SP_CIMB_FindBTP_Batch @TransactionsJSON = @CIMB_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'CIMB' AS BankType, ProcessedAt
+        FROM #CIMB_Results;
+        
+        DROP TABLE #CIMB_Results;
+        
+        PRINT '✅ CIMB completed';
+    END
+    
+    -- MAYBANK
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'MAYBANK')
+    BEGIN
+        PRINT '🔄 Processing MAYBANK transactions...';
+        
+        DECLARE @MAYBANK_JSON NVARCHAR(MAX);
+        SELECT @MAYBANK_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'MAYBANK'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #MAYBANK_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #MAYBANK_Results
+        EXEC SP_MAYBANK_FindBTP_Batch @TransactionsJSON = @MAYBANK_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'MAYBANK' AS BankType, ProcessedAt
+        FROM #MAYBANK_Results;
+        
+        DROP TABLE #MAYBANK_Results;
+        
+        PRINT '✅ MAYBANK completed';
+    END
+    
+    -- HSBC
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'HSBC')
+    BEGIN
+        PRINT '🔄 Processing HSBC transactions...';
+        
+        DECLARE @HSBC_JSON NVARCHAR(MAX);
+        SELECT @HSBC_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'HSBC'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #HSBC_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #HSBC_Results
+        EXEC SP_HSBC_FindBTP_Batch @TransactionsJSON = @HSBC_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'HSBC' AS BankType, ProcessedAt
+        FROM #HSBC_Results;
+        
+        DROP TABLE #HSBC_Results;
+        
+        PRINT '✅ HSBC completed';
+    END
+    
+    -- UOB
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'UOB')
+    BEGIN
+        PRINT '🔄 Processing UOB transactions...';
+        
+        DECLARE @UOB_JSON NVARCHAR(MAX);
+        SELECT @UOB_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'UOB'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #UOB_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #UOB_Results
+        EXEC SP_UOB_FindBTP_Batch @TransactionsJSON = @UOB_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'UOB' AS BankType, ProcessedAt
+        FROM #UOB_Results;
+        
+        DROP TABLE #UOB_Results;
+        
+        PRINT '✅ UOB completed';
+    END
+    
+    -- MUAMALAT
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'MUAMALAT')
+    BEGIN
+        PRINT '🔄 Processing MUAMALAT transactions...';
+        
+        DECLARE @MUAMALAT_JSON NVARCHAR(MAX);
+        SELECT @MUAMALAT_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'MUAMALAT'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #MUAMALAT_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #MUAMALAT_Results
+        EXEC SP_MUAMALAT_FindBTP_Batch @TransactionsJSON = @MUAMALAT_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'MUAMALAT' AS BankType, ProcessedAt
+        FROM #MUAMALAT_Results;
+        
+        DROP TABLE #MUAMALAT_Results;
+        
+        PRINT '✅ MUAMALAT completed';
+    END
+    
+    -- OCBC
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'OCBC')
+    BEGIN
+        PRINT '🔄 Processing OCBC transactions...';
+        
+        DECLARE @OCBC_JSON NVARCHAR(MAX);
+        SELECT @OCBC_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'OCBC'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #OCBC_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #OCBC_Results
+        EXEC SP_OCBC_FindBTP_Batch @TransactionsJSON = @OCBC_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'OCBC' AS BankType, ProcessedAt
+        FROM #OCBC_Results;
+        
+        DROP TABLE #OCBC_Results;
+        
+        PRINT '✅ OCBC completed';
+    END
+    
+    -- DBS
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'DBS')
+    BEGIN
+        PRINT '🔄 Processing DBS transactions...';
+        
+        DECLARE @DBS_JSON NVARCHAR(MAX);
+        SELECT @DBS_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'DBS'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #DBS_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #DBS_Results
+        EXEC SP_DBS_FindBTP_Batch @TransactionsJSON = @DBS_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'DBS' AS BankType, ProcessedAt
+        FROM #DBS_Results;
+        
+        DROP TABLE #DBS_Results;
+        
+        PRINT '✅ DBS completed';
+    END
+    
+    -- CAPITAL
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'CAPITAL')
+    BEGIN
+        PRINT '🔄 Processing CAPITAL transactions...';
+        
+        DECLARE @CAPITAL_JSON NVARCHAR(MAX);
+        SELECT @CAPITAL_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'CAPITAL'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #CAPITAL_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #CAPITAL_Results
+        EXEC SP_CAPITAL_FindBTP_Batch @TransactionsJSON = @CAPITAL_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'CAPITAL' AS BankType, ProcessedAt
+        FROM #CAPITAL_Results;
+        
+        DROP TABLE #CAPITAL_Results;
+        
+        PRINT '✅ CAPITAL completed';
+    END
+    
+    -- WOORI
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'WOORI')
+    BEGIN
+        PRINT '🔄 Processing WOORI transactions...';
+        
+        DECLARE @WOORI_JSON NVARCHAR(MAX);
+        SELECT @WOORI_JSON = (
+            SELECT TransactionID, TransactionDate, Description
+            FROM @Transactions
+            WHERE BankType = 'WOORI'
+            FOR JSON PATH
+        );
+        
+        CREATE TABLE #WOORI_Results (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #WOORI_Results
+        EXEC SP_WOORI_FindBTP_Batch @TransactionsJSON = @WOORI_JSON;
+        
+        INSERT INTO @AllResults
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+               TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+               BestFlag, LatestFlag, Label, Status, Message, 'WOORI' AS BankType, ProcessedAt
+        FROM #WOORI_Results;
+        
+        DROP TABLE #WOORI_Results;
+        
+        PRINT '✅ WOORI completed';
+    END
     
     -- ═══════════════════════════════════════════════════════════════════════
     -- Step 3: Return unified results
