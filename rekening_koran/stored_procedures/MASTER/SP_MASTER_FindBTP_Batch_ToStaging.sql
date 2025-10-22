@@ -106,6 +106,7 @@ BEGIN
         Message,
         BankType,
         ProcessedAt,
+        CreatedAt,
         BatchID,
         UploadedBy,
         UploadedAt
@@ -129,9 +130,10 @@ BEGIN
         Message,
         BankType,
         ProcessedAt,
+        GETDATE(),  -- CreatedAt
         @BatchID,
         @UploadedBy,
-        GETDATE()
+        GETDATE()   -- UploadedAt
     FROM #Results;
     
     DECLARE @SavedCount INT = @@ROWCOUNT;
