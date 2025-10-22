@@ -71,10 +71,10 @@ FROM dbo.REKENING_KORAN_STAGING;
 
 SELECT 
     BankType,
-    COUNT(*) AS RowCount
+    COUNT(*) AS [RowCount]
 FROM dbo.REKENING_KORAN_STAGING
 GROUP BY BankType
-ORDER BY RowCount DESC;
+ORDER BY [RowCount] DESC;
 
 PRINT '';
 PRINT '';
