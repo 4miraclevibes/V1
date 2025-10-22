@@ -44,6 +44,7 @@ BEGIN
     
     DECLARE @CurrentDescription NVARCHAR(MAX);
     DECLARE @CurrentTransactionID INT;
+    DECLARE @CurrentTransactionDate NVARCHAR(50);
     DECLARE @CustomerName NVARCHAR(200);
     DECLARE @WordCount INT;
     
@@ -87,9 +88,10 @@ BEGIN
     -- Parse JSON Input
     -- ═══════════════════════════════════════════════════════════════════════
     
-    INSERT INTO @Transactions (TransactionID, Description)
+    INSERT INTO @Transactions (TransactionID, TransactionDate, Description)
     SELECT 
         TransactionID,
+        TransactionDate,
         Description
     FROM OPENJSON(@TransactionsJSON)
     WITH (
@@ -103,7 +105,9 @@ BEGIN
     -- ═══════════════════════════════════════════════════════════════════════
     
     DECLARE trans_cursor CURSOR FOR 
-        SELECT TransactionID, Description 
+        SELECT TransactionID,
+        TransactionDate,
+        Description 
         FROM @Transactions;
     
     OPEN trans_cursor;
