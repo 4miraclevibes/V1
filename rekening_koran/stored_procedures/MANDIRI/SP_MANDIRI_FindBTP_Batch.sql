@@ -17,6 +17,7 @@ BEGIN
     DECLARE @Inputs TABLE (
         RowID INT IDENTITY(1,1),
         TransactionID NVARCHAR(50),
+        TransactionDate NVARCHAR(50),
         Description NVARCHAR(500)
     );
     
