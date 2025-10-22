@@ -62,6 +62,7 @@ BEGIN
     -- Input transactions
     DECLARE @Transactions TABLE (
         TransactionID INT,
+        TransactionDate NVARCHAR(50),
         Description NVARCHAR(MAX),
         BankType NVARCHAR(50)
     );
@@ -69,6 +70,7 @@ BEGIN
     -- Results from all banks
     DECLARE @AllResults TABLE (
         TransactionID INT,
+        TransactionDate NVARCHAR(50),
         Description NVARCHAR(MAX),
         CustomerName NVARCHAR(200),
         BTP NVARCHAR(50),
@@ -91,9 +93,10 @@ BEGIN
     -- Step 1: Parse JSON and detect bank type for each transaction
     -- ═══════════════════════════════════════════════════════════════════════
     
-    INSERT INTO @Transactions (TransactionID, Description, BankType)
+    INSERT INTO @Transactions (TransactionID, TransactionDate, Description, BankType)
     SELECT 
         TransactionID,
+        TransactionDate,
         Description,
         CASE
             -- Group 3: Special Logic (TRSF & BI-FAST)
@@ -127,6 +130,7 @@ BEGIN
     FROM OPENJSON(@TransactionsJSON)
     WITH (
         TransactionID INT '$.TransactionID',
+        TransactionDate NVARCHAR(50) '$.TransactionDate',
         Description NVARCHAR(MAX) '$.Description'
     );
     
@@ -160,7 +164,8 @@ BEGIN
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
             SELECT 
-                TransactionID AS transaction_id, 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
                 Description AS description
             FROM @Transactions
             WHERE BankType = 'TRSF'
@@ -168,7 +173,7 @@ BEGIN
         );
         
         CREATE TABLE #TRSF_Results (
-            TransactionID NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), TransactionDate NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -180,7 +185,7 @@ BEGIN
         EXEC SP_TRSF_FindBTP_Batch @InputJSON = @TRSF_JSON;
         
         INSERT INTO @AllResults
-        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                BestFlag, LatestFlag, Label, Status, Message, 'TRSF' AS BankType, ProcessedAt
         FROM #TRSF_Results;
@@ -198,7 +203,8 @@ BEGIN
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
             SELECT 
-                TransactionID AS transaction_id, 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
                 Description AS description
             FROM @Transactions
             WHERE BankType = 'BIFAST'
@@ -206,7 +212,7 @@ BEGIN
         );
         
         CREATE TABLE #BIFAST_Results (
-            TransactionID NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), TransactionDate NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -218,7 +224,7 @@ BEGIN
         EXEC SP_BIFAST_FindBTP_Batch @InputJSON = @BIFAST_JSON;
         
         INSERT INTO @AllResults
-        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                BestFlag, LatestFlag, Label, Status, Message, 'BIFAST' AS BankType, ProcessedAt
         FROM #BIFAST_Results;
@@ -236,7 +242,8 @@ BEGIN
         DECLARE @MANDIRI_JSON NVARCHAR(MAX);
         SELECT @MANDIRI_JSON = (
             SELECT 
-                TransactionID AS transaction_id, 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
                 Description AS description
             FROM @Transactions
             WHERE BankType = 'MANDIRI'
@@ -244,7 +251,7 @@ BEGIN
         );
         
         CREATE TABLE #MANDIRI_Results (
-            TransactionID NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
+            TransactionID NVARCHAR(50), TransactionDate NVARCHAR(50), Description NVARCHAR(500), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -256,7 +263,7 @@ BEGIN
         EXEC SP_MANDIRI_FindBTP_Batch @InputJSON = @MANDIRI_JSON;
         
         INSERT INTO @AllResults
-        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                BestFlag, LatestFlag, Label, Status, Message, 'MANDIRI' AS BankType, ProcessedAt
         FROM #MANDIRI_Results;
@@ -273,14 +280,14 @@ BEGIN
         
         DECLARE @BNI_JSON NVARCHAR(MAX);
         SELECT @BNI_JSON = (
-            SELECT TransactionID, Description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions
             WHERE BankType = 'BNI'
             FOR JSON PATH
         );
         
         CREATE TABLE #BNI_Results (
-            TransactionID INT, Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -292,7 +299,7 @@ BEGIN
         EXEC SP_BNI_FindBTP_Batch @TransactionsJSON = @BNI_JSON;
         
         INSERT INTO @AllResults
-        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                BestFlag, LatestFlag, Label, Status, Message, 'BNI' AS BankType, ProcessedAt
         FROM #BNI_Results;
@@ -309,14 +316,14 @@ BEGIN
         
         DECLARE @BTPN_JSON NVARCHAR(MAX);
         SELECT @BTPN_JSON = (
-            SELECT TransactionID, Description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions
             WHERE BankType = 'BTPN'
             FOR JSON PATH
         );
         
         CREATE TABLE #BTPN_Results (
-            TransactionID INT, Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -328,7 +335,7 @@ BEGIN
         EXEC SP_BTPN_FindBTP_Batch @TransactionsJSON = @BTPN_JSON;
         
         INSERT INTO @AllResults
-        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                BestFlag, LatestFlag, Label, Status, Message, 'BTPN' AS BankType, ProcessedAt
         FROM #BTPN_Results;
@@ -345,14 +352,14 @@ BEGIN
         
         DECLARE @BRI_JSON NVARCHAR(MAX);
         SELECT @BRI_JSON = (
-            SELECT TransactionID, Description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions
             WHERE BankType = 'BRI'
             FOR JSON PATH
         );
         
         CREATE TABLE #BRI_Results (
-            TransactionID INT, Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
@@ -364,7 +371,7 @@ BEGIN
         EXEC SP_BRI_FindBTP_Batch @TransactionsJSON = @BRI_JSON;
         
         INSERT INTO @AllResults
-        SELECT TransactionID, Description, CustomerName, BTP, MatchPercentage, MatchCount,
+        SELECT TransactionID, TransactionDate, Description, CustomerName, BTP, MatchPercentage, MatchCount,
                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                BestFlag, LatestFlag, Label, Status, Message, 'BRI' AS BankType, ProcessedAt
         FROM #BRI_Results;
@@ -389,6 +396,7 @@ BEGIN
     
     SELECT
         TransactionID,
+        TransactionDate,
         Description,
         CustomerName,
         BTP,

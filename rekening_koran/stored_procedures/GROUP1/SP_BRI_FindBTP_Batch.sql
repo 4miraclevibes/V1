@@ -52,6 +52,7 @@ BEGIN
     -- Input transactions
     DECLARE @Transactions TABLE (
         TransactionID INT,
+        TransactionDate NVARCHAR(50),
         Description NVARCHAR(MAX)
     );
     
@@ -64,6 +65,7 @@ BEGIN
     -- Results table (with support for multiple BTP options)
     DECLARE @Results TABLE (
         TransactionID INT,
+        TransactionDate NVARCHAR(50),
         Description NVARCHAR(MAX),
         CustomerName NVARCHAR(200),
         BTP NVARCHAR(50),
@@ -90,6 +92,7 @@ BEGIN
     FROM OPENJSON(@TransactionsJSON)
     WITH (
         TransactionID INT '$.TransactionID',
+        TransactionDate NVARCHAR(50) '$.TransactionDate',
         Description NVARCHAR(MAX) '$.Description'
     );
     
@@ -103,7 +106,7 @@ BEGIN
     
     OPEN trans_cursor;
     
-    FETCH NEXT FROM trans_cursor INTO @CurrentTransactionID, @CurrentDescription;
+    FETCH NEXT FROM trans_cursor INTO @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
     
     WHILE @@FETCH_STATUS = 0
     BEGIN
@@ -224,13 +227,14 @@ BEGIN
             BEGIN
                 -- Insert all BTP options as separate rows
                 INSERT INTO @Results (
-                    TransactionID, Description, CustomerName, BTP,
+                    TransactionID, TransactionDate, Description, CustomerName, BTP,
                     MatchPercentage, MatchCount, TotalTransactions, LastLineNumber,
                     TotalBTPOptions, OptionNumber, IsBest, IsLatest, Status
                 )
                 SELECT 
                     @CurrentTransactionID,
-                    @CurrentDescription,
+                    @CurrentTransactionDate,
+                @CurrentDescription,
                     customer_name,
                     btp,
                     match_percentage,
@@ -258,13 +262,14 @@ BEGIN
             BEGIN
                 -- No match found in master data
                 INSERT INTO @Results (
-                    TransactionID, Description, CustomerName, BTP,
+                    TransactionID, TransactionDate, Description, CustomerName, BTP,
                     MatchPercentage, MatchCount, TotalTransactions, LastLineNumber,
                     TotalBTPOptions, OptionNumber, IsBest, IsLatest, Status
                 )
                 VALUES (
                     @CurrentTransactionID,
-                    @CurrentDescription,
+                    @CurrentTransactionDate,
+                @CurrentDescription,
                     @CustomerName,
                     NULL,
                     0,
@@ -283,12 +288,13 @@ BEGIN
         BEGIN
             -- Could not extract customer name
             INSERT INTO @Results (
-                TransactionID, Description, CustomerName, BTP,
+                TransactionID, TransactionDate, Description, CustomerName, BTP,
                 MatchPercentage, MatchCount, TotalTransactions, LastLineNumber,
                 TotalBTPOptions, OptionNumber, IsBest, IsLatest, Status
             )
             VALUES (
                 @CurrentTransactionID,
+                @CurrentTransactionDate,
                 @CurrentDescription,
                 NULL,
                 NULL,
@@ -304,7 +310,7 @@ BEGIN
             );
         END
         
-        FETCH NEXT FROM trans_cursor INTO @CurrentTransactionID, @CurrentDescription;
+        FETCH NEXT FROM trans_cursor INTO @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
     END
     
     CLOSE trans_cursor;
@@ -316,6 +322,7 @@ BEGIN
     
     SELECT
         TransactionID,
+        TransactionDate,
         Description,
         CustomerName,
         BTP,

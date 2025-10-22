@@ -183,6 +183,7 @@ class BCAStatementParser {
     getTransactionsForStoredProcedure() {
         return this.result.transactions.map(t => ({
             TransactionID: t.TransactionID,
+            TransactionDate: t.TransactionDate,
             Description: t.Description
         }));
     }

@@ -1,0 +1,58 @@
+[
+  {
+    "TransactionID": 1,
+    "TransactionDate": "08/10/2025",
+    "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00  ELLA CAROLINE"
+  },
+  {
+    "TransactionID": 2,
+    "TransactionDate": "08/10/2025",
+    "Description": "TRSF E-BANKING CR 0810/FTSCY/WS95051 455520.00  inv tgl 16-09-25 PANNA BERKAT MANDI"
+  },
+  {
+    "TransactionID": 3,
+    "TransactionDate": "08/10/2025",
+    "Description": "TRSF E-BANKING CR 0810/FTSCY/WS95051 227760.00  inv tgl 18-09-25 BOGARINDO MULTI RA"
+  },
+  {
+    "TransactionID": 4,
+    "TransactionDate": "08/10/2025",
+    "Description": "TRSF E-BANKING CR 0810/FTSCY/WS95051 227760.00  inv tgl 23-09-25 BOGARINDO MULTI RA"
+  },
+  {
+    "TransactionID": 5,
+    "TransactionDate": "08/10/2025",
+    "Description": "BI-FAST CR TRANSFER   DR 032 PT Kerry Ingredien"
+  },
+  {
+    "TransactionID": 16,
+    "TransactionDate": "08/10/2025",
+    "Description": "KR OTOMATIS LLG-MANDIRI SUMBER ALFARIA TRI  RDPRLLG081025019"
+  },
+  {
+    "TransactionID": 17,
+    "TransactionDate": "08/10/2025",
+    "Description": "KR OTOMATIS LLG-MANDIRI FAJAR MITRA INDAH  PT. Fajar Mitra In da"
+  },
+  {
+    "TransactionID": 21,
+    "TransactionDate": "08/10/2025",
+    "Description": "KR OTOMATIS LLG-CIMB NIAGA PT.RUANG MAHA KARY  0000002316 11PI000 3899 100325 B H55  0"
+  },
+  {
+    "TransactionID": 26,
+    "TransactionDate": "08/10/2025",
+    "Description": "KR OTOMATIS LLG-CIMB NIAGA PT.ANUGRAH BERKAT"
+  },
+  {
+    "TransactionID": 8,
+    "TransactionDate": "08/10/2025",
+    "Description": "KR OTOMATIS LLG-DBS INDONESIA CITRA HASMORE KULI  KWT/GDI-INDO/2025/ 09/1124128"
+  },
+  {
+    "TransactionID": 9,
+    "TransactionDate": "08/10/2025",
+    "Description": "KR OTOMATIS LLG-HSBC INDONESIA PT BUMI CIPTA RASA"
+  }
+]
+

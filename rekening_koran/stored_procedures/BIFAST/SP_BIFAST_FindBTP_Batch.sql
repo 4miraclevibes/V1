@@ -17,16 +17,19 @@ BEGIN
     DECLARE @Inputs TABLE (
         RowID INT IDENTITY(1,1),
         TransactionID NVARCHAR(50),  -- Optional identifier dari client
+        TransactionDate NVARCHAR(50),  -- Transaction date from statement
         Description NVARCHAR(500)
     );
     
-    INSERT INTO @Inputs (TransactionID, Description)
+    INSERT INTO @Inputs (TransactionID, TransactionDate, Description)
     SELECT 
         ISNULL(TransactionID, CAST(ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS NVARCHAR(50))) AS TransactionID,
+        TransactionDate,
         Description
     FROM OPENJSON(@InputJSON)
     WITH (
         TransactionID NVARCHAR(50) '$.transaction_id',
+        TransactionDate NVARCHAR(50) '$.transaction_date',
         Description NVARCHAR(500) '$.description'
     );
     
@@ -40,6 +43,7 @@ BEGIN
     DECLARE @Results TABLE (
         RowID INT,
         TransactionID NVARCHAR(50),
+        TransactionDate NVARCHAR(50),
         Description NVARCHAR(500),
         CustomerName NVARCHAR(200),
         BTP NVARCHAR(100),
@@ -58,6 +62,7 @@ BEGIN
     -- Helper function variables
     DECLARE @CurrentRowID INT;
     DECLARE @CurrentTransactionID NVARCHAR(50);
+    DECLARE @CurrentTransactionDate NVARCHAR(50);
     DECLARE @CurrentDescription NVARCHAR(500);
     DECLARE @CustomerName NVARCHAR(200);
     DECLARE @BestBTP NVARCHAR(100);
@@ -68,10 +73,10 @@ BEGIN
     
     -- Cursor untuk process each description
     DECLARE desc_cursor CURSOR FOR 
-        SELECT RowID, TransactionID, Description FROM @Inputs;
+        SELECT RowID, TransactionID, TransactionDate, Description FROM @Inputs;
     
     OPEN desc_cursor;
-    FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentDescription;
+    FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
     
     WHILE @@FETCH_STATUS = 0
     BEGIN
@@ -200,7 +205,7 @@ BEGIN
                 
                 -- Insert ALL options sebagai rows terpisah
                 INSERT INTO @Results (
-                    RowID, TransactionID, Description, CustomerName, 
+                    RowID, TransactionID, TransactionDate, Description, CustomerName, 
                     BTP, MatchPercentage, MatchCount, TotalTransactions, 
                     LastLineNumber, TotalBTPOptions, OptionNumber, 
                     IsBest, IsLatest, Status
@@ -208,6 +213,7 @@ BEGIN
                 SELECT 
                     @CurrentRowID,
                     @CurrentTransactionID,
+                    @CurrentTransactionDate,
                     @CurrentDescription,
                     @CustomerName,
                     t.BTP,
@@ -234,7 +240,7 @@ BEGIN
             BEGIN
                 -- No match found
                 INSERT INTO @Results (
-                    RowID, TransactionID, Description, CustomerName, 
+                    RowID, TransactionID, TransactionDate, Description, CustomerName, 
                     BTP, MatchPercentage, MatchCount, TotalTransactions, 
                     LastLineNumber, TotalBTPOptions, OptionNumber, 
                     IsBest, IsLatest, Status
@@ -242,6 +248,7 @@ BEGIN
                 VALUES (
                     @CurrentRowID,
                     @CurrentTransactionID,
+                    @CurrentTransactionDate,
                     @CurrentDescription,
                     @CustomerName,
                     NULL, NULL, NULL, NULL, NULL,
@@ -253,7 +260,7 @@ BEGIN
         BEGIN
             -- Customer name not extracted
             INSERT INTO @Results (
-                RowID, TransactionID, Description, CustomerName, 
+                RowID, TransactionID, TransactionDate, Description, CustomerName, 
                 BTP, MatchPercentage, MatchCount, TotalTransactions, 
                 LastLineNumber, TotalBTPOptions, OptionNumber, 
                 IsBest, IsLatest, Status
@@ -261,14 +268,15 @@ BEGIN
             VALUES (
                 @CurrentRowID,
                 @CurrentTransactionID,
-                @CurrentDescription,
+                @CurrentTransactionDate,
+                    @CurrentDescription,
                 @CustomerName,
                 NULL, NULL, NULL, NULL, NULL,
                 0, NULL, 0, 0, 'NO_PATTERN'
             );
         END;
         
-        FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentDescription;
+        FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
     END
     
     CLOSE desc_cursor;
@@ -280,6 +288,7 @@ BEGIN
     
     SELECT 
         TransactionID,
+        TransactionDate,
         Description,
         CustomerName,
         BTP,
