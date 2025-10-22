@@ -12,6 +12,10 @@
 USE POWERAPPS;
 GO
 
+-- Step 0: Clean up any existing temp table
+IF OBJECT_ID('tempdb..#TempResults') IS NOT NULL
+    DROP TABLE #TempResults;
+
 -- Step 1: Declare your JSON
 DECLARE @JSON NVARCHAR(MAX) = N'[
     {"TransactionID": 1, "TransactionDate": "01/10/2024", "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE"},
