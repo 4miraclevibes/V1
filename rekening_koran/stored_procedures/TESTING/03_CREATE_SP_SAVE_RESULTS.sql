@@ -46,9 +46,32 @@ BEGIN
     
     BEGIN TRY
         -- Execute MASTER SP langsung (sudah di database yang sama)
+        -- Using WITH RESULT SETS to explicitly define which result set to capture
         INSERT INTO #MasterResults
         EXEC [dbo].[SP_MASTER_FindBTP_Batch] 
-            @TransactionsJSON = @TransactionsJSON;
+            @TransactionsJSON = @TransactionsJSON
+        WITH RESULT SETS (
+            (
+                TransactionID INT,
+                TransactionDate NVARCHAR(50),
+                Description NVARCHAR(MAX),
+                CustomerName NVARCHAR(200),
+                BTP NVARCHAR(50),
+                MatchPercentage DECIMAL(5,2),
+                MatchCount INT,
+                TotalTransactions INT,
+                LastLineNumber INT,
+                TotalBTPOptions INT,
+                OptionNumber INT,
+                BestFlag NVARCHAR(10),
+                LatestFlag NVARCHAR(10),
+                Label NVARCHAR(50),
+                Status NVARCHAR(20),
+                Message NVARCHAR(500),
+                BankType NVARCHAR(50),
+                ProcessedAt DATETIME
+            )
+        );
         
         -- Count results
         DECLARE @ResultCount INT;
