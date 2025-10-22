@@ -439,6 +439,9 @@ BEGIN
     PRINT '';
     PRINT 'Banks Processed:';
     
+    -- Summary result set (commented out for compatibility with SP_MASTER_FindBTP_And_Save)
+    -- Uncomment if you want to see summary when calling MASTER SP directly
+    /*
     SELECT 
         BankType,
         COUNT(DISTINCT TransactionID) as Transactions,
@@ -446,6 +449,7 @@ BEGIN
     FROM @AllResults
     GROUP BY BankType
     ORDER BY BankType;
+    */
     
     PRINT '═══════════════════════════════════════════════════════════════════════';
 END;
