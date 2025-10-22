@@ -67,7 +67,7 @@ BEGIN
         BankType NVARCHAR(50)
     );
     
-    -- Results from all banks
+    -- Results from all banks (19 columns total)
     DECLARE @AllResults TABLE (
         TransactionID INT,
         TransactionDate NVARCHAR(50),
@@ -86,7 +86,7 @@ BEGIN
         Status NVARCHAR(20),
         Message NVARCHAR(500),
         BankType NVARCHAR(50),
-        ProcessedAt DATETIME
+        ProcessedAt DATETIME  -- Column 18: Added back!
     );
     
     -- ═══════════════════════════════════════════════════════════════════════
