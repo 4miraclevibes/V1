@@ -21,9 +21,8 @@ DECLARE @JSON_Test1 NVARCHAR(MAX) = N'[
   {"TransactionID": 8, "TransactionDate": "08/10/2025", "Description": "KR OTOMATIS LLG-DBS INDONESIA CITRA HASMORE KULI  KWT/GDI-INDO/2025/ 09/1124128"}
 ]';
 
-EXEC rekening_koran_testing.dbo.SP_MASTER_FindBTP_And_Save 
-    @TransactionsJSON = @JSON_Test1,
-    @SourceDatabase = 'POWERAPPS';  -- ⚠️ GANTI dengan nama database Anda!
+EXEC POWERAPPS.dbo.SP_MASTER_FindBTP_And_Save 
+    @TransactionsJSON = @JSON_Test1;
 
 GO
 
@@ -37,7 +36,7 @@ PRINT 'TEST 2: View Saved Results';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 PRINT '';
 
-USE rekening_koran_testing;
+USE POWERAPPS;
 GO
 
 -- Show all saved results
@@ -82,22 +81,22 @@ PRINT 'Useful Queries:';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 PRINT '';
 PRINT '-- 1. View latest results:';
-PRINT 'SELECT TOP 10 * FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS ORDER BY ResultID DESC;';
+PRINT 'SELECT TOP 10 * FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS ORDER BY ResultID DESC;';
 PRINT '';
 PRINT '-- 2. View results by BankType:';
-PRINT 'SELECT * FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS WHERE BankType = ''TRSF'';';
+PRINT 'SELECT * FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS WHERE BankType = ''TRSF'';';
 PRINT '';
 PRINT '-- 3. View only successful matches:';
-PRINT 'SELECT * FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS WHERE Status IN (''EXCELLENT'', ''GOOD'', ''FAIR'');';
+PRINT 'SELECT * FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS WHERE Status IN (''EXCELLENT'', ''GOOD'', ''FAIR'');';
 PRINT '';
 PRINT '-- 4. View failed matches:';
-PRINT 'SELECT * FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS WHERE Status IN (''NO_MATCH'', ''NO_PATTERN'');';
+PRINT 'SELECT * FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS WHERE Status IN (''NO_MATCH'', ''NO_PATTERN'');';
 PRINT '';
 PRINT '-- 5. Clear all test data:';
-PRINT 'TRUNCATE TABLE rekening_koran_testing.dbo.BTP_MATCHING_RESULTS;';
+PRINT 'TRUNCATE TABLE POWERAPPS.dbo.BTP_MATCHING_RESULTS;';
 PRINT '';
 PRINT '-- 6. Count results by date:';
-PRINT 'SELECT TransactionDate, COUNT(*) AS Total FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS GROUP BY TransactionDate;';
+PRINT 'SELECT TransactionDate, COUNT(*) AS Total FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS GROUP BY TransactionDate;';
 PRINT '';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 GO

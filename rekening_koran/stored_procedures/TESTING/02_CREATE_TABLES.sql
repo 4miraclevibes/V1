@@ -2,10 +2,10 @@
 -- CREATE TABLES FOR TESTING
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Purpose: Create table untuk menyimpan hasil dari MASTER SP
--- Database: rekening_koran_testing
+-- Database: POWERAPPS (existing database)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-USE rekening_koran_testing;
+USE POWERAPPS;
 GO
 
 -- ═══════════════════════════════════════════════════════════════════════════

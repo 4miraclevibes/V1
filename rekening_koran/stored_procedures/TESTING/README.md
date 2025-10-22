@@ -1,15 +1,14 @@
-# Testing Database - rekening_koran_testing
+# Testing Table - BTP_MATCHING_RESULTS
 
-Database testing untuk menyimpan dan menganalisis hasil dari `SP_MASTER_FindBTP_Batch`.
+Table testing untuk menyimpan dan menganalisis hasil dari `SP_MASTER_FindBTP_Batch` di database **POWERAPPS** yang sudah ada.
 
 ## 📋 Setup Instructions
 
-### Step 1: Create Database
+### Step 1: ⚠️ SKIP - Database Sudah Ada
 ```sql
-:r 01_CREATE_DATABASE.sql
+-- SKIP FILE INI! Database POWERAPPS sudah ada.
+-- Langsung ke Step 2.
 ```
-- Creates database `rekening_koran_testing`
-- Drops existing database if exists
 
 ### Step 2: Create Tables
 ```sql
@@ -44,14 +43,12 @@ DECLARE @JSON NVARCHAR(MAX) = N'[
   {"TransactionID": 5, "TransactionDate": "08/10/2025", "Description": "BI-FAST CR TRANSFER   DR 032 PT Kerry Ingredien"}
 ]';
 
-EXEC rekening_koran_testing.dbo.SP_MASTER_FindBTP_And_Save 
-    @TransactionsJSON = @JSON,
-    @SourceDatabase = 'POWERAPPS';  -- Ganti dengan database Anda
+EXEC POWERAPPS.dbo.SP_MASTER_FindBTP_And_Save 
+    @TransactionsJSON = @JSON;
 ```
 
 **Parameters:**
 - `@TransactionsJSON` - JSON array of transactions (PascalCase: TransactionID, TransactionDate, Description)
-- `@SourceDatabase` - Nama database dimana MASTER SP berada (default: 'POWERAPPS')
 
 ---
 
@@ -95,28 +92,28 @@ EXEC rekening_koran_testing.dbo.SP_MASTER_FindBTP_And_Save
 ### 1. View Latest Results
 ```sql
 SELECT TOP 10 * 
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS 
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS 
 ORDER BY ResultID DESC;
 ```
 
 ### 2. View Results by BankType
 ```sql
 SELECT * 
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS 
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS 
 WHERE BankType = 'TRSF';
 ```
 
 ### 3. View Only Successful Matches
 ```sql
 SELECT * 
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS 
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS 
 WHERE Status IN ('EXCELLENT', 'GOOD', 'FAIR');
 ```
 
 ### 4. View Failed Matches
 ```sql
 SELECT * 
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS 
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS 
 WHERE Status IN ('NO_MATCH', 'NO_PATTERN');
 ```
 
@@ -128,7 +125,7 @@ SELECT
     COUNT(DISTINCT TransactionID) AS UniqueTransactions,
     SUM(CASE WHEN Status NOT IN ('NO_MATCH', 'NO_PATTERN') THEN 1 ELSE 0 END) AS MatchedRecords,
     AVG(CASE WHEN Status NOT IN ('NO_MATCH', 'NO_PATTERN') THEN MatchPercentage ELSE NULL END) AS AvgMatchPercentage
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS
 GROUP BY BankType
 ORDER BY BankType;
 ```
@@ -136,14 +133,14 @@ ORDER BY BankType;
 ### 6. View Results by Date Range
 ```sql
 SELECT * 
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS 
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS 
 WHERE TransactionDate BETWEEN '01/10/2025' AND '31/10/2025';
 ```
 
 ### 7. View Multiple BTP Options
 ```sql
 SELECT * 
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS 
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS 
 WHERE TotalBTPOptions > 1
 ORDER BY TransactionID, OptionNumber;
 ```
@@ -158,12 +155,12 @@ SELECT
     SUM(CASE WHEN Status = 'LOW' THEN 1 ELSE 0 END) AS LowConfidence,
     SUM(CASE WHEN Status = 'NO_MATCH' THEN 1 ELSE 0 END) AS NoMatch,
     SUM(CASE WHEN Status = 'NO_PATTERN' THEN 1 ELSE 0 END) AS NoPattern
-FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS;
+FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS;
 ```
 
 ### 9. Clear All Test Data
 ```sql
-TRUNCATE TABLE rekening_koran_testing.dbo.BTP_MATCHING_RESULTS;
+TRUNCATE TABLE POWERAPPS.dbo.BTP_MATCHING_RESULTS;
 ```
 
 ---
@@ -186,9 +183,9 @@ TRUNCATE TABLE rekening_koran_testing.dbo.BTP_MATCHING_RESULTS;
            ↓
 2. JSON → SP_MASTER_FindBTP_And_Save
            ↓
-3. Execute MASTER SP (from main database)
+3. Execute MASTER SP (in POWERAPPS database)
            ↓
-4. Save results → rekening_koran_testing.BTP_MATCHING_RESULTS
+4. Save results → POWERAPPS.BTP_MATCHING_RESULTS
            ↓
 5. Analyze results via SQL queries
 ```
@@ -207,8 +204,8 @@ TRUNCATE TABLE rekening_koran_testing.dbo.BTP_MATCHING_RESULTS;
 
 ## ⚠️ Important Notes
 
-1. **Database Name**: Pastikan main database name benar di parameter `@SourceDatabase`
-2. **Permissions**: User harus punya permission untuk execute SP di main database
+1. **Database**: Menggunakan database **POWERAPPS** yang sudah ada (tidak perlu create database baru)
+2. **Permissions**: User harus punya permission untuk execute SP dan create table di POWERAPPS
 3. **Storage**: Table akan grow seiring testing, truncate secara berkala jika perlu
 4. **Indexes**: Sudah include indexes untuk performance, tapi bisa ditambah sesuai kebutuhan
 5. **Backup**: Consider backup table sebelum truncate jika data penting
@@ -218,8 +215,7 @@ TRUNCATE TABLE rekening_koran_testing.dbo.BTP_MATCHING_RESULTS;
 ## 🚀 Quick Start
 
 ```sql
--- 1. Setup (one time)
-:r 01_CREATE_DATABASE.sql
+-- 1. Setup (one time) - SKIP 01_CREATE_DATABASE.sql
 :r 02_CREATE_TABLES.sql
 :r 03_CREATE_SP_SAVE_RESULTS.sql
 
@@ -228,12 +224,11 @@ DECLARE @JSON NVARCHAR(MAX) = N'[
   {"TransactionID": 1, "TransactionDate": "08/10/2025", "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00  ELLA CAROLINE"}
 ]';
 
-EXEC rekening_koran_testing.dbo.SP_MASTER_FindBTP_And_Save 
-    @TransactionsJSON = @JSON,
-    @SourceDatabase = 'POWERAPPS';
+EXEC POWERAPPS.dbo.SP_MASTER_FindBTP_And_Save 
+    @TransactionsJSON = @JSON;
 
 -- 3. View results
-SELECT TOP 10 * FROM rekening_koran_testing.dbo.BTP_MATCHING_RESULTS ORDER BY ResultID DESC;
+SELECT TOP 10 * FROM POWERAPPS.dbo.BTP_MATCHING_RESULTS ORDER BY ResultID DESC;
 ```
 
 **Done!** ✅

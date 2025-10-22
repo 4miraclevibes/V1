@@ -1,17 +1,15 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 -- SP_MASTER_FindBTP_And_Save
 -- ═══════════════════════════════════════════════════════════════════════════
--- Purpose: Execute MASTER SP dan langsung save hasil ke rekening_koran_testing
--- Database: rekening_koran_testing (untuk SP definition)
---           [YourMainDatabase] (untuk execute MASTER SP)
+-- Purpose: Execute MASTER SP dan langsung save hasil ke BTP_MATCHING_RESULTS
+-- Database: POWERAPPS (existing database)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-USE rekening_koran_testing;
+USE POWERAPPS;
 GO
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_MASTER_FindBTP_And_Save]
-    @TransactionsJSON NVARCHAR(MAX),
-    @SourceDatabase NVARCHAR(128) = 'POWERAPPS'  -- Default database tempat MASTER SP berada
+    @TransactionsJSON NVARCHAR(MAX)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -19,7 +17,7 @@ BEGIN
     PRINT '═══════════════════════════════════════════════════════════════════════';
     PRINT 'SP_MASTER_FindBTP_And_Save - Starting';
     PRINT '═══════════════════════════════════════════════════════════════════════';
-    PRINT 'Source Database: ' + @SourceDatabase;
+    PRINT 'Database: POWERAPPS';
     PRINT '';
     
     -- Temp table untuk menampung hasil dari MASTER SP
@@ -44,21 +42,12 @@ BEGIN
         ProcessedAt DATETIME
     );
     
-    -- Build dynamic SQL untuk execute MASTER SP dari database lain
-    DECLARE @SQL NVARCHAR(MAX);
-    SET @SQL = N'
-        INSERT INTO #MasterResults
-        EXEC [' + @SourceDatabase + N'].[dbo].[SP_MASTER_FindBTP_Batch] 
-            @TransactionsJSON = @TransactionsJSON;
-    ';
-    
-    PRINT '🔄 Executing MASTER SP from [' + @SourceDatabase + ']...';
+    PRINT '🔄 Executing MASTER SP...';
     
     BEGIN TRY
-        -- Execute MASTER SP
-        EXEC sp_executesql 
-            @SQL,
-            N'@TransactionsJSON NVARCHAR(MAX)',
+        -- Execute MASTER SP langsung (sudah di database yang sama)
+        INSERT INTO #MasterResults
+        EXEC [dbo].[SP_MASTER_FindBTP_Batch] 
             @TransactionsJSON = @TransactionsJSON;
         
         -- Count results
@@ -193,9 +182,7 @@ PRINT '  {"TransactionID": 1, "TransactionDate": "08/10/2025", "Description": "T
 PRINT '  {"TransactionID": 2, "TransactionDate": "08/10/2025", "Description": "BI-FAST CR..."}';
 PRINT ']'';';
 PRINT '';
-PRINT 'EXEC rekening_koran_testing.dbo.SP_MASTER_FindBTP_And_Save';
-PRINT '    @TransactionsJSON = @JSON,';
-PRINT '    @SourceDatabase = ''POWERAPPS'';  -- Ganti dengan nama database Anda';
+PRINT 'EXEC POWERAPPS.dbo.SP_MASTER_FindBTP_And_Save @TransactionsJSON = @JSON;';
 PRINT '';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 GO
