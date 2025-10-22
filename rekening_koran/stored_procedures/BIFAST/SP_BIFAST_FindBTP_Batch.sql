@@ -16,21 +16,21 @@ BEGIN
     -- Parse JSON input
     DECLARE @Inputs TABLE (
         RowID INT IDENTITY(1,1),
-        TransactionID NVARCHAR(50),  -- Optional identifier dari client
+        TransactionID INT,  -- Optional identifier dari client
         TransactionDate NVARCHAR(50),  -- Transaction date from statement
-        Description NVARCHAR(500)
+        Description NVARCHAR(MAX)
     );
     
     INSERT INTO @Inputs (TransactionID, TransactionDate, Description)
     SELECT 
-        ISNULL(TransactionID, CAST(ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS NVARCHAR(50))) AS TransactionID,
+        ISNULL(TRY_CAST(TransactionID AS INT), CAST(ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS INT)) AS TransactionID,
         TransactionDate,
         Description
     FROM OPENJSON(@InputJSON)
     WITH (
-        TransactionID NVARCHAR(50) '$.transaction_id',
+        TransactionID INT '$.transaction_id',
         TransactionDate NVARCHAR(50) '$.transaction_date',
-        Description NVARCHAR(500) '$.description'
+        Description NVARCHAR(MAX) '$.description'
     );
     
     IF @Debug = 1
@@ -42,11 +42,11 @@ BEGIN
     -- Process each description
     DECLARE @Results TABLE (
         RowID INT,
-        TransactionID NVARCHAR(50),
+        TransactionID INT,
         TransactionDate NVARCHAR(50),
-        Description NVARCHAR(500),
+        Description NVARCHAR(MAX),
         CustomerName NVARCHAR(200),
-        BTP NVARCHAR(100),
+        BTP NVARCHAR(50),
         MatchPercentage DECIMAL(5,2),
         MatchCount INT,
         TotalTransactions INT,
@@ -61,11 +61,11 @@ BEGIN
     
     -- Helper function variables
     DECLARE @CurrentRowID INT;
-    DECLARE @CurrentTransactionID NVARCHAR(50);
+    DECLARE @CurrentTransactionID INT;
     DECLARE @CurrentTransactionDate NVARCHAR(50);
-    DECLARE @CurrentDescription NVARCHAR(500);
+    DECLARE @CurrentDescription NVARCHAR(MAX);
     DECLARE @CustomerName NVARCHAR(200);
-    DECLARE @BestBTP NVARCHAR(100);
+    DECLARE @BestBTP NVARCHAR(50);
     DECLARE @BestMatchPct DECIMAL(5,2);
     DECLARE @BestMatchCount INT;
     DECLARE @BestTotalTrans INT;
@@ -171,7 +171,7 @@ BEGIN
             BEGIN
                 -- Temp table untuk ranking
                 DECLARE @TempOptions TABLE (
-                    BTP NVARCHAR(100),
+                    BTP NVARCHAR(50),
                     MatchPercentage DECIMAL(5,2),
                     MatchCount INT,
                     TotalTransactions INT,
@@ -198,7 +198,7 @@ BEGIN
                     AND UPPER(m.customer_name) = UPPER(@CustomerName);
                 
                 -- Find LATEST (highest line number)
-                DECLARE @LatestBTP NVARCHAR(100);
+                DECLARE @LatestBTP NVARCHAR(50);
                 SELECT TOP 1 @LatestBTP = BTP
                 FROM @TempOptions
                 ORDER BY LastLineNumber DESC;
