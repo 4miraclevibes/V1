@@ -138,14 +138,14 @@ BEGIN
         INSERT INTO #TRSF_Temp
         EXEC SP_TRSF_FindBTP_Batch @InputJSON = @TRSF_JSON;
         
-        -- Insert directly to BTP_REVIEW
+        -- Insert directly to BTP_REVIEW (with auto-populate Notes)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
             CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
-            IsApproved, CreatedAt
+            IsApproved, Notes, CreatedAt
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -153,7 +153,15 @@ BEGIN
             CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, 'TRSF', ProcessedAt,
-            0, GETDATE()
+            0,
+            CASE
+                WHEN Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN Status = 'NO_MATCH' THEN 'Customer "' + CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN Status = 'LOW' THEN 'Match confidence rendah (' + CAST(MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
         FROM #TRSF_Temp;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -193,7 +201,7 @@ BEGIN
             CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
-            IsApproved, CreatedAt
+            IsApproved, Notes, CreatedAt
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -201,7 +209,15 @@ BEGIN
             CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, 'BIFAST', ProcessedAt,
-            0, GETDATE()
+            0,
+            CASE
+                WHEN Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN Status = 'NO_MATCH' THEN 'Customer "' + CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN Status = 'LOW' THEN 'Match confidence rendah (' + CAST(MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
         FROM #BIFAST_Temp;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -241,7 +257,7 @@ BEGIN
             CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
-            IsApproved, CreatedAt
+            IsApproved, Notes, CreatedAt
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -249,7 +265,15 @@ BEGIN
             CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, 'MANDIRI', ProcessedAt,
-            0, GETDATE()
+            0,
+            CASE
+                WHEN Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN Status = 'NO_MATCH' THEN 'Customer "' + CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN Status = 'LOW' THEN 'Match confidence rendah (' + CAST(MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
         FROM #MANDIRI_Temp;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -260,6 +284,66 @@ BEGIN
     
     -- ... Add other banks as needed (BNI, BTPN, BRI, etc.)
     -- For now, just these 3 banks for testing
+    
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- Handle UNKNOWN bank types (save all with proper notes)
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'UNKNOWN')
+    BEGIN
+        PRINT '⚠️  Processing UNKNOWN bank types...';
+        
+        DECLARE @UnknownCount INT;
+        SELECT @UnknownCount = COUNT(*) FROM @Transactions WHERE BankType = 'UNKNOWN';
+        
+        -- Insert UNKNOWN transactions directly with helpful notes
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID,
+            @UploadedBy,
+            @UploadTime,
+            TransactionID,
+            TransactionDate,
+            Description,
+            NULL AS CustomerName,
+            NULL AS BTP,
+            0.00 AS MatchPercentage,
+            0 AS MatchCount,
+            0 AS TotalTransactions,
+            0 AS LastLineNumber,
+            0 AS TotalBTPOptions,
+            0 AS OptionNumber,
+            '' AS BestFlag,
+            '' AS LatestFlag,
+            '' AS Label,
+            'UNKNOWN_BANK' AS Status,
+            'Bank type tidak dikenali - perlu dicek manual atau tambahkan pattern deteksi bank' AS Message,
+            'UNKNOWN' AS BankType,
+            GETDATE() AS ProcessedAt,
+            0 AS IsApproved,
+            CASE 
+                WHEN Description LIKE 'SETORAN%' THEN 'Transaksi SETORAN - tidak perlu BTP matching'
+                WHEN Description LIKE 'DB OTOMATIS%' THEN 'Transaksi DEBIT - tidak perlu BTP matching'
+                WHEN Description LIKE 'SWITCHING%' THEN 'Transaksi SWITCHING - cek apakah perlu ditambahkan ke pattern bank'
+                WHEN Description LIKE 'FLAZZ%' THEN 'Transaksi FLAZZ - tidak perlu BTP matching'
+                WHEN Description LIKE 'KR OTOMATIS%' THEN 'Transaksi KR OTOMATIS tanpa keyword bank spesifik - cek description untuk identifikasi bank'
+                ELSE 'Format transaksi tidak dikenali - perlu review manual untuk identifikasi bank atau kategori'
+            END AS Notes,
+            GETDATE() AS CreatedAt
+        FROM @Transactions
+        WHERE BankType = 'UNKNOWN';
+        
+        SET @ProcessedCount = @ProcessedCount + @UnknownCount;
+        
+        PRINT '⚠️  UNKNOWN bank types saved: ' + CAST(@UnknownCount AS VARCHAR);
+        PRINT '   → These require manual review';
+    END
     
     -- ═══════════════════════════════════════════════════════════════════════
     -- Return results from BTP_REVIEW
