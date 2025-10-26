@@ -286,6 +286,92 @@
             border-left: 4px solid #dc3545;
         }
 
+        /* Toast Notification (Floating) */
+        .toast-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            min-width: 350px;
+            max-width: 500px;
+            padding: 20px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .toast-notification.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .toast-notification.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .toast-notification.info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+
+        .toast-notification .toast-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .toast-notification .toast-message {
+            flex: 1;
+        }
+
+        .toast-notification .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            padding: 0;
+            margin: 0;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-notification .toast-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -294,9 +380,46 @@
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
+
+        /* Scroll to Bottom Button */
+        .scroll-to-bottom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: none;
+        }
+
+        .scroll-to-bottom.show {
+            display: block;
+        }
+
+        .scroll-to-bottom:hover {
+            transform: translateY(2px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .scroll-to-bottom:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
+    <!-- Scroll to Bottom Button -->
+    <button class="scroll-to-bottom" id="scrollToBottomBtn" onclick="scrollToBottom()" title="Scroll ke bawah">
+        ⬇️
+    </button>
+
     <div class="container">
         <div class="header">
             <h1>🏦 BCA Statement Converter</h1>
@@ -392,8 +515,11 @@
                     <button class="btn btn-secondary" onclick="downloadSQLFormat()">
                         <span>🔄</span> Download untuk Stored Procedure
                     </button>
+                    <button class="btn btn-secondary" onclick="copySQLFormat()">
+                        <span>📄</span> Copy for Stored Procedure
+                    </button>
                     <button class="btn btn-warning" onclick="copyToClipboard()">
-                        <span>📋</span> Copy JSON ke Clipboard
+                        <span>📋</span> Copy Full JSON
                     </button>
                 </div>
 
@@ -539,27 +665,82 @@
             showAlert('success', `✅ File ${filename} berhasil di-download!`);
         }
 
-        function copyToClipboard() {
+        function copySQLFormat() {
             const sqlData = parser.getTransactionsForStoredProcedure();
             const jsonString = JSON.stringify(sqlData, null, 2);
             
             navigator.clipboard.writeText(jsonString).then(() => {
-                showAlert('success', '✅ JSON berhasil di-copy ke clipboard!');
+                showAlert('success', '✅ JSON for Stored Procedure berhasil di-copy ke clipboard!');
             }).catch(() => {
                 showAlert('error', '❌ Gagal copy ke clipboard');
             });
         }
 
+        function copyToClipboard() {
+            const jsonString = JSON.stringify(parsedData, null, 2);
+            
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ Full JSON berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide scroll to bottom button based on scroll position
+        window.addEventListener('scroll', () => {
+            const scrollBtn = document.getElementById('scrollToBottomBtn');
+            const results = document.getElementById('results');
+            
+            if (results.classList.contains('show') && window.scrollY < 200) {
+                scrollBtn.classList.add('show');
+            } else {
+                scrollBtn.classList.remove('show');
+            }
+        });
+
         function showAlert(type, message) {
+            // Create toast notification (floating)
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            
+            // Determine icon based on type
+            let icon = '✅';
+            if (type === 'error') icon = '❌';
+            if (type === 'info') icon = 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            document.body.appendChild(toast);
+
+            // Auto remove after 5 seconds with slide out animation
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.4s ease-out';
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 5000);
+
+            // Also add to alert container (for page history)
             const container = document.getElementById('alertContainer');
             const alert = document.createElement('div');
             alert.className = `alert alert-${type} fade-in`;
-            alert.textContent = message;
+            alert.textContent = message.replace(/✅|❌|ℹ️/g, '').trim();
             container.appendChild(alert);
 
             setTimeout(() => {
                 alert.remove();
-            }, 5000);
+            }, 8000);
         }
     </script>
 </body>

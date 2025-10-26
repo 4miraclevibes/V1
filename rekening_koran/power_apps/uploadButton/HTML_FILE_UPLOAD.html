@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .file-upload-container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .upload-btn {
+            border: 2px solid #0078d4;
+            color: white;
+            background-color: #0078d4;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .upload-btn:hover {
+            background-color: #106ebe;
+        }
+        
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-upload-container">
+        <div class="upload-btn-wrapper">
+            <button class="upload-btn">📎 Choose JSON File</button>
+            <input type="file" accept=".json" id="fileInput" onchange="readFile(event)" />
+        </div>
+        <div class="file-info" id="fileInfo">No file selected</div>
+    </div>
+
+    <script>
+        function readFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileInfo').textContent = `Selected: ${file.name}`;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    // Send to Power Apps via postMessage
+                    window.parent.postMessage({
+                        type: 'fileContent',
+                        content: content,
+                        fileName: file.name
+                    }, '*');
+                };
+                reader.readAsText(file);
+            }
+        }
+    </script>
+</body>
+</html>
+
