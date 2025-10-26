@@ -1,0 +1,53 @@
+[
+  {
+    "TransactionID": 1,
+    "TransactionDate": "2025-10-15",
+    "Description": "TRSF E-BANKING DR 1234567890 SEJIWA COFFEE ADIT"
+  },
+  {
+    "TransactionID": 2,
+    "TransactionDate": "2025-10-15",
+    "Description": "TRSF E-BANKING DR 9876543210 WARUNG MAKAN PAK BUDI"
+  },
+  {
+    "TransactionID": 3,
+    "TransactionDate": "2025-10-16",
+    "Description": "BI-FAST CR-AGRO JAYA SENTOSA"
+  },
+  {
+    "TransactionID": 4,
+    "TransactionDate": "2025-10-16",
+    "Description": "BI-FAST CR-TOKO ELEKTRONIK SEJAHTERA"
+  },
+  {
+    "TransactionID": 5,
+    "TransactionDate": "2025-10-17",
+    "Description": "LLG-MANDIRI/JAKARTA/IDR/PT MAJU BERSAMA INDONESIA"
+  },
+  {
+    "TransactionID": 6,
+    "TransactionDate": "2025-10-17",
+    "Description": "LLG-BNI/SURABAYA/IDR/CV SUMBER REZEKI"
+  },
+  {
+    "TransactionID": 7,
+    "TransactionDate": "2025-10-18",
+    "Description": "TRSF E-BANKING DR 1111222233 CUSTOMER TIDAK ADA DI MASTER"
+  },
+  {
+    "TransactionID": 8,
+    "TransactionDate": "2025-10-18",
+    "Description": "SETORAN TUNAI ATM"
+  },
+  {
+    "TransactionID": 9,
+    "TransactionDate": "2025-10-19",
+    "Description": "DB OTOMATIS BIAYA ADMIN"
+  },
+  {
+    "TransactionID": 10,
+    "TransactionDate": "2025-10-19",
+    "Description": "SWITCHING CR-KE REK LAIN"
+  }
+]
+
