@@ -8,7 +8,7 @@ GO
 -- Step 1: Cek jumlah data di table sumber
 PRINT '=== STEP 1: CEK DATA SUMBER ==='
 SELECT COUNT(*) as 'Jumlah Data di MP_CUSTOMER_NEW_28_10_2025'
-FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_28_10_2025]
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_28_10_2025]
 GO
 
 -- Step 2: Cek jumlah data di table target (sebelum truncate)
@@ -37,7 +37,7 @@ SELECT TOP 10
     [name],
     [distributor_id],
     [city]
-FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_28_10_2025]
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_28_10_2025]
 GO
 
 -- Step 5: Insert semua data dari table sumber
@@ -70,7 +70,7 @@ SELECT
     [regency_id],
     [created_at],
     [updated_at]
-FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_28_10_2025]
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_28_10_2025]
 
 -- Tampilkan jumlah record yang berhasil diinsert
 PRINT 'Jumlah record yang berhasil diinsert: ' + CAST(@@ROWCOUNT AS VARCHAR)
