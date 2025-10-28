@@ -10,7 +10,7 @@ CREATE TABLE [Distributors] (
 
 );
  
-INSERT INTO [distributors] ([distributor], [sub_region_id]) VALUES
+INSERT INTO [distributors] ([Distributor], [SubRegionId]) VALUES
     ('KACS', '1'),
     ('PT. CAHAYA INTI PUTRA SEJAHTERA - BANDUNG', '2'),
     ('PT. CAHAYA INTI PUTRA SEJAHTERA - CIREBON', '2'),

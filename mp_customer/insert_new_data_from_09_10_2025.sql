@@ -1,42 +1,47 @@
--- Script untuk insert data baru dari MP_CUSTOMER_NEW_09_10_2025 ke MP_CUSTOMER_NEW
--- Data dianggap baru jika kombinasi name, code, dan distributor_id belum ada
+-- Script untuk replace data MP_CUSTOMER_NEW dengan data dari MP_CUSTOMER_NEW_28_10_2025
+-- Table MP_CUSTOMER_NEW akan di-truncate dulu, lalu diisi dengan data baru
 -- Estimasi waktu: beberapa detik sampai beberapa menit untuk 140k records
 
 USE [POWERAPPS]
 GO
 
--- Step 1: Cek jumlah data yang akan diinsert (data baru)
-PRINT '=== STEP 1: CEK DATA YANG AKAN DIINSERT ==='
-SELECT COUNT(*) as 'Jumlah Data Baru Yang Akan Diinsert'
-FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_09_10_2025] src
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] tgt
-    WHERE tgt.[name] = src.[name] 
-      AND tgt.[code] = src.[code]
-      AND tgt.[distributor_id] = src.[distributor_id]
-)
+-- Step 1: Cek jumlah data di table sumber
+PRINT '=== STEP 1: CEK DATA SUMBER ==='
+SELECT COUNT(*) as 'Jumlah Data di MP_CUSTOMER_NEW_28_10_2025'
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_28_10_2025]
 GO
 
--- Step 2: Tampilkan sample data yang akan diinsert
-PRINT '=== STEP 2: SAMPLE DATA YANG AKAN DIINSERT (10 RECORD PERTAMA) ==='
+-- Step 2: Cek jumlah data di table target (sebelum truncate)
+PRINT '=== STEP 2: CEK DATA TARGET (SEBELUM TRUNCATE) ==='
+SELECT COUNT(*) as 'Jumlah Data di MP_CUSTOMER_NEW (Sebelum Truncate)'
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
+GO
+
+-- Step 3: Truncate table target
+PRINT '=== STEP 3: TRUNCATE TABLE MP_CUSTOMER_NEW ==='
+IF EXISTS (SELECT * FROM sysobjects WHERE name='MP_CUSTOMER_NEW' AND xtype='U')
+BEGIN
+    TRUNCATE TABLE [POWERAPPS].[dbo].[MP_CUSTOMER_NEW];
+    PRINT 'Table MP_CUSTOMER_NEW berhasil di-truncate.';
+END
+ELSE
+BEGIN
+    PRINT 'Table MP_CUSTOMER_NEW tidak ditemukan!';
+END
+GO
+
+-- Step 4: Tampilkan sample data yang akan diinsert
+PRINT '=== STEP 4: SAMPLE DATA YANG AKAN DIINSERT (10 RECORD PERTAMA) ==='
 SELECT TOP 10 
-    src.[code],
-    src.[name],
-    src.[distributor_id],
-    src.[city]
-FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_09_10_2025] src
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] tgt
-    WHERE tgt.[name] = src.[name] 
-      AND tgt.[code] = src.[code]
-      AND tgt.[distributor_id] = src.[distributor_id]
-)
+    [code],
+    [name],
+    [distributor_id],
+    [city]
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_28_10_2025]
 GO
 
--- Step 3: Insert data baru
-PRINT '=== STEP 3: MULAI INSERT DATA BARU ==='
+-- Step 5: Insert semua data dari table sumber
+PRINT '=== STEP 5: MULAI INSERT DATA ==='
 PRINT 'Waktu mulai: ' + CONVERT(VARCHAR, GETDATE(), 120)
 
 BEGIN TRANSACTION
@@ -55,24 +60,17 @@ INSERT INTO [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
     [updated_at]
 )
 SELECT 
-    src.[code],
-    src.[name],
-    src.[city],
-    src.[createdate],
-    src.[distributor_id],
-    src.[account_id],
-    src.[account_trading_term],
-    src.[regency_id],
-    src.[created_at],
-    src.[updated_at]
-FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_09_10_2025] src
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] tgt
-    WHERE tgt.[name] = src.[name] 
-      AND tgt.[code] = src.[code]
-      AND tgt.[distributor_id] = src.[distributor_id]
-)
+    [code],
+    [name],
+    [city],
+    [createdate],
+    [distributor_id],
+    [account_id],
+    [account_trading_term],
+    [regency_id],
+    [created_at],
+    [updated_at]
+FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW_28_10_2025]
 
 -- Tampilkan jumlah record yang berhasil diinsert
 PRINT 'Jumlah record yang berhasil diinsert: ' + CAST(@@ROWCOUNT AS VARCHAR)
