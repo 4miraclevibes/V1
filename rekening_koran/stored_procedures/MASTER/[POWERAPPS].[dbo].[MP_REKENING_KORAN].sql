@@ -1,0 +1,8 @@
+SELECT [id]
+      ,[trx_date]
+      ,[created_at]
+      ,[updated_at]
+      ,[credit]
+      ,[btp]
+      ,[desc]
+  FROM [POWERAPPS].[dbo].[MP_REKENING_KORAN]
