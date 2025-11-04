@@ -215,14 +215,16 @@ BEGIN
                 last_line_number,
                 ROW_NUMBER() OVER (
                     ORDER BY 
+                        CASE WHEN category = 'DBS' THEN 1 ELSE 2 END,
                         match_percentage DESC,
                         last_line_number DESC,
                         match_count DESC
                 ) as RowNum
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN]
             WHERE customer_name = @CustomerName
-              AND category = 'DBS'
+              AND (category = 'DBS' OR category = 'NEW')
             ORDER BY 
+                CASE WHEN category = 'DBS' THEN 1 ELSE 2 END,
                 match_percentage DESC,
                 last_line_number DESC,
                 match_count DESC;

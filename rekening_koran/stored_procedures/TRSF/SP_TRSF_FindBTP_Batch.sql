@@ -163,7 +163,7 @@ BEGIN
             -- Count total options
             SELECT @TotalOptions = COUNT(DISTINCT btp)
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
-            WHERE m.category = 'TRSF'
+            WHERE (m.category = 'TRSF' OR m.category = 'NEW')
                 AND UPPER(m.customer_name) = UPPER(@CustomerName);
             
             -- Insert ALL BTP options (multiple rows for same customer)
@@ -189,12 +189,13 @@ BEGIN
                     m.last_line_number,
                     ROW_NUMBER() OVER (
                         ORDER BY 
+                            CASE WHEN m.category = 'TRSF' THEN 1 ELSE 2 END,
                             m.match_percentage DESC,
                             m.total_transactions DESC,
                             m.last_line_number DESC
                     ) AS OptionNumber
                 FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
-                WHERE m.category = 'TRSF'
+                WHERE (m.category = 'TRSF' OR m.category = 'NEW')
                     AND UPPER(m.customer_name) = UPPER(@CustomerName);
                 
                 -- Find LATEST (highest line number)
