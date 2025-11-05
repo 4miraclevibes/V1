@@ -61,10 +61,11 @@ BEGIN
         IsBest BIT,
         IsLatest BIT,
         Status NVARCHAR(20),
+        DataSource NVARCHAR(50),  -- Flag untuk notes: 'MASTER_CUSTOMER_BTP_PATTERN' atau 'MP_CUSTOMER_NEW'
         ProcessedAt DATETIME DEFAULT GETDATE()
     );
     
-    -- Helper function variables
+        -- Helper function variables
     DECLARE @CurrentRowID INT;
     DECLARE @CurrentTransactionID INT;
     DECLARE @CurrentTransactionDate NVARCHAR(50);
@@ -76,6 +77,7 @@ BEGIN
     DECLARE @BestMatchCount INT;
     DECLARE @BestTotalTrans INT;
     DECLARE @TotalOptions INT;
+    DECLARE @DataSource NVARCHAR(50);  -- Untuk track data source: 'MASTER_CUSTOMER_BTP_PATTERN' atau 'MP_CUSTOMER_NEW'
     
     -- Cursor untuk process each description
     DECLARE desc_cursor CURSOR FOR 
@@ -92,6 +94,7 @@ BEGIN
         
         SET @CustomerName = NULL;
         SET @ExtractedBTP = NULL;
+        SET @DataSource = 'MASTER_CUSTOMER_BTP_PATTERN';  -- Reset data source untuk setiap transaction
         
         DECLARE @Words TABLE (WordIndex INT, Word NVARCHAR(100));
         DECLARE @WordCount INT = 0;
@@ -145,13 +148,13 @@ BEGIN
                 RowID, TransactionID, TransactionDate, Description,
                 CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
                 LastLineNumber, TotalBTPOptions, OptionNumber, IsBest, IsLatest,
-                Status, ProcessedAt
+                Status, DataSource, ProcessedAt
             )
             VALUES (
                 @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription,
                 NULL, NULL, NULL, NULL, NULL,
                 NULL, 0, 0, 0, 0,
-                'NO_PATTERN', GETDATE()
+                'NO_PATTERN', NULL, GETDATE()
             );
             
             FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
@@ -175,13 +178,13 @@ BEGIN
                 RowID, TransactionID, TransactionDate, Description,
                 CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
                 LastLineNumber, TotalBTPOptions, OptionNumber, IsBest, IsLatest,
-                Status, ProcessedAt
+                Status, DataSource, ProcessedAt
             )
             VALUES (
                 @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription,
                 NULL, NULL, NULL, NULL, NULL,
                 NULL, 0, 0, 0, 0,
-                'NO_BTP', GETDATE()
+                'NO_BTP', NULL, GETDATE()
             );
             
             FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
@@ -190,6 +193,7 @@ BEGIN
         
         -- =====================================================
         -- Step 3: Cari di master dengan BTP, ambil customer_name
+        -- Fallback: Jika tidak ketemu, cari di MP_CUSTOMER_NEW dengan BTP, ambil BTN
         -- =====================================================
         
         DECLARE @CustomerNameFromBTP NVARCHAR(200);
@@ -197,7 +201,9 @@ BEGIN
         DECLARE @BTPMatchCount INT;
         DECLARE @BTPTotalTrans INT;
         DECLARE @BTPLastLine INT;
+        DECLARE @DataSource NVARCHAR(50) = 'MASTER_CUSTOMER_BTP_PATTERN';  -- Flag untuk notes
         
+        -- Step 3a: Cari di MASTER_CUSTOMER_BTP_PATTERN dengan BTP
         SELECT TOP 1 
             @CustomerNameFromBTP = LTRIM(RTRIM(m.customer_name)),
             @BTPMatchPct = m.match_percentage,
@@ -212,20 +218,47 @@ BEGIN
             m.total_transactions DESC,
             m.last_line_number DESC;
         
+        -- Step 3b: Fallback - Jika tidak ketemu di master, cari di MP_CUSTOMER_NEW dengan BTP, ambil BTN
         IF @CustomerNameFromBTP IS NULL
         BEGIN
-            -- Customer name not found in master (BTP tidak ada di master)
+            DECLARE @BTNFromMPCustomer NVARCHAR(200);
+            
+            SELECT TOP 1 
+                @BTNFromMPCustomer = LTRIM(RTRIM(c.btn))
+            FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] c
+            WHERE c.btp = @ExtractedBTP
+                AND c.btn IS NOT NULL
+                AND LEN(LTRIM(RTRIM(c.btn))) >= 3
+            ORDER BY c.created_at DESC;
+            
+            IF @BTNFromMPCustomer IS NOT NULL
+            BEGIN
+                -- Ketemu di MP_CUSTOMER_NEW, gunakan BTN sebagai CustomerName
+                SET @CustomerNameFromBTP = @BTNFromMPCustomer;
+                SET @DataSource = 'MP_CUSTOMER_NEW';  -- Flag untuk notes
+                
+                -- Set default values untuk metadata (karena tidak ada di MP_CUSTOMER_NEW)
+                SET @BTPMatchPct = 100.00;  -- Assume 100% karena exact match by BTP
+                SET @BTPMatchCount = 1;
+                SET @BTPTotalTrans = 1;
+                SET @BTPLastLine = 0;
+            END
+        END
+        
+        IF @CustomerNameFromBTP IS NULL
+        BEGIN
+            -- Customer name not found in master or MP_CUSTOMER_NEW (BTP tidak ada di kedua tempat)
             INSERT INTO @Results (
                 RowID, TransactionID, TransactionDate, Description,
                 CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
                 LastLineNumber, TotalBTPOptions, OptionNumber, IsBest, IsLatest,
-                Status, ProcessedAt
+                Status, DataSource, ProcessedAt
             )
             VALUES (
                 @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription,
                 NULL, @ExtractedBTP, NULL, NULL, NULL,
                 NULL, 0, 0, 0, 0,
-                'NO_MATCH', GETDATE()
+                'NO_MATCH', NULL, GETDATE()
             );
             
             FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
@@ -309,7 +342,7 @@ BEGIN
                         RowID, TransactionID, TransactionDate, Description,
                         CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
                         LastLineNumber, TotalBTPOptions, OptionNumber, IsBest, IsLatest,
-                        Status, ProcessedAt
+                        Status, DataSource, ProcessedAt
                     )
                     VALUES (
                         @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription,
@@ -317,7 +350,7 @@ BEGIN
                         @OptLastLine, @TotalOptions, @OptNumber, 
                         CASE WHEN @OptNumber = 1 THEN 1 ELSE 0 END,  -- Best = Option 1
                         CASE WHEN @OptNumber = 1 AND @OptLastLine = (SELECT MAX(LastLineNumber) FROM @TempOptions) THEN 1 ELSE 0 END,  -- Latest = highest last_line_number
-                        @Status, GETDATE()
+                        @Status, @DataSource, GETDATE()
                     );
                     
                     FETCH NEXT FROM opt_cursor INTO @OptBTP, @OptMatchPct, @OptMatchCount, @OptTotalTrans, @OptLastLine, @OptNumber;
@@ -340,13 +373,13 @@ BEGIN
                     RowID, TransactionID, TransactionDate, Description,
                     CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
                     LastLineNumber, TotalBTPOptions, OptionNumber, IsBest, IsLatest,
-                    Status, ProcessedAt
+                    Status, DataSource, ProcessedAt
                 )
                 VALUES (
                     @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription,
                     @CustomerName, @ExtractedBTP, @BTPMatchPct, @BTPMatchCount, @BTPTotalTrans,
                     @BTPLastLine, 1, 1, 1, 1,  -- Single option, so it's both BEST and LATEST
-                    @FallbackStatus, GETDATE()
+                    @FallbackStatus, @DataSource, GETDATE()
                 );
             END
         END
@@ -386,13 +419,20 @@ BEGIN
             WHEN Status = 'NO_PATTERN' THEN 'GREENFIEL pattern not found (Array[4] must be "GREENFIEL")'
             WHEN Status = 'NO_BTP' THEN 'BTP not found in description (expected array ending with "23...")'
             WHEN Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(@ExtractedBTP, '') + '" not found in master data or customer has no BTP'
-            WHEN TotalBTPOptions > 1 AND OptionNumber = 1 THEN 'Found ' + CAST(TotalBTPOptions AS VARCHAR) + ' BTP options. This is BEST (Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR) + ')'
-            WHEN TotalBTPOptions > 1 THEN 'Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR)
-            WHEN Status IN ('EXCELLENT', 'GOOD') THEN 'High confidence match'
-            WHEN Status = 'FAIR' THEN 'Medium confidence match'
-            WHEN Status = 'LOW' THEN 'Low confidence match - verify manually'
-            ELSE 'Match found'
+            WHEN TotalBTPOptions > 1 AND OptionNumber = 1 THEN 'Found ' + CAST(TotalBTPOptions AS VARCHAR) + ' BTP options. This is BEST (Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR) + ')' + 
+                CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
+            WHEN TotalBTPOptions > 1 THEN 'Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR) + 
+                CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
+            WHEN Status IN ('EXCELLENT', 'GOOD') THEN 'High confidence match' + 
+                CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
+            WHEN Status = 'FAIR' THEN 'Medium confidence match' + 
+                CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
+            WHEN Status = 'LOW' THEN 'Low confidence match - verify manually' + 
+                CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
+            ELSE 'Match found' + 
+                CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
         END AS Message,
+        DataSource,
         ProcessedAt
     FROM @Results
     ORDER BY TransactionID, OptionNumber;

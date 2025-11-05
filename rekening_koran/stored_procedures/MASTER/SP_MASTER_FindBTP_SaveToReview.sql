@@ -328,7 +328,9 @@ BEGIN
                 WHEN Status = 'NO_BTP' THEN 'BTP tidak ditemukan di description (expected array ending with "23...")'
                 WHEN Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(BTP, '') + '" tidak ditemukan di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
                 WHEN Status = 'LOW' THEN 'Match confidence rendah (' + CAST(MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN TotalBTPOptions > 1 AND Message LIKE '%[Data source: MP_CUSTOMER_NEW]%' THEN 'Ditemukan ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai [Data source: MP_CUSTOMER_NEW - BTN dari MP_CUSTOMER_NEW]'
                 WHEN TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                WHEN Message LIKE '%[Data source: MP_CUSTOMER_NEW]%' THEN 'CustomerName ditemukan dari MP_CUSTOMER_NEW (BTN) - BTP tidak ada di MASTER_CUSTOMER_BTP_PATTERN'
                 ELSE NULL
             END,
             GETDATE()
