@@ -192,8 +192,18 @@ BEGIN
         -- Step 3: Cari di master dengan BTP, ambil customer_name
         -- =====================================================
         
+        DECLARE @CustomerNameFromBTP NVARCHAR(200);
+        DECLARE @BTPMatchPct DECIMAL(5,2);
+        DECLARE @BTPMatchCount INT;
+        DECLARE @BTPTotalTrans INT;
+        DECLARE @BTPLastLine INT;
+        
         SELECT TOP 1 
-            @CustomerName = m.customer_name
+            @CustomerNameFromBTP = LTRIM(RTRIM(m.customer_name)),
+            @BTPMatchPct = m.match_percentage,
+            @BTPMatchCount = m.match_count,
+            @BTPTotalTrans = m.total_transactions,
+            @BTPLastLine = m.last_line_number
         FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
         WHERE m.btp = @ExtractedBTP
         ORDER BY 
@@ -202,7 +212,7 @@ BEGIN
             m.total_transactions DESC,
             m.last_line_number DESC;
         
-        IF @CustomerName IS NULL
+        IF @CustomerNameFromBTP IS NULL
         BEGIN
             -- Customer name not found in master (BTP tidak ada di master)
             INSERT INTO @Results (
@@ -221,6 +231,8 @@ BEGIN
             FETCH NEXT FROM desc_cursor INTO @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
             CONTINUE;
         END
+        
+        SET @CustomerName = @CustomerNameFromBTP;
         
         -- =====================================================
         -- Step 4: Find ALL BTP Options dari Master Pattern menggunakan customer_name
@@ -316,7 +328,14 @@ BEGIN
             END
             ELSE
             BEGIN
-                -- Customer name found but no BTP in master
+                -- Customer name found but no BTP in master with category 'GREENFIEL' or 'NEW'
+                -- Fallback: Use the extracted BTP as default (since we found customer_name from it)
+                DECLARE @FallbackStatus NVARCHAR(20) = 'FAIR';
+                IF @BTPMatchPct >= 95 SET @FallbackStatus = 'EXCELLENT';
+                ELSE IF @BTPMatchPct >= 80 SET @FallbackStatus = 'GOOD';
+                ELSE IF @BTPMatchPct >= 70 SET @FallbackStatus = 'FAIR';
+                ELSE SET @FallbackStatus = 'LOW';
+                
                 INSERT INTO @Results (
                     RowID, TransactionID, TransactionDate, Description,
                     CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
@@ -325,9 +344,9 @@ BEGIN
                 )
                 VALUES (
                     @CurrentRowID, @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription,
-                    @CustomerName, NULL, NULL, NULL, NULL,
-                    NULL, 0, 0, 0, 0,
-                    'NO_MATCH', GETDATE()
+                    @CustomerName, @ExtractedBTP, @BTPMatchPct, @BTPMatchCount, @BTPTotalTrans,
+                    @BTPLastLine, 1, 1, 1, 1,  -- Single option, so it's both BEST and LATEST
+                    @FallbackStatus, GETDATE()
                 );
             END
         END
