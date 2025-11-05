@@ -125,10 +125,20 @@ BEGIN
         END
         
         -- Check if Array[4] = 'GREENFIEL'
+        -- Note: Array index 4 (zero-based) = WordIndex 5 (one-based)
+        -- Format: "KR OTOMATIS [CODE] [CODE] GREENFIEL ..."
+        --         [0]         [1]    [2]      [3]        [4]    [5+]
+        --         WordIndex: 1       2        3          4      5
         DECLARE @Array4 NVARCHAR(100);
-        SELECT @Array4 = Word FROM @Words WHERE WordIndex = 4;
+        SELECT @Array4 = Word FROM @Words WHERE WordIndex = 5;  -- Changed from 4 to 5
         
-        IF @Array4 <> 'GREENFIEL'
+        IF @Debug = 1
+        BEGIN
+            PRINT 'Debug: WordIndex 5 = ' + ISNULL(@Array4, 'NULL');
+            PRINT 'Debug: Total words = ' + CAST(@WordCount AS VARCHAR);
+        END
+        
+        IF @Array4 <> 'GREENFIEL' OR @Array4 IS NULL
         BEGIN
             -- Not a GREENFIEL pattern, skip
             INSERT INTO @Results (

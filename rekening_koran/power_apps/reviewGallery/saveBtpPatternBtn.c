@@ -10,14 +10,14 @@ With(
         )
     },
     // 1. Save to MASTER_CUSTOMER_BTP_PATTERN
-    Patch(
-        MASTER_CUSTOMER_BTP_PATTERN,
-        Defaults(MASTER_CUSTOMER_BTP_PATTERN),
-        {
-            customer_name: ThisItem.CustomerName,
-            category: ThisItem.BankType,
-            match_count: 1,
-            total_transactions: 1,
+Patch(
+    MASTER_CUSTOMER_BTP_PATTERN,
+    Defaults(MASTER_CUSTOMER_BTP_PATTERN),
+    {
+        customer_name: ThisItem.CustomerName,
+        category: ThisItem.BankType,
+        match_count: 1,
+        total_transactions: 1,
             match_percentage: 100,
             last_line_number: If(
                 !IsBlank(lastRecord.id),
@@ -48,8 +48,8 @@ With(
                 Left(ThisItem.Description, 255),
                 ""
             )
-        }
-    );
+    }
+);
     
     // 3. Update BTP_REVIEW: Set IsApproved = 1 (mirip approveToFinal)
     Patch(
