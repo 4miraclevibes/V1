@@ -74,6 +74,7 @@ BEGIN
             -- Group 3: Special Logic
             WHEN Description LIKE 'TRSF E-BANKING%' OR Description LIKE 'TRSF FROM%' THEN 'TRSF'
             WHEN Description LIKE 'BI-FAST%' THEN 'BIFAST'
+            WHEN Description LIKE '% GREENFIEL %' OR Description LIKE '% GREENFIEL,%' OR Description LIKE '% GREENFIEL' THEN 'GREENFIEL'
             -- Group 1
             WHEN Description LIKE '%LLG-BNI %' THEN 'BNI'
             WHEN Description LIKE '%LLG-BTPN %' THEN 'BTPN'
@@ -282,8 +283,65 @@ BEGIN
         PRINT '✅ MANDIRI completed';
     END
     
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- GREENFIEL
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'GREENFIEL')
+    BEGIN
+        PRINT '🔄 Processing GREENFIEL...';
+        
+        DECLARE @GREENFIEL_JSON NVARCHAR(MAX);
+        SELECT @GREENFIEL_JSON = (
+            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            FROM @Transactions WHERE BankType = 'GREENFIEL' FOR JSON PATH
+        );
+        
+        CREATE TABLE #GREENFIEL_Temp (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #GREENFIEL_Temp
+        EXEC SP_GREENFIEL_FindBTP_Batch @InputJSON = @GREENFIEL_JSON;
+        
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, 'GREENFIEL', ProcessedAt,
+            0,
+            CASE
+                WHEN Status = 'NO_PATTERN' THEN 'Array[4] bukan "GREENFIEL" - transaksi tidak match dengan pattern GREENFIEL'
+                WHEN Status = 'NO_BTP' THEN 'BTP tidak ditemukan di description (expected array ending with "23...")'
+                WHEN Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(BTP, '') + '" tidak ditemukan di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN Status = 'LOW' THEN 'Match confidence rendah (' + CAST(MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #GREENFIEL_Temp;
+        
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DROP TABLE #GREENFIEL_Temp;
+        
+        PRINT '✅ GREENFIEL completed';
+    END
+    
     -- ... Add other banks as needed (BNI, BTPN, BRI, etc.)
-    -- For now, just these 3 banks for testing
+    -- For now, just these 4 banks: TRSF, BIFAST, MANDIRI, GREENFIEL
     
     -- ═══════════════════════════════════════════════════════════════════════
     -- Handle UNKNOWN bank types (save all with proper notes)
