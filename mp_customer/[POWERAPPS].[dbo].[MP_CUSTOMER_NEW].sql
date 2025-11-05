@@ -27,3 +27,11 @@ SELECT [code]
       ,[btg]
       ,[cutting]
   FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
+
+-- Set credit_limit menjadi NULL terlebih dahulu
+UPDATE [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
+SET [credit_limit] = NULL;
+
+-- Alter kolom credit_limit menjadi FLOAT
+ALTER TABLE [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
+ALTER COLUMN [credit_limit] FLOAT;
