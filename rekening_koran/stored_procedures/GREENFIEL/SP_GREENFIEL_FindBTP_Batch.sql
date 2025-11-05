@@ -201,7 +201,9 @@ BEGIN
         DECLARE @BTPMatchCount INT;
         DECLARE @BTPTotalTrans INT;
         DECLARE @BTPLastLine INT;
-        DECLARE @DataSource NVARCHAR(50) = 'MASTER_CUSTOMER_BTP_PATTERN';  -- Flag untuk notes
+        
+        -- Reset data source untuk setiap transaction
+        SET @DataSource = 'MASTER_CUSTOMER_BTP_PATTERN';  -- Flag untuk notes
         
         -- Step 3a: Cari di MASTER_CUSTOMER_BTP_PATTERN dengan BTP
         SELECT TOP 1 
