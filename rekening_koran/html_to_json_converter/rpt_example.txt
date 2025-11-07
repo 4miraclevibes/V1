@@ -1,0 +1,34 @@
+1RETENSI         : RA.1B/6B/10T                LAPORAN TRANSAKSI VIA E-BANKING & COUNTER                         FREKWENSI :   HARIAN
+ LAPORAN         : R-5401                             UNTUK PERUSAHAAN KERJASAMA                                 TANGGAL   : 05/11/25
+ CABANG          : 0000005-KCU WISMA MILLENIA                                                                    HALAMAN   :        1
+ NAMA PERUSAHAAN : 02194-PT  GREENFIELDS DAIRY INDONESI                                                                              
+ ====================================================================================================================================
+ NO.   NO.PELANGGAN/NO.TXN   NAMA PELANGGAN         NILAI TRANSAKSI      TGL. TXN    WAKTU   LOKASI     KETERANGAN1     KETERANGAN2  
+ ====================================================================================================================================
+                                                                                                                                     
+ SUB-COMP 00000                                                                                                                      
+     1  2300016953          PT  ERA KOPI AND  IDR            463,270.00  05/11/25  06:11:44  9508N  -                -               
+     2  2300008125          BANK CENTRAL ASI  IDR          1,379,596.00  05/11/25  09:14:57  9501N  SUSU KARYAWAN    -               
+     3  2300008622          MARGARITA NURSIA  IDR            683,280.00  05/11/25  09:18:07  9501N  3 nov            -               
+     4  2300008125          BANK CENTRAL ASI  IDR            344,899.00  05/11/25  09:19:10  9501N  BCA SETIABUDI A  -               
+     5  2300018543          AGAPANA NITYA IS  IDR            722,757.00  05/11/25  09:40:19  9505N  S222527492       -               
+     6  2300015714          PT  KREASI BOGA   IDR            455,520.00  05/11/25  13:02:54  9505N  -                -               
+     7  2300015130          GIOVANNI AGRIPPI  IDR            227,760.00  05/11/25  14:11:23  9527N  Gurumi Cafe      -               
+     8  2300008842          TOMMY WIJAYA      IDR          1,366,560.00  05/11/25  14:38:17  9527N  K002000168025 K  000173524       
+     9  2300008842          TOMMY WIJAYA      IDR            683,280.00  05/11/25  14:40:03  9527N  K002000177378    -               
+    10  2300016621          PAULUS RUDY KURN  IDR            694,904.00  05/11/25  14:53:17  9527N  uht              -               
+    11  2300019209          PAULUS RUDY KURN  IDR            579,420.00  05/11/25  15:18:21  9503N  pembayaran gree  elds            
+    12  2300016651          ANNISA FARHANA D  IDR            386,280.00  05/11/25  15:48:09  9503N  eti kalisari     -               
+    13  2300019213          KAISARPERDANA MA  IDR          2,453,544.00  05/11/25  16:15:47  9505N  -                -               
+    14  2300017922          CV  DINARRI       IDR            231,635.00  05/11/25  16:50:37  9523B  20251105I761519  -               
+    15  2300016637          AGNES THERESIAWA  IDR            965,700.00  05/11/25  16:56:56  9527N  -                -               
+    16  2300019227          EGA STEFANUS BRA  IDR          1,389,809.00  05/11/25  16:58:16  9527N  -                -               
+    17  2300008125          BANK CENTRAL ASI  IDR          1,034,697.00  05/11/25  17:42:09  9501N  INVN9397374      BCA CYBER 2     
+    18  2300017409          SARAH AFIFAH AZ   IDR            463,269.00  05/11/25  18:13:06  9523B  20251105I762664  -               
+    19  2300016721          PT   BADAN SUPRA  IDR         13,715,231.00  05/11/25  20:05:19  9501N  SUPRABAKTI MAND  2527035         
+      SUB TOTAL TRANSAKSI    IDR        :      19                                                                                    
+      SUB TOTAL NILAI TRANSAKSI         :  IDR       28,241,411.00                                                                   
+                                                                                                                                     
+      TOTAL TRANSAKSI        IDR        :      19                                                                                    
+      TOTAL NILAI TRANSAKSI             :  IDR       28,241,411.00                                                                   
+                                                                                                                                     

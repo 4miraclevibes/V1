@@ -429,17 +429,25 @@
         <div class="main-content">
             <div class="upload-section" id="uploadSection">
                 <div class="icon">📁</div>
-                <h2>Upload File HTML Rekening Koran</h2>
+                <h2>Upload File Rekening Koran</h2>
                 <p style="margin: 15px 0; color: #666;">
-                    Drag & drop file HTML atau klik tombol di bawah
+                    Drag & drop file HTML atau pilih salah satu opsi konversi di bawah
                 </p>
                 <div class="file-input-wrapper">
                     <input type="file" id="fileInput" accept=".html,.htm">
                     <label for="fileInput" class="file-input-label">
-                        Pilih File HTML
+                        Pilih File HTML (BCA)
                     </label>
                 </div>
                 <div class="file-name" id="fileName"></div>
+
+                <div class="file-input-wrapper" style="margin-top: 10px;">
+                    <input type="file" id="txtFileInput" accept=".txt">
+                    <label for="txtFileInput" class="file-input-label" style="background: linear-gradient(135deg, #ff6a3d 0%, #ff924c 100%);">
+                        Pilih File TXT (RPT GREENFIELD)
+                    </label>
+                </div>
+                <div class="file-name" id="txtFileName"></div>
             </div>
 
             <div id="alertContainer"></div>
@@ -527,6 +535,73 @@
                     <pre id="jsonPreview"></pre>
                 </div>
             </div>
+
+            <div class="results" id="rptResults">
+                <div class="info-card fade-in">
+                    <h3>🏭 Ringkasan Laporan RPT</h3>
+                    <div class="info-row">
+                        <span class="info-label">Nama Perusahaan:</span>
+                        <span class="info-value" id="rptCompanyName">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tanggal Laporan:</span>
+                        <span class="info-value" id="rptReportDate">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Kode Laporan:</span>
+                        <span class="info-value" id="rptReportCode">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Cabang:</span>
+                        <span class="info-value" id="rptBranch">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Transaksi:</span>
+                        <span class="info-value" id="rptTotalTransactions">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Nilai:</span>
+                        <span class="info-value" id="rptTotalAmount">-</span>
+                    </div>
+                </div>
+
+                <div class="info-card fade-in">
+                    <h3>📊 Data Transaksi RPT</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="transactions-table" id="rptTransactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>BTP</th>
+                                    <th>Customer Name</th>
+                                    <th>Amount</th>
+                                    <th>Tanggal</th>
+                                    <th>Jam</th>
+                                    <th>Lokasi</th>
+                                    <th>Keterangan 1</th>
+                                    <th>Keterangan 2</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rptTransactionsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadRPTFullJSON()">
+                        <span>💾</span> Download Full JSON RPT
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadRPTSQLFormat()">
+                        <span>🔄</span> Download JSON untuk SP (RPT)
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyRPTSQLFormat()">
+                        <span>📄</span> Copy JSON untuk SP (RPT)
+                    </button>
+                    <button class="btn btn-warning" onclick="copyRPTFullJSON()">
+                        <span>📋</span> Copy Full JSON RPT
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -534,9 +609,12 @@
     <script>
         let parsedData = null;
         let parser = null;
+        let rptParsedData = null;
+        let rptParser = null;
 
         // File input handler
         document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        document.getElementById('txtFileInput').addEventListener('change', handleTxtFileSelect);
 
         // Drag and drop handlers
         const uploadSection = document.getElementById('uploadSection');
@@ -567,6 +645,13 @@
             }
         }
 
+        function handleTxtFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleTxtFile(file);
+            }
+        }
+
         function handleFile(file) {
             const fileName = document.getElementById('fileName');
             fileName.textContent = `📄 ${file.name}`;
@@ -590,6 +675,35 @@
                     showAlert('success', `✅ File ${fileName} berhasil di-parse!`);
                 } else {
                     showAlert('error', `❌ Error parsing: ${result.error}`);
+                }
+            } catch (error) {
+                showAlert('error', `❌ Error: ${error.message}`);
+            }
+        }
+
+        function handleTxtFile(file) {
+            const fileName = document.getElementById('txtFileName');
+            fileName.textContent = `📄 ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const txtContent = e.target.result;
+                parseRPT(txtContent, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseRPT(txtContent, fileName) {
+            try {
+                rptParser = new RPTStatementParser(txtContent);
+                const result = rptParser.parse();
+
+                if (result.success) {
+                    rptParsedData = result.data;
+                    displayRPTResults();
+                    showAlert('success', `✅ File ${fileName} RPT berhasil di-parse!`);
+                } else {
+                    showAlert('error', `❌ Error parsing RPT: ${result.error}`);
                 }
             } catch (error) {
                 showAlert('error', `❌ Error: ${error.message}`);
@@ -635,6 +749,40 @@
             const preview = document.getElementById('jsonPreview');
             preview.textContent = JSON.stringify(parsedData, null, 2);
             document.getElementById('codePreview').classList.add('show');
+        }
+
+        function displayRPTResults() {
+            const container = document.getElementById('rptResults');
+            container.classList.add('show');
+
+            const header = rptParsedData.headerInfo || {};
+            const summary = rptParsedData.summary || {};
+
+            document.getElementById('rptCompanyName').textContent = header.companyName || '-';
+            document.getElementById('rptReportDate').textContent = header.reportDate || '-';
+            document.getElementById('rptReportCode').textContent = header.reportCode || '-';
+            document.getElementById('rptBranch').textContent = header.branch || '-';
+            document.getElementById('rptTotalTransactions').textContent = summary.totalTransactions || rptParsedData.transactions.length || 0;
+            document.getElementById('rptTotalAmount').textContent = summary.totalAmountFormatted || (summary.totalAmount ? `IDR ${summary.totalAmount.toLocaleString('id-ID', { minimumFractionDigits: 2 })}` : '-');
+
+            const tbody = document.getElementById('rptTransactionsBody');
+            tbody.innerHTML = '';
+
+            rptParsedData.transactions.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.transactionId}</td>
+                    <td>${item.btp}</td>
+                    <td>${item.customerName}</td>
+                    <td>${formatCurrency(item.amount)}</td>
+                    <td>${item.transactionDate}</td>
+                    <td>${item.transactionTime}</td>
+                    <td>${item.location}</td>
+                    <td>${item.keterangan1}</td>
+                    <td>${item.keterangan2}</td>
+                `;
+                tbody.appendChild(row);
+            });
         }
 
         function formatCurrency(value) {
@@ -686,6 +834,52 @@
             });
         }
 
+        function downloadRPTFullJSON() {
+            if (!rptParsedData) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            downloadJSON(rptParsedData, 'rpt_statement_full.json');
+        }
+
+        function downloadRPTSQLFormat() {
+            if (!rptParser) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            const sqlData = rptParser.getTransactionsForStoredProcedure();
+            downloadJSON(sqlData, 'rpt_statement_for_sp.json');
+        }
+
+        function copyRPTSQLFormat() {
+            if (!rptParser) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            const sqlData = rptParser.getTransactionsForStoredProcedure();
+            const jsonString = JSON.stringify(sqlData, null, 2);
+
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ JSON RPT untuk SP berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function copyRPTFullJSON() {
+            if (!rptParsedData) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            const jsonString = JSON.stringify(rptParsedData, null, 2);
+
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ Full JSON RPT berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
         function scrollToBottom() {
             window.scrollTo({
                 top: document.body.scrollHeight,
@@ -697,8 +891,10 @@
         window.addEventListener('scroll', () => {
             const scrollBtn = document.getElementById('scrollToBottomBtn');
             const results = document.getElementById('results');
-            
-            if (results.classList.contains('show') && window.scrollY < 200) {
+            const rptResults = document.getElementById('rptResults');
+            const shouldShow = ((results && results.classList.contains('show')) || (rptResults && rptResults.classList.contains('show')));
+
+            if (shouldShow && window.scrollY < 200) {
                 scrollBtn.classList.add('show');
             } else {
                 scrollBtn.classList.remove('show');

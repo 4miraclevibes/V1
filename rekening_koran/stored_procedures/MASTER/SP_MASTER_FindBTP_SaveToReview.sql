@@ -61,16 +61,39 @@ BEGIN
         TransactionID INT,
         TransactionDate NVARCHAR(50),
         Description NVARCHAR(MAX),
-        BankType NVARCHAR(50)
+        BankType NVARCHAR(50),
+        BTP NVARCHAR(50),
+        CustomerNameFromInput NVARCHAR(200),
+        TransactionTime NVARCHAR(50),
+        Amount DECIMAL(18,2),
+        Location NVARCHAR(100),
+        Keterangan1 NVARCHAR(200),
+        Keterangan2 NVARCHAR(200)
     );
     
-    -- Parse JSON and detect bank types
-    INSERT INTO @Transactions (TransactionID, TransactionDate, Description, BankType)
+    -- Parse JSON dan deteksi bank type (dengan dukungan VA/RPT)
+    INSERT INTO @Transactions (
+        TransactionID,
+        TransactionDate,
+        Description,
+        BankType,
+        BTP,
+        CustomerNameFromInput,
+        TransactionTime,
+        Amount,
+        Location,
+        Keterangan1,
+        Keterangan2
+    )
     SELECT 
         TransactionID,
         TransactionDate,
         Description,
         CASE
+            WHEN UPPER(ISNULL(BankTypeInput, '')) = 'VA' THEN 'VA'
+            WHEN BTPValue IS NOT NULL AND (
+                    Description IS NULL OR Description LIKE 'RPT:%' OR LEN(ISNULL(TransactionTimeInput, '')) > 0
+                ) THEN 'VA'
             -- Group 3: Special Logic
             WHEN Description LIKE 'TRSF E-BANKING%' OR Description LIKE 'TRSF FROM%' THEN 'TRSF'
             WHEN Description LIKE 'BI-FAST%' THEN 'BIFAST'
@@ -96,13 +119,65 @@ BEGIN
             WHEN Description LIKE '%LLG-CAPITAL INDONE%' THEN 'CAPITAL'
             WHEN Description LIKE '%LLG-WOORI SAUDARA%' THEN 'WOORI'
             ELSE 'UNKNOWN'
-        END as BankType
+        END as BankType,
+        BTPValue,
+        CustomerNameInput,
+        TransactionTimeInput,
+        AmountValue,
+        LocationInput,
+        Keterangan1Input,
+        Keterangan2Input
     FROM OPENJSON(@TransactionsJSON)
     WITH (
         TransactionID INT '$.TransactionID',
         TransactionDate NVARCHAR(50) '$.TransactionDate',
-        Description NVARCHAR(MAX) '$.Description'
+        Description NVARCHAR(MAX) '$.Description',
+        BTPValue NVARCHAR(50) '$.BTP',
+        CustomerNameInput NVARCHAR(200) '$.CustomerName',
+        TransactionTimeInput NVARCHAR(50) '$.TransactionTime',
+        AmountValue DECIMAL(18,2) '$.Amount',
+        LocationInput NVARCHAR(100) '$.Location',
+        Keterangan1Input NVARCHAR(200) '$.Keterangan1',
+        Keterangan2Input NVARCHAR(200) '$.Keterangan2',
+        BankTypeInput NVARCHAR(50) '$.BankType'
     );
+
+    -- Fallback parsing untuk format camelCase/lowercase (contoh hasil converter TXT)
+    UPDATE t
+    SET t.BTP = ISNULL(t.BTP, j.btp),
+        t.CustomerNameFromInput = ISNULL(t.CustomerNameFromInput, j.customer_name),
+        t.TransactionTime = ISNULL(t.TransactionTime, j.transaction_time),
+        t.Amount = ISNULL(t.Amount, TRY_CAST(j.amount AS DECIMAL(18,2))),
+        t.Location = ISNULL(t.Location, j.location),
+        t.Keterangan1 = ISNULL(t.Keterangan1, j.keterangan1),
+        t.Keterangan2 = ISNULL(t.Keterangan2, j.keterangan2),
+        t.BankType = CASE
+            WHEN t.BankType = 'UNKNOWN' AND UPPER(ISNULL(j.bank_type, '')) = 'VA' THEN 'VA'
+            ELSE t.BankType
+        END
+    FROM @Transactions t
+    CROSS APPLY OPENJSON(@TransactionsJSON)
+    WITH (
+        TransactionID INT '$.transaction_id',
+        btp NVARCHAR(50) '$.btp',
+        customer_name NVARCHAR(200) '$.customer_name',
+        transaction_time NVARCHAR(50) '$.transaction_time',
+        amount NVARCHAR(50) '$.amount',
+        location NVARCHAR(100) '$.location',
+        keterangan1 NVARCHAR(200) '$.keterangan1',
+        keterangan2 NVARCHAR(200) '$.keterangan2',
+        bank_type NVARCHAR(50) '$.bank_type'
+    ) j
+    WHERE t.TransactionID = j.TransactionID;
+
+    -- Bentuk description default untuk data VA (RPT) jika kosong
+    UPDATE @Transactions
+    SET Description = CONCAT(
+            'RPT: ', ISNULL(CustomerNameFromInput, '-'),
+            ' | ', ISNULL(Keterangan1, '-'),
+            ' | ', ISNULL(Keterangan2, '-')
+        )
+    WHERE BankType = 'VA' AND (Description IS NULL OR LTRIM(RTRIM(Description)) = '');
     
     SELECT @TotalTransactions = COUNT(*) FROM @Transactions;
     PRINT 'Total transactions to process: ' + CAST(@TotalTransactions AS VARCHAR);
@@ -340,6 +415,98 @@ BEGIN
         DROP TABLE #GREENFIEL_Temp;
         
         PRINT '✅ GREENFIEL completed';
+    END
+
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- VA (RPT TXT)
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'VA')
+    BEGIN
+        PRINT '🔄 Processing VA (RPT TXT)...';
+
+        DECLARE @VA_JSON NVARCHAR(MAX);
+        SELECT @VA_JSON = (
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                TransactionTime AS transaction_time,
+                Description AS description,
+                BTP,
+                CustomerNameFromInput AS customer_name,
+                Amount AS amount,
+                Location AS location,
+                Keterangan1 AS keterangan1,
+                Keterangan2 AS keterangan2
+            FROM @Transactions WHERE BankType = 'VA' FOR JSON PATH
+        );
+
+        CREATE TABLE #VA_Temp (
+            TransactionID INT,
+            TransactionDate NVARCHAR(50),
+            Description NVARCHAR(MAX),
+            CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50),
+            MatchPercentage DECIMAL(5,2),
+            MatchCount INT,
+            TotalTransactions INT,
+            LastLineNumber INT,
+            TotalBTPOptions INT,
+            OptionNumber INT,
+            BestFlag NVARCHAR(10),
+            LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50),
+            Status NVARCHAR(20),
+            Message NVARCHAR(500),
+            DataSource NVARCHAR(50),
+            OriginalCustomerName NVARCHAR(200),
+            TransactionTime NVARCHAR(50),
+            Amount DECIMAL(18,2),
+            Location NVARCHAR(100),
+            Keterangan1 NVARCHAR(200),
+            Keterangan2 NVARCHAR(200),
+            ProcessedAt DATETIME
+        );
+
+        INSERT INTO #VA_Temp
+        EXEC SP_RPT_FindBTP_Batch @InputJSON = @VA_JSON;
+
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, 'VA', ProcessedAt,
+            0,
+            CASE
+                WHEN Status = 'NO_BTP' THEN 'BTP kosong pada data RPT - periksa file sumber'
+                WHEN Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(BTP, '') + '" belum ada di master ataupun MP_CUSTOMER_NEW'
+                WHEN Status = 'LOW' THEN 'Match confidence rendah (' + CAST(MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN TotalBTPOptions > 1 AND DataSource = 'MP_CUSTOMER_NEW' THEN 'Ada ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP (BEST dari MP_CUSTOMER_NEW)'
+                WHEN TotalBTPOptions > 1 THEN 'Ada ' + CAST(TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                WHEN DataSource = 'MP_CUSTOMER_NEW' THEN 'CustomerName diambil dari MP_CUSTOMER_NEW (BTN)' 
+                ELSE NULL
+            END
+            + ' | RPT Original: ' + ISNULL(OriginalCustomerName, '-')
+            + ' / Ket1: ' + ISNULL(Keterangan1, '-')
+            + ' / Ket2: ' + ISNULL(Keterangan2, '-')
+            + CASE WHEN TransactionTime IS NOT NULL THEN ' / Jam: ' + TransactionTime ELSE '' END
+            + CASE WHEN Amount IS NOT NULL THEN ' / Amount: ' + FORMAT(Amount, 'N2') ELSE '' END
+            + CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
+            GETDATE()
+        FROM #VA_Temp;
+
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DROP TABLE #VA_Temp;
+
+        PRINT '✅ VA (RPT TXT) completed';
     END
     
     -- ... Add other banks as needed (BNI, BTPN, BRI, etc.)
