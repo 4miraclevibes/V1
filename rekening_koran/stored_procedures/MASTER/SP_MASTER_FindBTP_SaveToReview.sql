@@ -445,7 +445,7 @@ BEGIN
                 TransactionDate AS transaction_date,
                 TransactionTime AS transaction_time,
                 Description AS description,
-                BTP,
+                BTP AS btp,
                 CustomerNameFromInput AS customer_name,
                 Amount AS amount,
                 Location AS location,
