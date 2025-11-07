@@ -204,8 +204,9 @@ BEGIN
         WHERE m.btp = @BTP
         ORDER BY
             CASE WHEN m.category = 'VA' THEN 1
-                 WHEN m.category = 'NEW' THEN 2
-                 ELSE 3 END,
+                 WHEN m.category = 'TRSF' THEN 2
+                 WHEN m.category = 'NEW' THEN 3
+                 ELSE 4 END,
             m.match_percentage DESC,
             m.total_transactions DESC,
             m.last_line_number DESC;
@@ -257,10 +258,12 @@ BEGIN
         END
 
         -- 3d. Cari semua opsi BTP di master berdasarkan customer_name
-        SELECT @TotalOptions = COUNT(*)
+        SELECT 
+            @TotalOptions = COUNT(*),
+            @BTPLastLine = MAX(m.last_line_number)
         FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
         WHERE UPPER(m.customer_name) = UPPER(@CustomerName)
-            AND (m.category = 'VA' OR m.category = 'NEW');
+            AND (m.category = 'VA' OR m.category = 'TRSF' OR m.category = 'NEW');
 
         IF @TotalOptions > 0
         BEGIN
@@ -289,7 +292,7 @@ BEGIN
                 ) AS OptionNumber
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
             WHERE UPPER(m.customer_name) = UPPER(@CustomerName)
-              AND (m.category = 'VA' OR m.category = 'NEW');
+              AND (m.category = 'VA' OR m.category = 'TRSF' OR m.category = 'NEW');
 
             DECLARE @OptBTP NVARCHAR(50);
             DECLARE @OptMatchPct DECIMAL(5,2);
@@ -326,9 +329,7 @@ BEGIN
                     @CustomerName, @OriginalCustomer, @OptBTP, @OptMatchPct, @OptMatchCount,
                     @OptTotalTrans, @OptLastLine, @TotalOptions, @OptNumber,
                     CASE WHEN @OptNumber = 1 THEN 1 ELSE 0 END,
-                    CASE WHEN @OptNumber = 1 AND @OptLastLine = (
-                        SELECT ISNULL(MAX(LastLineNumber), 0) FROM @Options
-                    ) THEN 1 ELSE 0 END,
+                    CASE WHEN @OptLastLine = @BTPLastLine THEN 1 ELSE 0 END,
                     @Status, @DataSource, @Amount, @Location,
                     @Keterangan1, @Keterangan2, GETDATE()
                 );
@@ -434,5 +435,33 @@ BEGIN
     END
 END
 GO
+
+/* ======================================================================
+   TEST BLOCK
+   Cara pakai:
+     1. Buka converter.html → tab TXT/RPT → upload file → Copy JSON untuk SP.
+     2. Ganti isi @JSON di bawah dengan hasil copy tersebut.
+     3. Jalankan block ini di SSMS untuk melihat output langsung dari SP.
+====================================================================== */
+
+-- DECLARE @JSON NVARCHAR(MAX) = N'[
+--     {
+--         "transaction_id": 1,
+--         "transaction_date": "05/11/25",
+--         "transaction_time": "06:11:44",
+--         "btp": "2300016953",
+--         "customer_name": "PT  ERA KOPI AND",
+--         "amount": 463270.00,
+--         "location": "9508N",
+--         "keterangan1": "-",
+--         "keterangan2": "-",
+--         "description": "RPT: PT  ERA KOPI AND | - | -",
+--         "bank_type": "VA"
+--     }
+-- ]';
+
+-- EXEC [dbo].[SP_RPT_FindBTP_Batch]
+--     @InputJSON = @JSON,
+--     @Debug = 1;
 
 
