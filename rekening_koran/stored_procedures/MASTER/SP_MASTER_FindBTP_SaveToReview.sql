@@ -86,60 +86,71 @@ BEGIN
         Keterangan2
     )
     SELECT 
-        TransactionID,
-        TransactionDate,
-        Description,
+        COALESCE(TransactionID, TransactionIDLower) AS TransactionID,
+        COALESCE(TransactionDate, TransactionDateLower) AS TransactionDate,
+        COALESCE(Description, DescriptionLower) AS Description,
         CASE
-            WHEN UPPER(ISNULL(BankTypeInput, '')) = 'VA' THEN 'VA'
-            WHEN BTPValue IS NOT NULL AND (
-                    Description IS NULL OR Description LIKE 'RPT:%' OR LEN(ISNULL(TransactionTimeInput, '')) > 0
+            WHEN UPPER(ISNULL(BankTypeInput, '')) = 'VA' OR UPPER(ISNULL(BankTypeInputLower, '')) = 'VA' THEN 'VA'
+            WHEN COALESCE(BTPValue, BTPValueLower) IS NOT NULL AND (
+                    COALESCE(Description, DescriptionLower) IS NULL OR COALESCE(Description, DescriptionLower) LIKE 'RPT:%' OR LEN(ISNULL(COALESCE(TransactionTimeInput, TransactionTimeLower), '')) > 0
                 ) THEN 'VA'
             -- Group 3: Special Logic
-            WHEN Description LIKE 'TRSF E-BANKING%' OR Description LIKE 'TRSF FROM%' THEN 'TRSF'
-            WHEN Description LIKE 'BI-FAST%' THEN 'BIFAST'
-            WHEN Description LIKE '% GREENFIEL %' OR Description LIKE '% GREENFIEL,%' OR Description LIKE '% GREENFIEL' THEN 'GREENFIEL'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE 'TRSF E-BANKING%' OR COALESCE(Description, DescriptionLower, '') LIKE 'TRSF FROM%' THEN 'TRSF'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE 'BI-FAST%' THEN 'BIFAST'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL %' OR COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL,%' OR COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL' THEN 'GREENFIEL'
             -- Group 1
-            WHEN Description LIKE '%LLG-BNI %' THEN 'BNI'
-            WHEN Description LIKE '%LLG-BTPN %' THEN 'BTPN'
-            WHEN Description LIKE '%LLG-MANDIRI %' THEN 'MANDIRI'
-            WHEN Description LIKE '%LLG-BRI %' THEN 'BRI'
-            WHEN Description LIKE '%LLG-MEGA %' THEN 'MEGA'
-            WHEN Description LIKE '%LLG-PERMATA %' THEN 'PERMATA'
-            WHEN Description LIKE '%LLG-DANAMON %' THEN 'DANAMON'
-            WHEN Description LIKE '%LLG-CITIBANK %' THEN 'CITIBANK'
-            WHEN Description LIKE '%LLG-SINARMAS %' THEN 'SINARMAS'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BNI %' THEN 'BNI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BTPN %' THEN 'BTPN'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MANDIRI %' THEN 'MANDIRI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BRI %' THEN 'BRI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MEGA %' THEN 'MEGA'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-PERMATA %' THEN 'PERMATA'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-DANAMON %' THEN 'DANAMON'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CITIBANK %' THEN 'CITIBANK'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-SINARMAS %' THEN 'SINARMAS'
             -- Group 2
-            WHEN Description LIKE '%LLG-CIMB NIAGA%' THEN 'CIMB'
-            WHEN Description LIKE '%LLG-MAYBANK INDONE%' THEN 'MAYBANK'
-            WHEN Description LIKE '%LLG-HSBC INDONESIA%' THEN 'HSBC'
-            WHEN Description LIKE '%LLG-UOB INDONESIA%' THEN 'UOB'
-            WHEN Description LIKE '%LLG-MUAMALAT INDON%' THEN 'MUAMALAT'
-            WHEN Description LIKE '%LLG-OCBC NISP%' THEN 'OCBC'
-            WHEN Description LIKE '%LLG-DBS INDONESIA%' THEN 'DBS'
-            WHEN Description LIKE '%LLG-CAPITAL INDONE%' THEN 'CAPITAL'
-            WHEN Description LIKE '%LLG-WOORI SAUDARA%' THEN 'WOORI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CIMB NIAGA%' THEN 'CIMB'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MAYBANK INDONE%' THEN 'MAYBANK'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-HSBC INDONESIA%' THEN 'HSBC'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-UOB INDONESIA%' THEN 'UOB'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MUAMALAT INDON%' THEN 'MUAMALAT'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-OCBC NISP%' THEN 'OCBC'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-DBS INDONESIA%' THEN 'DBS'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CAPITAL INDONE%' THEN 'CAPITAL'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-WOORI SAUDARA%' THEN 'WOORI'
             ELSE 'UNKNOWN'
         END as BankType,
-        BTPValue,
-        CustomerNameInput,
-        TransactionTimeInput,
-        AmountValue,
-        LocationInput,
-        Keterangan1Input,
-        Keterangan2Input
+        COALESCE(BTPValue, BTPValueLower) AS BTP,
+        COALESCE(CustomerNameInput, CustomerNameLower) AS CustomerNameFromInput,
+        COALESCE(TransactionTimeInput, TransactionTimeLower) AS TransactionTime,
+        COALESCE(AmountValue, AmountValueLower) AS Amount,
+        COALESCE(LocationInput, LocationLower) AS Location,
+        COALESCE(Keterangan1Input, Keterangan1Lower) AS Keterangan1,
+        COALESCE(Keterangan2Input, Keterangan2Lower) AS Keterangan2
     FROM OPENJSON(@TransactionsJSON)
     WITH (
         TransactionID INT '$.TransactionID',
+        TransactionIDLower INT '$.transaction_id',
         TransactionDate NVARCHAR(50) '$.TransactionDate',
+        TransactionDateLower NVARCHAR(50) '$.transaction_date',
         Description NVARCHAR(MAX) '$.Description',
+        DescriptionLower NVARCHAR(MAX) '$.description',
         BTPValue NVARCHAR(50) '$.BTP',
+        BTPValueLower NVARCHAR(50) '$.btp',
         CustomerNameInput NVARCHAR(200) '$.CustomerName',
+        CustomerNameLower NVARCHAR(200) '$.customer_name',
         TransactionTimeInput NVARCHAR(50) '$.TransactionTime',
+        TransactionTimeLower NVARCHAR(50) '$.transaction_time',
         AmountValue DECIMAL(18,2) '$.Amount',
+        AmountValueLower DECIMAL(18,2) '$.amount',
         LocationInput NVARCHAR(100) '$.Location',
+        LocationLower NVARCHAR(100) '$.location',
         Keterangan1Input NVARCHAR(200) '$.Keterangan1',
+        Keterangan1Lower NVARCHAR(200) '$.keterangan1',
         Keterangan2Input NVARCHAR(200) '$.Keterangan2',
-        BankTypeInput NVARCHAR(50) '$.BankType'
+        Keterangan2Lower NVARCHAR(200) '$.keterangan2',
+        BankTypeInput NVARCHAR(50) '$.BankType',
+        BankTypeInputLower NVARCHAR(50) '$.bank_type'
     );
 
     -- Fallback parsing untuk format camelCase/lowercase (contoh hasil converter TXT)

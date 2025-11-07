@@ -18,8 +18,7 @@
 USE [POWERAPPS];
 GO
 
-DECLARE @RPT_JSON NVARCHAR(MAX) = N'
-[
+DECLARE @RPT_JSON NVARCHAR(MAX) = N'[
     {
         "transaction_id": 1,
         "transaction_date": "05/11/25",
@@ -33,8 +32,9 @@ DECLARE @RPT_JSON NVARCHAR(MAX) = N'
         "description": "RPT: PT  ERA KOPI AND | - | -",
         "bank_type": "VA"
     }
-    -- TODO: Tambahkan baris lain hasil paste dari converter (hapus komentar ini)
-];
+]';
+
+-- TODO: Ganti isi array di atas dengan hasil paste JSON dari converter (hapus contoh jika perlu)
 
 DECLARE @UploadedBy NVARCHAR(255) = 'rpt.test@company.com';
 

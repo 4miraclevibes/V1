@@ -893,7 +893,7 @@
             const results = document.getElementById('results');
             const rptResults = document.getElementById('rptResults');
             const shouldShow = ((results && results.classList.contains('show')) || (rptResults && rptResults.classList.contains('show')));
-
+            
             if (shouldShow && window.scrollY < 200) {
                 scrollBtn.classList.add('show');
             } else {
