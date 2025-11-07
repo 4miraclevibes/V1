@@ -416,7 +416,7 @@ if (typeof module !== 'undefined' && module.exports) {
 // Example usage in Node.js:
 if (typeof require !== 'undefined' && require.main === module) {
     const fs = require('fs');
-
+    
     if (process.argv.length < 4) {
         console.log('Usage: node parser.js <mode> <input_file>');
         console.log('Modes: html | rpt');
@@ -428,13 +428,13 @@ if (typeof require !== 'undefined' && require.main === module) {
     const mode = process.argv[2];
     const inputFile = process.argv[3];
     const content = fs.readFileSync(inputFile, 'utf8');
-
+    
     const parser = mode === 'rpt'
         ? new RPTStatementParser(content)
         : new BCAStatementParser(content);
 
     const result = parser.parse();
-
+    
     if (result.success) {
         console.log('\n✅ PARSING SUCCESS!\n');
         console.log('═══════════════════════════════════════════════════════');
@@ -446,7 +446,7 @@ if (typeof require !== 'undefined' && require.main === module) {
         const fullOutput = `${baseName}_${mode}_full.json`;
         fs.writeFileSync(fullOutput, JSON.stringify(result.data, null, 2));
         console.log(`\n✅ Full JSON saved to: ${fullOutput}`);
-
+        
         const sqlOutput = `${baseName}_${mode}_for_sp.json`;
         fs.writeFileSync(sqlOutput, parser.toSQLFormat());
         console.log(`✅ SQL format saved to: ${sqlOutput}`);

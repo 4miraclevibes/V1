@@ -188,7 +188,10 @@ BEGIN
             ' | ', ISNULL(Keterangan1, '-'),
             ' | ', ISNULL(Keterangan2, '-')
         )
-    WHERE BankType = 'VA' AND (Description IS NULL OR LTRIM(RTRIM(Description)) = '');
+    WHERE BankType = 'VA' AND (
+        Description IS NULL OR LTRIM(RTRIM(Description)) = '' OR
+        Description NOT LIKE 'RPT:%'
+    );
     
     SELECT @TotalTransactions = COUNT(*) FROM @Transactions;
     PRINT 'Total transactions to process: ' + CAST(@TotalTransactions AS VARCHAR);
