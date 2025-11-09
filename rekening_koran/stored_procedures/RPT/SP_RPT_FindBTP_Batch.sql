@@ -283,118 +283,79 @@ BEGIN
             CONTINUE;
         END
 
-        -- 3d. Cari semua opsi BTP di master berdasarkan customer_name
-        SELECT 
-            @TotalOptions = COUNT(*),
-            @BTPLastLine = MAX(m.last_line_number)
-        FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
-        WHERE UPPER(m.customer_name) = UPPER(@CustomerName)
-            AND (m.category = 'VA' OR m.category = 'TRSF' OR m.category = 'NEW');
+        -- 3d. Hitung informasi tambahan & tentukan hasil akhir (1 row per transaksi)
+        DECLARE @LatestLastLine INT = NULL;
+        DECLARE @LatestFlag BIT = 0;
 
-        IF @TotalOptions > 0
+        SET @TotalOptions = 0;
+
+        IF @CustomerName IS NOT NULL AND @DataSource = 'MASTER_CUSTOMER_BTP_PATTERN'
         BEGIN
-            DECLARE @Options TABLE (
-                BTP NVARCHAR(50),
-                MatchPercentage DECIMAL(5,2),
-                MatchCount INT,
-                TotalTransactions INT,
-                LastLineNumber INT,
-                OptionNumber INT
-            );
-
-            INSERT INTO @Options
-            SELECT
-                m.btp,
-                m.match_percentage,
-                m.match_count,
-                m.total_transactions,
-                m.last_line_number,
-                ROW_NUMBER() OVER (
-                    ORDER BY
-                        CASE WHEN m.category = 'VA' THEN 1 ELSE 2 END,
-                        m.match_percentage DESC,
-                        m.total_transactions DESC,
-                        m.last_line_number DESC
-                ) AS OptionNumber
+            SELECT 
+                @TotalOptions = COUNT(DISTINCT m.btp),
+                @LatestLastLine = MAX(m.last_line_number)
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
-            WHERE UPPER(m.customer_name) = UPPER(@CustomerName)
-              AND (m.category = 'VA' OR m.category = 'TRSF' OR m.category = 'NEW');
+            WHERE (m.category = 'VA' OR m.category = 'TRSF' OR m.category = 'NEW')
+              AND UPPER(m.customer_name) = UPPER(@CustomerName);
 
-            DECLARE @OptBTP NVARCHAR(50);
-            DECLARE @OptMatchPct DECIMAL(5,2);
-            DECLARE @OptMatchCount INT;
-            DECLARE @OptTotalTrans INT;
-            DECLARE @OptLastLine INT;
-            DECLARE @OptNumber INT;
-
-            DECLARE opt_cursor CURSOR FOR
-                SELECT BTP, MatchPercentage, MatchCount, TotalTransactions, LastLineNumber, OptionNumber
-                FROM @Options
-                ORDER BY OptionNumber;
-
-            OPEN opt_cursor;
-            FETCH NEXT FROM opt_cursor INTO @OptBTP, @OptMatchPct, @OptMatchCount, @OptTotalTrans, @OptLastLine, @OptNumber;
-
-            WHILE @@FETCH_STATUS = 0
-            BEGIN
-                DECLARE @Status NVARCHAR(20) = 'FAIR';
-                IF @OptMatchPct >= 95 SET @Status = 'EXCELLENT';
-                ELSE IF @OptMatchPct >= 80 SET @Status = 'GOOD';
-                ELSE IF @OptMatchPct >= 70 SET @Status = 'FAIR';
-                ELSE SET @Status = 'LOW';
-
-                INSERT INTO @Results (
-                    RowID, TransactionID, TransactionDate, TransactionTime, Description,
-                    CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
-                    TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
-                    IsBest, IsLatest, Status, DataSource, Amount, Location,
-                    Keterangan1, Keterangan2, TransactionType, ProcessedAt
-                )
-                VALUES (
-                    @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
-                    @CustomerName, @OriginalCustomer, @OptBTP, @OptMatchPct, @OptMatchCount,
-                    @OptTotalTrans, @OptLastLine, @TotalOptions, @OptNumber,
-                    CASE WHEN @OptNumber = 1 THEN 1 ELSE 0 END,
-                    CASE WHEN @OptLastLine = @BTPLastLine THEN 1 ELSE 0 END,
-                    @Status, @DataSource, @Amount, @Location,
-                    @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
-                );
-
-                FETCH NEXT FROM opt_cursor INTO @OptBTP, @OptMatchPct, @OptMatchCount, @OptTotalTrans, @OptLastLine, @OptNumber;
-            END
-
-            CLOSE opt_cursor;
-            DEALLOCATE opt_cursor;
+            IF @TotalOptions IS NULL SET @TotalOptions = 0;
+            IF @BTPLastLine IS NOT NULL AND @LatestLastLine IS NOT NULL AND @BTPLastLine = @LatestLastLine
+                SET @LatestFlag = 1;
         END
         ELSE
         BEGIN
-            -- Tidak ada opsi di master utk customer ini, gunakan BTP asli sebagai fallback
-            DECLARE @FallbackStatus NVARCHAR(20) = 'FAIR';
-            IF @BTPMatchPct >= 95 SET @FallbackStatus = 'EXCELLENT';
-            ELSE IF @BTPMatchPct >= 80 SET @FallbackStatus = 'GOOD';
-            ELSE IF @BTPMatchPct >= 70 SET @FallbackStatus = 'FAIR';
-            ELSE SET @FallbackStatus = 'LOW';
-
-            INSERT INTO @Results (
-                RowID, TransactionID, TransactionDate, TransactionTime, Description,
-                CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
-                TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
-                IsBest, IsLatest, Status, DataSource, Amount, Location,
-                Keterangan1, Keterangan2, TransactionType, ProcessedAt
-            )
-            VALUES (
-                @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
-                @CustomerName, @OriginalCustomer, @BTP,
-                ISNULL(@BTPMatchPct, 100.00),
-                ISNULL(@BTPMatchCount, 1),
-                ISNULL(@BTPTotalTrans, 1),
-                ISNULL(@BTPLastLine, 0),
-                1, 1,
-                1, 1,
-                @FallbackStatus, @DataSource, @Amount, @Location,
-                @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
-            );
+            SET @TotalOptions = CASE WHEN @CustomerName IS NOT NULL THEN 1 ELSE 0 END;
+            SET @LatestFlag = 1;
         END
+
+        DECLARE @Status NVARCHAR(20);
+        IF @BTPMatchPct >= 95 SET @Status = 'EXCELLENT';
+        ELSE IF @BTPMatchPct >= 80 SET @Status = 'GOOD';
+        ELSE IF @BTPMatchPct >= 70 SET @Status = 'FAIR';
+        ELSE IF @BTPMatchPct IS NULL THEN SET @Status = 'LOW';
+        ELSE SET @Status = 'LOW';
+
+        DECLARE @Message NVARCHAR(500);
+        IF @TotalOptions > 1
+            SET @Message = 'Ditemukan ' + CAST(@TotalOptions AS VARCHAR) + ' opsi BTP - menggunakan BEST option';
+        ELSE IF @DataSource = 'MP_CUSTOMER_NEW'
+            SET @Message = 'CustomerName diambil dari MP_CUSTOMER_NEW (BTN)';
+        ELSE IF @Status IN ('EXCELLENT', 'GOOD')
+            SET @Message = 'High confidence match';
+        ELSE IF @Status = 'FAIR'
+            SET @Message = 'Medium confidence match';
+        ELSE IF @Status = 'LOW'
+            SET @Message = 'Low confidence match - perlu verifikasi manual';
+        ELSE
+            SET @Message = 'Match ditemukan';
+
+        INSERT INTO @Results (
+            RowID, TransactionID, TransactionDate, TransactionTime, Description,
+            CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
+            TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
+            IsBest, IsLatest, Status, DataSource, Amount, Location,
+            Keterangan1, Keterangan2, TransactionType, ProcessedAt
+        )
+        VALUES (
+            @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
+            @CustomerName, @OriginalCustomer, @BTP,
+            ISNULL(@BTPMatchPct, 100.00),
+            ISNULL(@BTPMatchCount, 1),
+            ISNULL(@BTPTotalTrans, 1),
+            ISNULL(@BTPLastLine, 0),
+            @TotalOptions,
+            1,
+            1,
+            CASE WHEN @LatestFlag = 1 THEN 1 ELSE 0 END,
+            @Status,
+            @DataSource,
+            @Amount,
+            @Location,
+            @Keterangan1,
+            @Keterangan2,
+            @TransactionType,
+            GETDATE()
+        );
 
         FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
             @Description, @TransactionType, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;

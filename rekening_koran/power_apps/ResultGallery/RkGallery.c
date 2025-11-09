@@ -1,0 +1,1 @@
+ThisItem.TransactionType & " - Rp " & Text(Value(ThisItem.Amount), "#,##0")
