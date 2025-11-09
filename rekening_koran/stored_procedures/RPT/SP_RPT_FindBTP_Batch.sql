@@ -208,7 +208,7 @@ BEGIN
             )
             VALUES (
                 @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
-                NULL, @OriginalCustomer, NULL, NULL, NULL,
+                NULL, COALESCE(@CustomerName, @OriginalCustomer), NULL, NULL, NULL,
                 NULL, NULL, 0, 0,
                 0, 0, 'NO_BTP', NULL, @Amount, @Location,
                 @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
@@ -272,7 +272,7 @@ BEGIN
             )
             VALUES (
                 @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
-                NULL, @OriginalCustomer, @BTP, NULL, NULL,
+                NULL, COALESCE(@CustomerName, @OriginalCustomer), @BTP, NULL, NULL,
                 NULL, NULL, 0, 0,
                 0, 0, 'NO_MATCH', NULL, @Amount, @Location,
                 @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
@@ -324,7 +324,7 @@ BEGIN
         )
         VALUES (
             @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
-            @CustomerName, @OriginalCustomer, @BTP,
+            @CustomerName, COALESCE(@CustomerName, @OriginalCustomer), @BTP,
             ISNULL(@BTPMatchPct, 100.00),
             ISNULL(@BTPMatchCount, 1),
             ISNULL(@BTPTotalTrans, 1),
