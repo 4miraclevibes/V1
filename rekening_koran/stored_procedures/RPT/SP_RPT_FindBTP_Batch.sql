@@ -26,6 +26,7 @@ BEGIN
         TransactionDate NVARCHAR(50),
         TransactionTime NVARCHAR(50),
         Description NVARCHAR(MAX),
+        TransactionType NVARCHAR(2),
         BTP NVARCHAR(50),
         OriginalCustomerName NVARCHAR(200),
         Amount DECIMAL(18,2),
@@ -39,6 +40,7 @@ BEGIN
         TransactionDate,
         TransactionTime,
         Description,
+        TransactionType,
         BTP,
         OriginalCustomerName,
         Amount,
@@ -52,6 +54,7 @@ BEGIN
         LTRIM(RTRIM([transaction_date])) AS TransactionDate,
         LTRIM(RTRIM([transaction_time])) AS TransactionTime,
         NULLIF(LTRIM(RTRIM([description])), '') AS Description,
+        NULLIF(UPPER(LEFT(LTRIM(RTRIM([transaction_type])), 2)), '') AS TransactionType,
         NULLIF(LTRIM(RTRIM([btp])), '') AS BTP,
         NULLIF(LTRIM(RTRIM([customer_name])), '') AS OriginalCustomerName,
         TRY_CAST([amount] AS DECIMAL(18,2)) AS Amount,
@@ -77,6 +80,15 @@ BEGIN
         PRINT '=== RAW INPUT (RPT) ===';
         SELECT * FROM @Inputs;
     END
+
+    -- Normalisasi transaction type (default CR jika amount positif)
+    UPDATE @Inputs
+    SET TransactionType = CASE
+            WHEN TransactionType IN ('CR', 'DB') THEN TransactionType
+            WHEN Amount < 0 THEN 'DB'
+            WHEN Amount >= 0 THEN 'CR'
+            ELSE NULL
+        END;
 
     -- Pastikan description terisi (untuk BTP_REVIEW)
     UPDATE @Inputs
@@ -116,6 +128,7 @@ BEGIN
         Location NVARCHAR(100),
         Keterangan1 NVARCHAR(200),
         Keterangan2 NVARCHAR(200),
+        TransactionType NVARCHAR(2),
         ProcessedAt DATETIME DEFAULT GETDATE()
     );
 
@@ -127,6 +140,7 @@ BEGIN
     DECLARE @TransactionDate NVARCHAR(50);
     DECLARE @TransactionTime NVARCHAR(50);
     DECLARE @Description NVARCHAR(MAX);
+    DECLARE @TransactionType NVARCHAR(2);
     DECLARE @BTP NVARCHAR(50);
     DECLARE @OriginalCustomer NVARCHAR(200);
     DECLARE @Amount DECIMAL(18,2);
@@ -146,13 +160,13 @@ BEGIN
 
     DECLARE rpt_cursor CURSOR FOR
         SELECT RowID, TransactionID, TransactionDate, TransactionTime, Description,
-               BTP, OriginalCustomerName, Amount, Location, Keterangan1, Keterangan2
+               TransactionType, BTP, OriginalCustomerName, Amount, Location, Keterangan1, Keterangan2
         FROM @Inputs
         ORDER BY RowID;
 
     OPEN rpt_cursor;
     FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
-        @Description, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
+        @Description, @TransactionType, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
@@ -163,6 +177,12 @@ BEGIN
         SET @BTPTotalTrans = NULL;
         SET @BTPLastLine = NULL;
         SET @TotalOptions = 0;
+        SET @TransactionType = CASE
+            WHEN @TransactionType IN ('CR', 'DB') THEN @TransactionType
+            WHEN @Amount < 0 THEN 'DB'
+            WHEN @Amount >= 0 THEN 'CR'
+            ELSE NULL
+        END;
 
         IF @Debug = 1
         BEGIN
@@ -178,14 +198,14 @@ BEGIN
                 CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
                 TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                 IsBest, IsLatest, Status, DataSource, Amount, Location,
-                Keterangan1, Keterangan2, ProcessedAt
+                Keterangan1, Keterangan2, TransactionType, ProcessedAt
             )
             VALUES (
                 @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
                 NULL, @OriginalCustomer, NULL, NULL, NULL,
                 NULL, NULL, 0, 0,
                 0, 0, 'NO_BTP', NULL, @Amount, @Location,
-                @Keterangan1, @Keterangan2, GETDATE()
+                @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
             );
 
             FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
@@ -242,14 +262,14 @@ BEGIN
                 CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
                 TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                 IsBest, IsLatest, Status, DataSource, Amount, Location,
-                Keterangan1, Keterangan2, ProcessedAt
+                Keterangan1, Keterangan2, TransactionType, ProcessedAt
             )
             VALUES (
                 @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
                 NULL, @OriginalCustomer, @BTP, NULL, NULL,
                 NULL, NULL, 0, 0,
                 0, 0, 'NO_MATCH', NULL, @Amount, @Location,
-                @Keterangan1, @Keterangan2, GETDATE()
+                @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
             );
 
             FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
@@ -322,7 +342,7 @@ BEGIN
                     CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
                     TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                     IsBest, IsLatest, Status, DataSource, Amount, Location,
-                    Keterangan1, Keterangan2, ProcessedAt
+                    Keterangan1, Keterangan2, TransactionType, ProcessedAt
                 )
                 VALUES (
                     @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
@@ -331,7 +351,7 @@ BEGIN
                     CASE WHEN @OptNumber = 1 THEN 1 ELSE 0 END,
                     CASE WHEN @OptLastLine = @BTPLastLine THEN 1 ELSE 0 END,
                     @Status, @DataSource, @Amount, @Location,
-                    @Keterangan1, @Keterangan2, GETDATE()
+                    @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
                 );
 
                 FETCH NEXT FROM opt_cursor INTO @OptBTP, @OptMatchPct, @OptMatchCount, @OptTotalTrans, @OptLastLine, @OptNumber;
@@ -354,7 +374,7 @@ BEGIN
                 CustomerName, OriginalCustomerName, BTP, MatchPercentage, MatchCount,
                 TotalTransactions, LastLineNumber, TotalBTPOptions, OptionNumber,
                 IsBest, IsLatest, Status, DataSource, Amount, Location,
-                Keterangan1, Keterangan2, ProcessedAt
+                Keterangan1, Keterangan2, TransactionType, ProcessedAt
             )
             VALUES (
                 @RowID, @TransactionID, @TransactionDate, @TransactionTime, @Description,
@@ -366,7 +386,7 @@ BEGIN
                 1, 1,
                 1, 1,
                 @FallbackStatus, @DataSource, @Amount, @Location,
-                @Keterangan1, @Keterangan2, GETDATE()
+                @Keterangan1, @Keterangan2, @TransactionType, GETDATE()
             );
         END
 
@@ -415,6 +435,7 @@ BEGIN
         OriginalCustomerName,
         TransactionTime,
         Amount,
+        TransactionType,
         Location,
         Keterangan1,
         Keterangan2,

@@ -184,7 +184,9 @@ class BCAStatementParser {
         return this.result.transactions.map(t => ({
             TransactionID: t.TransactionID,
             TransactionDate: t.TransactionDate,
-            Description: t.Description
+            Description: t.Description,
+            Amount: typeof t.Amount === 'number' ? t.Amount : null,
+            TransactionType: t.TransactionType === 'CR' || t.TransactionType === 'DB' ? t.TransactionType : null
         }));
     }
 
@@ -392,6 +394,7 @@ class RPTStatementParser {
             transaction_date: t.transactionDate,
             transaction_time: t.transactionTime,
             amount: t.amount,
+            transaction_type: t.amount >= 0 ? 'CR' : 'DB',
             location: t.location,
             keterangan1: t.keterangan1,
             keterangan2: t.keterangan2,

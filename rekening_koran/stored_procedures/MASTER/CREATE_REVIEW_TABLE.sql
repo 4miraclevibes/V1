@@ -33,6 +33,8 @@ CREATE TABLE [dbo].[BTP_REVIEW] (
     TransactionID INT NOT NULL,
     TransactionDate NVARCHAR(50) NULL,
     Description NVARCHAR(MAX) NULL,
+    Amount FLOAT NULL,
+    TransactionType NVARCHAR(2) NULL,
     
     -- Matching results (from SP_MASTER_FindBTP_Batch)
     CustomerName NVARCHAR(200) NULL,
@@ -78,6 +80,7 @@ PRINT 'Table structure:';
 PRINT '  - ID (PK, auto-increment)';
 PRINT '  - BatchID, UploadedBy, UploadedAt';
 PRINT '  - TransactionID, TransactionDate, Description';
+PRINT '  - Amount, TransactionType';
 PRINT '  - CustomerName, BTP, MatchPercentage, ...';
 PRINT '  - IsApproved, ApprovedBy, ApprovedAt, Notes';
 PRINT '  - CreatedAt, ModifiedAt';

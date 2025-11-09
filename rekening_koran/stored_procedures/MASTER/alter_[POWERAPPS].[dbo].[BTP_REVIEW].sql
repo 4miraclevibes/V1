@@ -1,0 +1,4 @@
+ALTER TABLE [POWERAPPS].[dbo].[BTP_REVIEW]
+ADD [Amount] FLOAT NULL,
+    [TransactionType] NVARCHAR(2) NULL;
+
