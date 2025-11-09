@@ -70,6 +70,7 @@ BEGIN
         [btp] NVARCHAR(50) '$.btp',
         [customer_name] NVARCHAR(200) '$.customer_name',
         [amount] NVARCHAR(50) '$.amount',
+        [transaction_type] NVARCHAR(10) '$.transaction_type',
         [location] NVARCHAR(100) '$.location',
         [keterangan1] NVARCHAR(200) '$.keterangan1',
         [keterangan2] NVARCHAR(200) '$.keterangan2'
