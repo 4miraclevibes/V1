@@ -1,0 +1,5 @@
+ALTER TABLE [POWERAPPS].[dbo].[MP_REKENING_KORAN]
+ADD [Amount] FLOAT NULL,
+    [TransactionType] NVARCHAR(2) NULL,
+    [BankType] NVARCHAR(50) NULL;
+

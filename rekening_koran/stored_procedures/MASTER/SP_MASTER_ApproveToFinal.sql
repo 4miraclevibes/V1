@@ -56,7 +56,10 @@ BEGIN
             [updated_at],
             [credit],
             [btp],
-            [desc]
+            [desc],
+            [Amount],
+            [TransactionType],
+            [BankType]
         )
         SELECT
             -- Convert TransactionDate (NVARCHAR) to DATE
@@ -81,7 +84,12 @@ BEGIN
             ISNULL(BTP, '') AS [btp],
             
             -- Description (truncate to 255 chars if needed)
-            LEFT(ISNULL(Description, ''), 255) AS [desc]
+            LEFT(ISNULL(Description, ''), 255) AS [desc],
+
+            -- New columns
+            Amount,
+            ISNULL(TransactionType, 'CR') AS [TransactionType],
+            ISNULL(BankType, 'UNKNOWN') AS [BankType]
             
         FROM [POWERAPPS].[dbo].[BTP_REVIEW]
         WHERE 
