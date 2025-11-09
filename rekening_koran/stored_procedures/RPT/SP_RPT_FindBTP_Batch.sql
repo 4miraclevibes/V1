@@ -312,22 +312,8 @@ BEGIN
         IF @BTPMatchPct >= 95 SET @Status = 'EXCELLENT';
         ELSE IF @BTPMatchPct >= 80 SET @Status = 'GOOD';
         ELSE IF @BTPMatchPct >= 70 SET @Status = 'FAIR';
-        ELSE IF @BTPMatchPct IS NULL THEN SET @Status = 'LOW';
+        ELSE IF @BTPMatchPct IS NULL SET @Status = 'LOW';
         ELSE SET @Status = 'LOW';
-
-        DECLARE @Message NVARCHAR(500);
-        IF @TotalOptions > 1
-            SET @Message = 'Ditemukan ' + CAST(@TotalOptions AS VARCHAR) + ' opsi BTP - menggunakan BEST option';
-        ELSE IF @DataSource = 'MP_CUSTOMER_NEW'
-            SET @Message = 'CustomerName diambil dari MP_CUSTOMER_NEW (BTN)';
-        ELSE IF @Status IN ('EXCELLENT', 'GOOD')
-            SET @Message = 'High confidence match';
-        ELSE IF @Status = 'FAIR'
-            SET @Message = 'Medium confidence match';
-        ELSE IF @Status = 'LOW'
-            SET @Message = 'Low confidence match - perlu verifikasi manual';
-        ELSE
-            SET @Message = 'Match ditemukan';
 
         INSERT INTO @Results (
             RowID, TransactionID, TransactionDate, TransactionTime, Description,
