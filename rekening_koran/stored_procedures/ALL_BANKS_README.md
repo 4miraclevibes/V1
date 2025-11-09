@@ -5,6 +5,7 @@
 **Status:** ✅ Production Ready  
 **Total Banks:** 20 banks  
 **Total SPs:** 21 (20 individual + 1 MASTER)  
+**Latest Update:** 9 Nov 2025 — Added `Amount` & `TransactionType` support (MASTER + RPT parser + converter)  
 **Cost:** $0 (NO AZURE!)  
 
 ---
@@ -57,9 +58,9 @@
 ```sql
 -- Step 1: Prepare JSON (from statement_for_sp.json)
 DECLARE @JSON NVARCHAR(MAX) = N'[
-  {"TransactionID": 1, "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE"},
-  {"TransactionID": 2, "Description": "BI-FAST CR TRANSFER DR 032 PT Kerry Ingredien"},
-  {"TransactionID": 3, "Description": "KR OTOMATIS LLG-MANDIRI SUMBER ALFARIA TRI RDPRLLG081025019"}
+  {"TransactionID": 1, "TransactionDate": "08/10/2025", "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE", "Amount": 911040.00, "TransactionType": "CR"},
+  {"TransactionID": 2, "TransactionDate": "08/10/2025", "Description": "BI-FAST CR TRANSFER DR 032 PT Kerry Ingredien", "Amount": 455520.00, "TransactionType": "CR"},
+  {"TransactionID": 3, "TransactionDate": "08/10/2025", "Description": "KR OTOMATIS LLG-MANDIRI SUMBER ALFARIA TRI RDPRLLG081025019"}
 ]';
 
 -- Step 2: Execute MASTER SP
@@ -77,26 +78,52 @@ EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
 ```sql
 -- For TRSF only
 DECLARE @JSON NVARCHAR(MAX) = N'[
-  {"TransactionID": 1, "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE"}
+  {"TransactionID": 1, "TransactionDate": "08/10/2025", "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE", "Amount": 911040.00, "TransactionType": "CR"}
 ]';
 
 EXEC SP_TRSF_FindBTP_Batch @TransactionsJSON = @JSON;
+```
+
+### Option 3: RPT / VA (TXT Converter)
+
+```sql
+-- JSON dari converter RPT (termasuk transaction_time, amount, transaction_type)
+DECLARE @JSON NVARCHAR(MAX) = N'[
+  {
+    "transaction_id": 1,
+    "transaction_date": "05/11/2025",
+    "transaction_time": "06:11:44",
+    "btp": "2300016953",
+    "customer_name": "PT ERA KOPI AND",
+    "amount": 463270.00,
+    "transaction_type": "CR",
+    "location": "9508N",
+    "keterangan1": "-",
+    "keterangan2": "-",
+    "description": "RPT: PT ERA KOPI AND | - | -",
+    "bank_type": "VA"
+  }
+]';
+
+EXEC SP_RPT_FindBTP_Batch @InputJSON = @JSON;
 ```
 
 ---
 
 ## 📊 Output Format
 
-### MASTER SP Output
+### MASTER SP Output (setelah update Amount & TransactionType)
 
 ```
-TransactionID | Description           | CustomerName    | BTP        | MatchPercentage | BankType | Status
-1             | TRSF E-BANKING...    | ELLA CAROLINE  | 2300014094 | 100.00         | TRSF     | EXCELLENT
-2             | BI-FAST CR...        | PT KERRY       | 2300015239 | 100.00         | BIFAST   | EXCELLENT
-3             | KR OTOMATIS LLG...   | SUMBER ALFARIA | 2300016055 | 100.00         | MANDIRI  | EXCELLENT
+TransactionID | Description           | CustomerName    | BTP        | Amount     | Type | MatchPercentage | BankType | Status
+1             | TRSF E-BANKING...    | ELLA CAROLINE  | 2300014094 | 911040.00  | CR   | 100.00         | TRSF     | EXCELLENT
+2             | BI-FAST CR...        | PT KERRY       | 2300015239 | 455520.00  | CR   | 100.00         | BIFAST   | EXCELLENT
+3             | KR OTOMATIS LLG...   | SUMBER ALFARIA | 2300016055 | 227760.00  | CR   | 100.00         | MANDIRI  | EXCELLENT
 ```
 
-**Key Column:** `BankType` - Shows which bank's SP processed the transaction
+**Key Columns:**  
+- `BankType` → menunjukkan SP bank mana yang memproses transaksi  
+- `Amount` & `TransactionType` → tersedia untuk analitik kredit/debet (TRSF, BIFAST, MANDIRI, GREENFIEL, VA)  
 
 ### Columns Explanation
 
@@ -115,6 +142,8 @@ TransactionID | Description           | CustomerName    | BTP        | MatchPerc
 | BestFlag | "YES" jika ini BEST option |
 | LatestFlag | "YES" jika ini LATEST option |
 | Label | "BEST + LATEST" / "BEST" / "LATEST" |
+| Amount | Nominal transaksi (FLOAT) untuk bank yang mendukung (TRSF, BIFAST, MANDIRI, GREENFIEL, VA) |
+| TransactionType | `CR` / `DB` — tipe mutasi, digunakan di Power Apps & laporan |
 | Status | EXCELLENT / GOOD / FAIR / LOW / NO_MATCH / NO_PATTERN |
 | Message | Human-readable message |
 | BankType | ⭐ Bank yang memproses transaksi ini |
@@ -123,6 +152,13 @@ TransactionID | Description           | CustomerName    | BTP        | MatchPerc
 ---
 
 ## 🔧 Installation
+
+### Step 0: Sync Table Structure
+
+```sql
+-- Pastikan kolom baru tersedia di BTP_REVIEW
+:r MASTER/alter_[POWERAPPS].[dbo].[BTP_REVIEW].sql
+```
 
 ### Step 1: Deploy Master Data
 
@@ -152,6 +188,8 @@ TransactionID | Description           | CustomerName    | BTP        | MatchPerc
 :r GROUP1/SP_BTPN_FindBTP_Batch.sql
 -- ... (all 20 individual SPs)
 :r MASTER/SP_MASTER_FindBTP_Batch.sql
+:r MASTER/SP_MASTER_FindBTP_SaveToReview.sql
+:r RPT/SP_RPT_FindBTP_Batch.sql
 ```
 
 **Option B: Deploy Master SP Only** (requires individual SPs already deployed)
@@ -226,11 +264,11 @@ EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
 
 ```sql
 DECLARE @JSON NVARCHAR(MAX) = N'[
-  {"TransactionID": 1, "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE"},
-  {"TransactionID": 2, "Description": "BI-FAST CR TRANSFER DR 032 PT Kerry Ingredien"},
-  {"TransactionID": 3, "Description": "KR OTOMATIS LLG-MANDIRI SUMBER ALFARIA TRI RDPRLLG081025019"},
-  {"TransactionID": 4, "Description": "KR OTOMATIS LLG-BNI PT MITRA SELERA GREENFIELDS"},
-  {"TransactionID": 5, "Description": "KR OTOMATIS LLG-CIMB NIAGA PT RUANG MAHA KARYA"}
+  {"TransactionID": 1, "TransactionDate": "08/10/2025", "Description": "TRSF E-BANKING CR 0710/FTSCY/WS95031 911040.00 ELLA CAROLINE", "Amount": 911040.00, "TransactionType": "CR"},
+  {"TransactionID": 2, "TransactionDate": "08/10/2025", "Description": "BI-FAST CR TRANSFER DR 032 PT Kerry Ingredien", "Amount": 455520.00, "TransactionType": "CR"},
+  {"TransactionID": 3, "TransactionDate": "08/10/2025", "Description": "KR OTOMATIS LLG-MANDIRI SUMBER ALFARIA TRI RDPRLLG081025019"},
+  {"TransactionID": 4, "TransactionDate": "08/10/2025", "Description": "KR OTOMATIS LLG-BNI PT MITRA SELERA GREENFIELDS"},
+  {"TransactionID": 5, "TransactionDate": "08/10/2025", "Description": "KR OTOMATIS LLG-CIMB NIAGA PT RUANG MAHA KARYA"}
 ]';
 
 EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
@@ -379,12 +417,13 @@ Power Apps (display results with BankType)
 ✅ **8,012 Total Patterns** - Across all banks  
 ✅ **Zero Azure Cost** - Pure SQL Server  
 ✅ **Power Apps Ready** - Simple 1-SP integration  
+✅ **Amount & Type Support** - MASTER + RPT menyimpan `Amount` & `TransactionType` ke `BTP_REVIEW`  
 
 ### Usage:
 
 ```sql
--- Simple as this:
-DECLARE @JSON NVARCHAR(MAX) = N'[... from statement_for_sp.json ...]';
+-- Simple as this (JSON terbaru sudah berisi Amount + TransactionType):
+DECLARE @JSON NVARCHAR(MAX) = N'[... from statement_for_sp.json (Nov 2025+) ...]';
 EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
 ```
 
@@ -403,6 +442,7 @@ EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
 **Status:** ✅ Production Ready  
 **Total SPs:** 21 (20 banks + 1 master)  
 **Total Patterns:** 8,012  
+**Latest Update:** 9 Nov 2025 — MASTER_SaveToReview + RPT kini menyertakan `Amount` & `TransactionType`  
 **Cost:** $0 (NO AZURE!)  
 
 **READY FOR PRODUCTION! 🎉**

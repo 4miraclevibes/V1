@@ -91,6 +91,11 @@ BEGIN
             ELSE NULL
         END;
 
+    -- Default terakhir: jika tetap NULL, pakai CR
+    UPDATE @Inputs
+    SET TransactionType = 'CR'
+    WHERE TransactionType IS NULL;
+
     -- Pastikan description terisi (untuk BTP_REVIEW)
     UPDATE @Inputs
     SET Description = CONCAT(
