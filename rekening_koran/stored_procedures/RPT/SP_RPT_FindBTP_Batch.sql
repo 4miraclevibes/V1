@@ -215,7 +215,7 @@ BEGIN
             );
 
             FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
-                @Description, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
+                @Description, @TransactionType, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
             CONTINUE;
         END
 
@@ -279,7 +279,7 @@ BEGIN
             );
 
             FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
-                @Description, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
+                @Description, @TransactionType, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
             CONTINUE;
         END
 
@@ -397,7 +397,7 @@ BEGIN
         END
 
         FETCH NEXT FROM rpt_cursor INTO @RowID, @TransactionID, @TransactionDate, @TransactionTime,
-            @Description, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
+            @Description, @TransactionType, @BTP, @OriginalCustomer, @Amount, @Location, @Keterangan1, @Keterangan2;
     END
 
     CLOSE rpt_cursor;
