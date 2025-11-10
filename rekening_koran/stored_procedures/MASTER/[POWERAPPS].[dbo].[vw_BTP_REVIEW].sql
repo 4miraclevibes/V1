@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW [POWERAPPS].[dbo].[VW_BTP_REVIEW]
+CREATE OR ALTER VIEW [dbo].[VW_BTP_REVIEW]
 AS
 SELECT 
     [ID],
@@ -31,6 +31,6 @@ SELECT
     [Notes],
     [CreatedAt],
     [ModifiedAt]
-FROM [POWERAPPS].[dbo].[BTP_REVIEW];
+FROM [dbo].[BTP_REVIEW];
 GO
 

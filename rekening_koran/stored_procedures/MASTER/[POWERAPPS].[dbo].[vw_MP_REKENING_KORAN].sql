@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW [POWERAPPS].[dbo].[VW_MP_REKENING_KORAN]
+CREATE OR ALTER VIEW [dbo].[VW_MP_REKENING_KORAN]
 AS
 SELECT 
     [id],
@@ -11,6 +11,6 @@ SELECT
     [Amount],
     [TransactionType],
     [BankType]
-FROM [POWERAPPS].[dbo].[MP_REKENING_KORAN];
+FROM [dbo].[MP_REKENING_KORAN];
 GO
 
