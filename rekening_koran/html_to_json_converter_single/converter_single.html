@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCA Statement Converter - HTML to JSON</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0049A2 0%, #003875 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .upload-section {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: #0049A2;
+            background: #f0f2ff;
+        }
+
+        .upload-section.drag-over {
+            border-color: #28a745;
+            background: #e8f5e9;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: #0049A2;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .info-card {
+            background: #f8f9ff;
+            border-left: 4px solid #0049A2;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .info-card h3 {
+            color: #0049A2;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            text-align: right;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .transactions-table thead {
+            background: linear-gradient(135deg, #0049A2 0%, #003875 100%);
+            color: white;
+        }
+
+        .transactions-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .transactions-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .transactions-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        .transactions-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .amount-cr {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .amount-db {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+        }
+
+        .code-preview {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin-top: 20px;
+            display: none;
+            max-height: 400px;
+        }
+
+        .code-preview.show {
+            display: block;
+        }
+
+        .code-preview pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* Toast Notification (Floating) */
+        .toast-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            min-width: 350px;
+            max-width: 500px;
+            padding: 20px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .toast-notification.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .toast-notification.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .toast-notification.info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+
+        .toast-notification .toast-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .toast-notification .toast-message {
+            flex: 1;
+        }
+
+        .toast-notification .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            padding: 0;
+            margin: 0;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-notification .toast-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Scroll to Bottom Button */
+        .scroll-to-bottom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: none;
+        }
+
+        .scroll-to-bottom.show {
+            display: block;
+        }
+
+        .scroll-to-bottom:hover {
+            transform: translateY(2px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .scroll-to-bottom:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll to Bottom Button -->
+    <button class="scroll-to-bottom" id="scrollToBottomBtn" onclick="scrollToBottom()" title="Scroll ke bawah">
+        ⬇️
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏦 BCA Statement Converter</h1>
+            <p>Konversi HTML Rekening Koran ke JSON untuk Power Apps & SQL Server</p>
+        </div>
+
+        <div class="main-content">
+            <div class="upload-section" id="uploadSection">
+                <div class="icon">📁</div>
+                <h2>Upload File Rekening Koran</h2>
+                <p style="margin: 15px 0; color: #666;">
+                    Drag & drop file HTML atau pilih salah satu opsi konversi di bawah
+                </p>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".html,.htm">
+                    <label for="fileInput" class="file-input-label">
+                        Pilih File HTML (BCA)
+                    </label>
+                </div>
+                <div class="file-name" id="fileName"></div>
+
+                <div class="file-input-wrapper" style="margin-top: 10px;">
+                    <input type="file" id="txtFileInput" accept=".txt">
+                    <label for="txtFileInput" class="file-input-label" style="background: linear-gradient(135deg, #ff6a3d 0%, #ff924c 100%);">
+                        Pilih File TXT (RPT GREENFIELD)
+                    </label>
+                </div>
+                <div class="file-name" id="txtFileName"></div>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="results" id="results">
+                <div class="info-card fade-in">
+                    <h3>📋 Informasi Rekening</h3>
+                    <div class="info-row">
+                        <span class="info-label">No. Rekening:</span>
+                        <span class="info-value" id="accountNumber">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nama:</span>
+                        <span class="info-value" id="accountName">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Periode:</span>
+                        <span class="info-value" id="period">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mata Uang:</span>
+                        <span class="info-value" id="currency">-</span>
+                    </div>
+                </div>
+
+                <div class="info-card fade-in">
+                    <h3>💰 Ringkasan</h3>
+                    <div class="info-row">
+                        <span class="info-label">Saldo Awal:</span>
+                        <span class="info-value" id="saldoAwal">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mutasi Debet:</span>
+                        <span class="info-value amount-db" id="mutasiDebet">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mutasi Kredit:</span>
+                        <span class="info-value amount-cr" id="mutasiKredit">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Saldo Akhir:</span>
+                        <span class="info-value" id="saldoAkhir">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Transaksi:</span>
+                        <span class="info-value" id="totalTransactions">-</span>
+                    </div>
+                </div>
+
+                <div class="info-card fade-in">
+                    <h3>📊 Data Transaksi</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="transactions-table" id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Jumlah</th>
+                                    <th>Tipe</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadFullJSON()">
+                        <span>💾</span> Download Full JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSQLFormat()">
+                        <span>🔄</span> Download untuk Stored Procedure
+                    </button>
+                    <button class="btn btn-secondary" onclick="copySQLFormat()">
+                        <span>📄</span> Copy for Stored Procedure
+                    </button>
+                    <button class="btn btn-warning" onclick="copyToClipboard()">
+                        <span>📋</span> Copy Full JSON
+                    </button>
+                </div>
+
+                <div class="code-preview" id="codePreview">
+                    <pre id="jsonPreview"></pre>
+                </div>
+            </div>
+
+            <div class="results" id="rptResults">
+                <div class="info-card fade-in">
+                    <h3>🏭 Ringkasan Laporan RPT</h3>
+                    <div class="info-row">
+                        <span class="info-label">Nama Perusahaan:</span>
+                        <span class="info-value" id="rptCompanyName">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tanggal Laporan:</span>
+                        <span class="info-value" id="rptReportDate">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Kode Laporan:</span>
+                        <span class="info-value" id="rptReportCode">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Cabang:</span>
+                        <span class="info-value" id="rptBranch">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Transaksi:</span>
+                        <span class="info-value" id="rptTotalTransactions">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Nilai:</span>
+                        <span class="info-value" id="rptTotalAmount">-</span>
+                    </div>
+                </div>
+
+                <div class="info-card fade-in">
+                    <h3>📊 Data Transaksi RPT</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="transactions-table" id="rptTransactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>BTP</th>
+                                    <th>Customer Name</th>
+                                    <th>Amount</th>
+                                    <th>Tanggal</th>
+                                    <th>Jam</th>
+                                    <th>Lokasi</th>
+                                    <th>Keterangan 1</th>
+                                    <th>Keterangan 2</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rptTransactionsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadRPTFullJSON()">
+                        <span>💾</span> Download Full JSON RPT
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadRPTSQLFormat()">
+                        <span>🔄</span> Download JSON untuk SP (RPT)
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyRPTSQLFormat()">
+                        <span>📄</span> Copy JSON untuk SP (RPT)
+                    </button>
+                    <button class="btn btn-warning" onclick="copyRPTFullJSON()">
+                        <span>📋</span> Copy Full JSON RPT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+/**
+ * BCA HTML to JSON Converter
+ * Converts BCA bank statement HTML to JSON format
+ * Compatible with Power Apps and SQL Server Stored Procedures
+ */
+
+class BCAStatementParser {
+    constructor(htmlContent) {
+        this.htmlContent = htmlContent;
+        this.result = {
+            accountInfo: {},
+            transactions: [],
+            summary: {}
+        };
+    }
+
+    /**
+     * Main parsing function
+     */
+    parse() {
+        try {
+            // Parse account information
+            this.parseAccountInfo();
+            
+            // Parse transactions
+            this.parseTransactions();
+            
+            // Parse summary
+            this.parseSummary();
+            
+            return {
+                success: true,
+                data: this.result
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    }
+
+    /**
+     * Parse account information (No. Rekening, Nama, Periode, Mata Uang)
+     */
+    parseAccountInfo() {
+        // Extract account number
+        const accountNumberMatch = this.htmlContent.match(/<B>No\. rekening<\/B>.*?<B>(\d+)<\/B>/i);
+        if (accountNumberMatch) {
+            this.result.accountInfo.accountNumber = accountNumberMatch[1].trim();
+        }
+
+        // Extract account name
+        const accountNameMatch = this.htmlContent.match(/<B>Nama<\/B>.*?<B>([^<]+)<\/B>/i);
+        if (accountNameMatch) {
+            this.result.accountInfo.accountName = accountNameMatch[1].trim();
+        }
+
+        // Extract period
+        const periodMatch = this.htmlContent.match(/<B>Periode<\/B>.*?<B>([^<]+)<\/B>/i);
+        if (periodMatch) {
+            this.result.accountInfo.period = periodMatch[1].trim();
+        }
+
+        // Extract currency
+        const currencyMatch = this.htmlContent.match(/<B>Kode Mata Uang<\/B>.*?<B>([^<]+)<\/B>/i);
+        if (currencyMatch) {
+            this.result.accountInfo.currency = currencyMatch[1].trim();
+        }
+    }
+
+    /**
+     * Parse transaction table
+     */
+    parseTransactions() {
+        // Find transaction table (the one with Tanggal Transaksi header)
+        const tableMatch = this.htmlContent.match(
+            /<TABLE[^>]*>.*?Tanggal Transaksi.*?<\/TABLE>/is
+        );
+
+        if (!tableMatch) {
+            console.warn('Transaction table not found');
+            return;
+        }
+
+        const tableContent = tableMatch[0];
+        
+        // Extract all transaction rows
+        // Pattern: <TR><TD ...>DATE</TD><TD ...>DESCRIPTION</TD><TD ...>BRANCH</TD><TD ...>AMOUNT</TD><TD ...>BALANCE</TD></TR>
+        const rowRegex = /<TR><TD[^>]*><FONT[^>]*>([^<]+)<\/FONT><\/TD><TD[^>]*><FONT[^>]*>(.*?)<\/FONT><\/TD><TD[^>]*><FONT[^>]*>([^<]+)<\/FONT><\/TD><TD[^>]*><FONT[^>]*>([^<]+)<\/FONT><\/TD><TD[^>]*><FONT[^>]*>([^<]+)<\/FONT><\/TD><\/TR>/gi;
+        
+        let match;
+        let transactionId = 1;
+        
+        while ((match = rowRegex.exec(tableContent)) !== null) {
+            const [, date, description, branch, amount, balance] = match;
+            
+            // Skip header row
+            if (date.includes('Tanggal') || description.includes('Keterangan')) {
+                continue;
+            }
+
+            // Clean up description (remove extra whitespace)
+            const cleanDescription = description.replace(/\s+/g, ' ').trim();
+
+            // Parse amount and determine type (CR/DB)
+            const amountStr = amount.trim();
+            const isCredit = amountStr.includes('CR');
+            const isDebit = amountStr.includes('DB');
+            const cleanAmount = amountStr
+                .replace(/CR|DB/g, '')
+                .replace(/,/g, '')
+                .trim();
+
+            // Parse balance
+            const cleanBalance = balance
+                .replace(/,/g, '')
+                .trim();
+
+            const transaction = {
+                TransactionID: transactionId++,
+                TransactionDate: date.trim(),
+                Description: cleanDescription,
+                Branch: branch.trim(),
+                Amount: parseFloat(cleanAmount) || 0,
+                AmountFormatted: amountStr,
+                TransactionType: isCredit ? 'CR' : (isDebit ? 'DB' : 'UNKNOWN'),
+                Balance: parseFloat(cleanBalance) || 0,
+                BalanceFormatted: balance.trim()
+            };
+
+            this.result.transactions.push(transaction);
+        }
+    }
+
+    /**
+     * Parse summary table (Saldo Awal, Mutasi, Saldo Akhir)
+     */
+    parseSummary() {
+        // Extract Saldo Awal
+        const saldoAwalMatch = this.htmlContent.match(/<B>Saldo Awal<\/B>.*?<B>([0-9,.]+)<\/B>/i);
+        if (saldoAwalMatch) {
+            const value = saldoAwalMatch[1].replace(/,/g, '');
+            this.result.summary.saldoAwal = parseFloat(value) || 0;
+            this.result.summary.saldoAwalFormatted = saldoAwalMatch[1];
+        }
+
+        // Extract Mutasi Debet
+        const mutasiDebetMatch = this.htmlContent.match(/<B>Mutasi Debet<\/B>.*?<B>([0-9,.]+)<\/B>/i);
+        if (mutasiDebetMatch) {
+            const value = mutasiDebetMatch[1].replace(/,/g, '');
+            this.result.summary.mutasiDebet = parseFloat(value) || 0;
+            this.result.summary.mutasiDebetFormatted = mutasiDebetMatch[1];
+        }
+
+        // Extract Mutasi Kredit
+        const mutasiKreditMatch = this.htmlContent.match(/<B>Mutasi Kredit<\/B>.*?<B>([0-9,.]+)<\/B>/i);
+        if (mutasiKreditMatch) {
+            const value = mutasiKreditMatch[1].replace(/,/g, '');
+            this.result.summary.mutasiKredit = parseFloat(value) || 0;
+            this.result.summary.mutasiKreditFormatted = mutasiKreditMatch[1];
+        }
+
+        // Extract Saldo Akhir
+        const saldoAkhirMatch = this.htmlContent.match(/<B>Saldo Akhir<\/B>.*?<B>([0-9,.]+)<\/B>/i);
+        if (saldoAkhirMatch) {
+            const value = saldoAkhirMatch[1].replace(/,/g, '');
+            this.result.summary.saldoAkhir = parseFloat(value) || 0;
+            this.result.summary.saldoAkhirFormatted = saldoAkhirMatch[1];
+        }
+
+        // Count transactions
+        const countMatch = this.htmlContent.match(/<B>Mutasi Kredit<\/B>.*?<B>&nbsp;(\d+)<\/B>/i);
+        if (countMatch) {
+            this.result.summary.totalTransactions = parseInt(countMatch[1]) || 0;
+        }
+    }
+
+    /**
+     * Get transactions in format for SQL Stored Procedure
+     * Returns JSON string compatible with OPENJSON in SQL Server
+     */
+    getTransactionsForStoredProcedure() {
+        return this.result.transactions.map(t => ({
+            TransactionID: t.TransactionID,
+            TransactionDate: t.TransactionDate,
+            Description: t.Description,
+            Amount: typeof t.Amount === 'number' ? t.Amount : null,
+            TransactionType: t.TransactionType === 'CR' || t.TransactionType === 'DB' ? t.TransactionType : null
+        }));
+    }
+
+    /**
+     * Export to SQL Server compatible JSON format
+     */
+    toSQLFormat() {
+        return JSON.stringify(this.getTransactionsForStoredProcedure(), null, 2);
+    }
+}
+
+/**
+ * RPT (TXT) Statement Parser
+ * Mengkonversi laporan RPT berbasis teks (mis. GREENFIELD) ke JSON
+ */
+class RPTStatementParser {
+    constructor(textContent) {
+        this.textContent = textContent;
+        this.lines = textContent.split(/\r?\n/);
+        this.result = {
+            headerInfo: {},
+            transactions: [],
+            summary: {}
+        };
+    }
+
+    parse() {
+        try {
+            this.parseHeader();
+            this.parseTransactions();
+            this.parseSummary();
+
+            return {
+                success: true,
+                data: this.result
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    }
+
+    parseHeader() {
+        for (const line of this.lines) {
+            if (!line) continue;
+
+            const namaPerusahaanMatch = line.match(/NAMA PERUSAHAAN\s*:\s*(.+)$/i);
+            if (namaPerusahaanMatch) {
+                this.result.headerInfo.companyName = namaPerusahaanMatch[1].trim();
+            }
+
+            const tanggalMatch = line.match(/TANGGAL\s*:\s*([0-9/]+)/i);
+            if (tanggalMatch) {
+                this.result.headerInfo.reportDate = tanggalMatch[1].trim();
+            }
+
+            const laporanMatch = line.match(/LAPORAN\s*:\s*([^\s]+)\s+/i);
+            if (laporanMatch) {
+                this.result.headerInfo.reportCode = laporanMatch[1].trim();
+            }
+
+            const cabangMatch = line.match(/CABANG\s*:\s*(.+?)\s+HALAMAN/i);
+            if (cabangMatch) {
+                this.result.headerInfo.branch = cabangMatch[1].trim();
+            }
+
+            const halamanMatch = line.match(/HALAMAN\s*:\s*(\d+)/i);
+            if (halamanMatch) {
+                this.result.headerInfo.page = parseInt(halamanMatch[1], 10);
+            }
+
+            const frekwensiMatch = line.match(/FREKWENSI\s*:\s*(.+)$/i);
+            if (frekwensiMatch) {
+                this.result.headerInfo.frequency = frekwensiMatch[1].trim();
+            }
+        }
+    }
+
+    parseTransactions() {
+        const transactionLines = this.lines.filter(line => {
+            if (!line) return false;
+            const trimmed = line.trim();
+            if (!trimmed) return false;
+            return /^\d+\s+\d{6,}/.test(trimmed);
+        });
+
+        transactionLines.forEach(line => {
+            const trimmed = line.trim();
+            const tokens = trimmed.split(/\s+/);
+            if (tokens.length < 6) {
+                return;
+            }
+
+            const idMatch = trimmed.match(/^(\d+)/);
+            if (!idMatch) {
+                return;
+            }
+            const sequence = parseInt(idMatch[1], 10);
+
+            const btp = tokens[1];
+            const idrIndex = tokens.indexOf('IDR');
+            if (idrIndex === -1) {
+                return;
+            }
+
+            const customerNameTokens = tokens.slice(2, idrIndex);
+            const customerName = customerNameTokens.join(' ').replace(/\s+/g, ' ').trim();
+
+            const amountRaw = tokens[idrIndex + 1] || '0';
+            const amountValue = parseFloat(amountRaw.replace(/,/g, '')) || 0;
+
+            const transactionDate = tokens[idrIndex + 2] || '';
+            const transactionTime = tokens[idrIndex + 3] || '';
+            const location = tokens[idrIndex + 4] || '';
+
+            let keterangan1 = '';
+            let keterangan2 = '';
+
+            if (location) {
+                const locationIndex = line.indexOf(location, line.indexOf(transactionTime));
+                if (locationIndex !== -1) {
+                    const remainder = line.slice(locationIndex + location.length).trim();
+                    if (remainder) {
+                        const parts = remainder.split(/\s{2,}/).map(part => part.trim()).filter(Boolean);
+                        if (parts.length > 0) {
+                            keterangan1 = parts[0];
+                        }
+                        if (parts.length > 1) {
+                            keterangan2 = parts[1];
+                        }
+                    }
+                }
+            }
+
+            this.result.transactions.push({
+                transactionId: sequence,
+                btp: btp,
+                customerName: customerName,
+                amount: amountValue,
+                amountFormatted: amountRaw,
+                transactionDate: transactionDate,
+                transactionTime: transactionTime,
+                location: location,
+                keterangan1: keterangan1 || '-',
+                keterangan2: keterangan2 || '-',
+                description: `RPT: ${customerName || '-' } | ${keterangan1 || '-' } | ${keterangan2 || '-' }`,
+                rawLine: line
+            });
+        });
+    }
+
+    parseSummary() {
+        const subTotalTransaksiMatch = this.lines.find(line => line.includes('SUB TOTAL TRANSAKSI'));
+        if (subTotalTransaksiMatch) {
+            const jumlahMatch = subTotalTransaksiMatch.match(/SUB TOTAL TRANSAKSI\s+IDR\s*:\s*(\d+)/i);
+            if (jumlahMatch) {
+                this.result.summary.subTotalTransactions = parseInt(jumlahMatch[1], 10);
+            }
+        }
+
+        const subTotalNilaiMatch = this.lines.find(line => line.includes('SUB TOTAL NILAI TRANSAKSI'));
+        if (subTotalNilaiMatch) {
+            const nilaiMatch = subTotalNilaiMatch.match(/IDR\s+([0-9,.]+)/i);
+            if (nilaiMatch) {
+                this.result.summary.subTotalAmount = this.parseAmount(nilaiMatch[1]);
+                this.result.summary.subTotalAmountFormatted = nilaiMatch[1].trim();
+            }
+        }
+
+        const totalTransaksiMatch = this.lines.find(line => line.includes('TOTAL TRANSAKSI'));
+        if (totalTransaksiMatch) {
+            const jumlahMatch = totalTransaksiMatch.match(/TOTAL TRANSAKSI\s+IDR\s*:\s*(\d+)/i);
+            if (jumlahMatch) {
+                this.result.summary.totalTransactions = parseInt(jumlahMatch[1], 10);
+            }
+        }
+
+        const totalNilaiMatch = this.lines.find(line => line.includes('TOTAL NILAI TRANSAKSI'));
+        if (totalNilaiMatch) {
+            const nilaiMatch = totalNilaiMatch.match(/IDR\s+([0-9,.]+)/i);
+            if (nilaiMatch) {
+                this.result.summary.totalAmount = this.parseAmount(nilaiMatch[1]);
+                this.result.summary.totalAmountFormatted = nilaiMatch[1].trim();
+            }
+        }
+
+        if (typeof this.result.summary.totalTransactions === 'undefined') {
+            this.result.summary.totalTransactions = this.result.transactions.length;
+        }
+    }
+
+    parseAmount(value) {
+        if (!value) return 0;
+        const sanitized = value.replace(/,/g, '').trim();
+        return parseFloat(sanitized) || 0;
+    }
+
+    getTransactionsForStoredProcedure() {
+        return this.result.transactions.map(t => ({
+            transaction_id: t.transactionId,
+            btp: t.btp,
+            customer_name: t.customerName,
+            transaction_date: t.transactionDate,
+            transaction_time: t.transactionTime,
+            amount: t.amount,
+            transaction_type: t.amount >= 0 ? 'CR' : 'DB',
+            location: t.location,
+            keterangan1: t.keterangan1,
+            keterangan2: t.keterangan2,
+            description: t.description,
+            bank_type: 'VA'
+        }));
+    }
+
+    toSQLFormat() {
+        return JSON.stringify(this.getTransactionsForStoredProcedure(), null, 2);
+    }
+}
+
+// Export for Node.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        BCAStatementParser,
+        RPTStatementParser
+    };
+}
+
+// Example usage in Node.js:
+if (typeof require !== 'undefined' && require.main === module) {
+    const fs = require('fs');
+    
+    if (process.argv.length < 4) {
+        console.log('Usage: node parser.js <mode> <input_file>');
+        console.log('Modes: html | rpt');
+        console.log('Example: node parser.js html 0053061777.html');
+        console.log('         node parser.js rpt rpt_example.txt');
+        process.exit(1);
+    }
+
+    const mode = process.argv[2];
+    const inputFile = process.argv[3];
+    const content = fs.readFileSync(inputFile, 'utf8');
+    
+    const parser = mode === 'rpt'
+        ? new RPTStatementParser(content)
+        : new BCAStatementParser(content);
+
+    const result = parser.parse();
+    
+    if (result.success) {
+        console.log('\n✅ PARSING SUCCESS!\n');
+        console.log('═══════════════════════════════════════════════════════');
+        console.log('RESULT');
+        console.log('═══════════════════════════════════════════════════════');
+        console.log(JSON.stringify(result.data, null, 2));
+
+        const baseName = inputFile.replace(/\.[^.]+$/, '');
+        const fullOutput = `${baseName}_${mode}_full.json`;
+        fs.writeFileSync(fullOutput, JSON.stringify(result.data, null, 2));
+        console.log(`\n✅ Full JSON saved to: ${fullOutput}`);
+        
+        const sqlOutput = `${baseName}_${mode}_for_sp.json`;
+        fs.writeFileSync(sqlOutput, parser.toSQLFormat());
+        console.log(`✅ SQL format saved to: ${sqlOutput}`);
+    } else {
+        console.error('❌ PARSING FAILED:', result.error);
+        process.exit(1);
+    }
+}
+
+
+</script>
+    <script>
+        let parsedData = null;
+        let parser = null;
+        let rptParsedData = null;
+        let rptParser = null;
+
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        document.getElementById('txtFileInput').addEventListener('change', handleTxtFileSelect);
+
+        // Drag and drop handlers
+        const uploadSection = document.getElementById('uploadSection');
+        
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('drag-over');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('drag-over');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleTxtFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleTxtFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            const fileName = document.getElementById('fileName');
+            fileName.textContent = `📄 ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const htmlContent = e.target.result;
+                parseHTML(htmlContent, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseHTML(htmlContent, fileName) {
+            try {
+                parser = new BCAStatementParser(htmlContent);
+                const result = parser.parse();
+
+                if (result.success) {
+                    parsedData = result.data;
+                    displayResults();
+                    showAlert('success', `✅ File ${fileName} berhasil di-parse!`);
+                } else {
+                    showAlert('error', `❌ Error parsing: ${result.error}`);
+                }
+            } catch (error) {
+                showAlert('error', `❌ Error: ${error.message}`);
+            }
+        }
+
+        function handleTxtFile(file) {
+            const fileName = document.getElementById('txtFileName');
+            fileName.textContent = `📄 ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const txtContent = e.target.result;
+                parseRPT(txtContent, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseRPT(txtContent, fileName) {
+            try {
+                rptParser = new RPTStatementParser(txtContent);
+                const result = rptParser.parse();
+
+                if (result.success) {
+                    rptParsedData = result.data;
+                    displayRPTResults();
+                    showAlert('success', `✅ File ${fileName} RPT berhasil di-parse!`);
+                } else {
+                    showAlert('error', `❌ Error parsing RPT: ${result.error}`);
+                }
+            } catch (error) {
+                showAlert('error', `❌ Error: ${error.message}`);
+            }
+        }
+
+        function displayResults() {
+            // Show results section
+            document.getElementById('results').classList.add('show');
+
+            // Display account info
+            document.getElementById('accountNumber').textContent = parsedData.accountInfo.accountNumber || '-';
+            document.getElementById('accountName').textContent = parsedData.accountInfo.accountName || '-';
+            document.getElementById('period').textContent = parsedData.accountInfo.period || '-';
+            document.getElementById('currency').textContent = parsedData.accountInfo.currency || '-';
+
+            // Display summary
+            document.getElementById('saldoAwal').textContent = formatCurrency(parsedData.summary.saldoAwal);
+            document.getElementById('mutasiDebet').textContent = formatCurrency(parsedData.summary.mutasiDebet);
+            document.getElementById('mutasiKredit').textContent = formatCurrency(parsedData.summary.mutasiKredit);
+            document.getElementById('saldoAkhir').textContent = formatCurrency(parsedData.summary.saldoAkhir);
+            document.getElementById('totalTransactions').textContent = parsedData.transactions.length;
+
+            // Display transactions table
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+
+            parsedData.transactions.forEach(t => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${t.TransactionID}</td>
+                    <td>${t.TransactionDate}</td>
+                    <td>${t.Description}</td>
+                    <td class="${t.TransactionType === 'CR' ? 'amount-cr' : 'amount-db'}">
+                        ${formatCurrency(t.Amount)}
+                    </td>
+                    <td><span style="background: ${t.TransactionType === 'CR' ? '#d4edda' : '#f8d7da'}; padding: 3px 10px; border-radius: 5px; font-weight: 600; color: ${t.TransactionType === 'CR' ? '#155724' : '#721c24'};">${t.TransactionType}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Show preview
+            const preview = document.getElementById('jsonPreview');
+            preview.textContent = JSON.stringify(parsedData, null, 2);
+            document.getElementById('codePreview').classList.add('show');
+        }
+
+        function displayRPTResults() {
+            const container = document.getElementById('rptResults');
+            container.classList.add('show');
+
+            const header = rptParsedData.headerInfo || {};
+            const summary = rptParsedData.summary || {};
+
+            document.getElementById('rptCompanyName').textContent = header.companyName || '-';
+            document.getElementById('rptReportDate').textContent = header.reportDate || '-';
+            document.getElementById('rptReportCode').textContent = header.reportCode || '-';
+            document.getElementById('rptBranch').textContent = header.branch || '-';
+            document.getElementById('rptTotalTransactions').textContent = summary.totalTransactions || rptParsedData.transactions.length || 0;
+            document.getElementById('rptTotalAmount').textContent = summary.totalAmountFormatted || (summary.totalAmount ? `IDR ${summary.totalAmount.toLocaleString('id-ID', { minimumFractionDigits: 2 })}` : '-');
+
+            const tbody = document.getElementById('rptTransactionsBody');
+            tbody.innerHTML = '';
+
+            rptParsedData.transactions.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.transactionId}</td>
+                    <td>${item.btp}</td>
+                    <td>${item.customerName}</td>
+                    <td>${formatCurrency(item.amount)}</td>
+                    <td>${item.transactionDate}</td>
+                    <td>${item.transactionTime}</td>
+                    <td>${item.location}</td>
+                    <td>${item.keterangan1}</td>
+                    <td>${item.keterangan2}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2
+            }).format(value);
+        }
+
+        function downloadFullJSON() {
+            downloadJSON(parsedData, 'statement_full.json');
+        }
+
+        function downloadSQLFormat() {
+            const sqlData = parser.getTransactionsForStoredProcedure();
+            downloadJSON(sqlData, 'statement_for_sp.json');
+        }
+
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('success', `✅ File ${filename} berhasil di-download!`);
+        }
+
+        function copySQLFormat() {
+            const sqlData = parser.getTransactionsForStoredProcedure();
+            const jsonString = JSON.stringify(sqlData, null, 2);
+            
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ JSON for Stored Procedure berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function copyToClipboard() {
+            const jsonString = JSON.stringify(parsedData, null, 2);
+            
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ Full JSON berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function downloadRPTFullJSON() {
+            if (!rptParsedData) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            downloadJSON(rptParsedData, 'rpt_statement_full.json');
+        }
+
+        function downloadRPTSQLFormat() {
+            if (!rptParser) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            const sqlData = rptParser.getTransactionsForStoredProcedure();
+            downloadJSON(sqlData, 'rpt_statement_for_sp.json');
+        }
+
+        function copyRPTSQLFormat() {
+            if (!rptParser) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            const sqlData = rptParser.getTransactionsForStoredProcedure();
+            const jsonString = JSON.stringify(sqlData, null, 2);
+
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ JSON RPT untuk SP berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function copyRPTFullJSON() {
+            if (!rptParsedData) {
+                showAlert('error', '❌ Data RPT belum tersedia');
+                return;
+            }
+            const jsonString = JSON.stringify(rptParsedData, null, 2);
+
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showAlert('success', '✅ Full JSON RPT berhasil di-copy ke clipboard!');
+            }).catch(() => {
+                showAlert('error', '❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide scroll to bottom button based on scroll position
+        window.addEventListener('scroll', () => {
+            const scrollBtn = document.getElementById('scrollToBottomBtn');
+            const results = document.getElementById('results');
+            const rptResults = document.getElementById('rptResults');
+            const shouldShow = ((results && results.classList.contains('show')) || (rptResults && rptResults.classList.contains('show')));
+            
+            if (shouldShow && window.scrollY < 200) {
+                scrollBtn.classList.add('show');
+            } else {
+                scrollBtn.classList.remove('show');
+            }
+        });
+
+        function showAlert(type, message) {
+            // Create toast notification (floating)
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            
+            // Determine icon based on type
+            let icon = '✅';
+            if (type === 'error') icon = '❌';
+            if (type === 'info') icon = 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            document.body.appendChild(toast);
+
+            // Auto remove after 5 seconds with slide out animation
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.4s ease-out';
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 5000);
+
+            // Also add to alert container (for page history)
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} fade-in`;
+            alert.textContent = message.replace(/✅|❌|ℹ️/g, '').trim();
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 8000);
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Pengguna Power Apps - Rekening Koran</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6fb;
+            color: #222;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0047ab, #326dff);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        h1, h2 {
+            margin: 0 0 16px;
+        }
+
+        h2 {
+            color: #0047ab;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .step {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .step img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .step-content {
+            padding: 24px 28px 32px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 32px;
+            min-width: 32px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(0, 71, 171, 0.1);
+            color: #0047ab;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .note {
+            background: rgba(0, 71, 171, 0.08);
+            border-left: 4px solid #0047ab;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .inline-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+            border-radius: 50%;
+            background: rgba(0, 71, 171, 0.12);
+            font-size: 18px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Panduan Pengguna Power Apps - Rekening Koran</h1>
+        <p>Ikuti langkah-langkah berikut untuk mengunggah rekening koran dan memproses hasilnya.</p>
+    </header>
+    <main>
+        <section class="step">
+            <img src="../image/1.login.png" alt="Login ke Power Apps">
+            <div class="step-content">
+                <div class="badge">Langkah 1</div>
+                <h2>Masuk ke Power Apps</h2>
+                <p>Buka aplikasi Power Apps dan lakukan login menggunakan akun perusahaan yang memiliki akses ke solusi Rekening Koran.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/2.menu.png" alt="Menu utama aplikasi">
+            <div class="step-content">
+                <div class="badge">Langkah 2</div>
+                <h2>Membuka Modul Rekening Koran</h2>
+                <p>Pada menu utama, pilih modul <strong>Rekening Koran</strong> untuk masuk ke halaman unggah mutasi.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/3.refresh_button.png" alt="Tombol refresh data">
+            <div class="step-content">
+                <div class="badge">Langkah 3</div>
+                <h2>Muat Data Awal</h2>
+                <p>
+                    <span class="inline-icon" aria-hidden="true">🔄</span>
+                    Ketuk tombol dengan ikon panah melingkar di pojok kanan atas. Ini memastikan daftar sudah memuat data terbaru sebelum kamu mulai.
+                </p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/4.upload_button_in_power_apps.png" alt="Tombol upload di Power Apps">
+            <div class="step-content">
+                <div class="badge">Langkah 4</div>
+                <h2>Buka Popup Upload</h2>
+                <p>Tekan tombol <strong>Upload</strong> di pojok kanan atas layar untuk memunculkan popup input JSON.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/5.open_file_converter.png" alt="Membuka BCA Statement Converter">
+            <div class="step-content">
+                <div class="badge">Langkah 5</div>
+                <h2>Buka Converter Rekening Koran</h2>
+                <p>Klik tombol <em>Open Converter</em> untuk membuka alat <strong>BCA Statement Converter</strong>. Alat ini akan mengubah file rekening koran menjadi data yang bisa dipakai aplikasi.</p>
+                <p>
+                    Belum punya file konverternya? Unduh versi terbaru di sini:
+                    <a href="https://drive.usercontent.google.com/download?id=18SGp7LP-yZ-0ze07RBYVfht8Bvq4o59D&export=download&authuser=1&confirm=t&uuid=ab90451e-a77d-4151-8a8c-29ec6e30c69d&at=ALWLOp6983LwNnQxyNLyTTMHoZu4:1762831230134" target="_blank" rel="noopener">Download BCA Statement Converter</a>
+                </p>
+                <div class="note">
+                    <strong>Catatan:</strong> Semua proses terjadi di browser kamu, tidak ada data yang dikirim ke internet.
+                </div>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/6.select_file_to_convert.png" alt="Pilih file untuk dikonversi">
+            <div class="step-content">
+                <div class="badge">Langkah 6</div>
+                <h2>Pilih File Rekening Koran</h2>
+                <p>Ambil file HTML atau TXT rekening koran yang akan diolah. Pastikan file yang dipilih adalah versi resmi dari bank.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/7.copy_for_store_procedure.png" alt="Copy JSON untuk stored procedure">
+            <div class="step-content">
+                <div class="badge">Langkah 7</div>
+                <h2>Salin Data dari Converter</h2>
+                <p>Setelah proses selesai, tekan tombol <em>Copy JSON for Stored Procedure</em> untuk menyalin data yang baru saja dihasilkan.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/8.paste_in_power_apps.png" alt="Paste JSON di popup upload">
+            <div class="step-content">
+                <div class="badge">Langkah 8</div>
+                <h2>Paste Data & Kirim</h2>
+                <p>Paste data yang tadi disalin ke kotak <em>Paste JSON</em> (tekan <strong>Ctrl + V</strong> di keyboard), lalu tekan <strong>Submit</strong> untuk mengirim ke sistem.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/9.refresh_button.png" alt="Refresh daftar review">
+            <div class="step-content">
+                <div class="badge">Langkah 9</div>
+                <h2>Munculkan Data yang Baru</h2>
+                <p>
+                    <span class="inline-icon" aria-hidden="true">🔄</span>
+                    Setelah unggahan selesai, tekan lagi tombol panah melingkar. Dengan begitu, batch yang baru masuk akan terlihat di daftar review.
+                </p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/10.forward_to_final.png" alt="Kirim ke tabel final">
+            <div class="step-content">
+                <div class="badge">Langkah 10</div>
+                <h2>Kirim ke Data Final</h2>
+                <p>Sesudah pengecekan selesai, tekan tombol <strong>Forward Review →</strong> agar data yang sudah cocok pindah ke daftar terakhir.</p>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../image/11.final_result.png" alt="Hasil akhir setelah forward">
+            <div class="step-content">
+                <div class="badge">Langkah 11</div>
+                <h2>Lihat Rekap Akhir</h2>
+                <p>Periksa daftar akhir untuk memastikan nilai uang, jenis transaksi (CR/DB), dan jenis bank tampil dengan benar. Setelah itu proses sudah selesai.</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        &copy; <script>document.write(new Date().getFullYear());</script> Tim Rekening Koran. Semua hak dilindungi.
+    </footer>
+</body>
+</html>
+

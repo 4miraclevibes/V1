@@ -30,7 +30,7 @@ SELECT [code]
 
 -- Set credit_limit menjadi NULL terlebih dahulu
 UPDATE [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
-SET [credit_limit] = NULL;
+SET [credit_limit] = 0;
 
 -- Alter kolom credit_limit menjadi FLOAT
 ALTER TABLE [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
