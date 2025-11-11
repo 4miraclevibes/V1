@@ -65,7 +65,7 @@ SELECT
 
 	c.[top] AS customer_top,
 
-	c.credit_limit AS credit_limit,
+	CAST(c.credit_limit AS FLOAT) AS credit_limit,
 
 	c.GFcode AS GFcode,
 
