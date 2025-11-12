@@ -8,28 +8,28 @@
                 Filter(
                     BTP_REVIEW,
                     (
-                        Status = "NO_MATCH" 
-                        //Status = "UNKNOWN_BANK" ||
-                        //Status = "NO_PATTERN"
+                        Status = "NO_MATCH" ||
+                        Status = "UNKNOWN_BANK" ||
+                        Status = "NO_PATTERN"
                     ) &&
                     IsApproved = false &&
                     (IsBlank(searchCustomerRv.Text) || searchCustomerRv.Text in CustomerName) &&
                     (IsBlank(searchDescRv.Text) || searchDescRv.Text in Description) &&
                     (IsBlank(searchBtRv.Text) || searchBtRv.Text in BankType) &&
-                    (IsBlank(UaDpRvRk.SelectedDate) || DateValue(UploadedAt) = UaDpRvRk.SelectedDate) &&
+                    //(IsBlank(UaDpRvRk.SelectedDate) || DateValue(UploadedAt) = UaDpRvRk.SelectedDate) &&
                     (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP)
                 ),
                 Filter(
                     BTP_REVIEW,
                     (Status = "FAIR" ||
                     Status = "GOOD" ||
-                    //Status = "LOW" ||
+                    Status = "LOW" ||
                     Status = "EXCELLENT") &&
                     IsApproved = false &&
                     (IsBlank(searchCustomerRv.Text) || searchCustomerRv.Text in CustomerName) &&
                     (IsBlank(searchDescRv.Text) || searchDescRv.Text in Description) &&
                     (IsBlank(searchBtRv.Text) || searchBtRv.Text in BankType) &&
-                    (IsBlank(UaDpRvRk.SelectedDate) || DateValue(UploadedAt) = UaDpRvRk.SelectedDate) &&
+                    //(IsBlank(UaDpRvRk.SelectedDate) || DateValue(UploadedAt) = UaDpRvRk.SelectedDate) &&
                     (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP)
                 )
             ),
