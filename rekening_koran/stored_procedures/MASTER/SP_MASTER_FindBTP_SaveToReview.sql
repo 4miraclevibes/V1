@@ -427,6 +427,7 @@ BEGIN
             TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
             OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
             Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            DataSource NVARCHAR(50),
             ProcessedAt DATETIME
         );
         
@@ -456,9 +457,9 @@ BEGIN
                 WHEN temp.Status = 'NO_BTP' THEN 'BTP tidak ditemukan di description (expected array ending with "23...")'
                 WHEN temp.Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(temp.BTP, '') + '" tidak ditemukan di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
                 WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                WHEN temp.TotalBTPOptions > 1 AND temp.Message LIKE '%[Data source: MP_CUSTOMER_NEW]%' THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai [Data source: MP_CUSTOMER_NEW - BTN dari MP_CUSTOMER_NEW]'
+                WHEN temp.TotalBTPOptions > 1 AND temp.DataSource = 'MP_CUSTOMER_NEW' THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai [Data source: MP_CUSTOMER_NEW - BTN dari MP_CUSTOMER_NEW]'
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                WHEN temp.Message LIKE '%[Data source: MP_CUSTOMER_NEW]%' THEN 'CustomerName ditemukan dari MP_CUSTOMER_NEW (BTN) - BTP tidak ada di MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN 'CustomerName ditemukan dari MP_CUSTOMER_NEW (BTN) - BTP tidak ada di MASTER_CUSTOMER_BTP_PATTERN'
                 ELSE NULL
             END,
             GETDATE()
