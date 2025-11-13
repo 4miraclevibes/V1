@@ -1,9 +1,10 @@
 -- =====================================================
 -- SP_EXPORT_REKENING_KORAN
 -- =====================================================
--- Purpose: Stored Procedure untuk export data dari VW_REKENING_KORAN
+-- Purpose: Stored Procedure untuk export data dari VW_MP_REKENING_KORAN
 --          Support filter parameters untuk Power Automate
 --          Compatible dengan on-premises gateway
+--          Exclude credit, include Amount, TransactionType, BankType
 -- =====================================================
 
 USE [POWERAPPS]
@@ -31,16 +32,18 @@ BEGIN
         SET @EndDateDT = TRY_CAST(@EndDate AS DATETIME);
     END
     
-    -- Query dengan filter
+    -- Query dengan filter (exclude credit, include Amount, TransactionType, BankType)
     SELECT 
         [id],
         [trx_date],
         [created_at],
         [updated_at],
-        [credit],
         [btp],
-        [desc]
-    FROM [dbo].[VW_REKENING_KORAN]
+        [desc],
+        [Amount],
+        [TransactionType],
+        [BankType]
+    FROM [dbo].[VW_MP_REKENING_KORAN]
     WHERE 
         (@StartDateDT IS NULL OR [trx_date] >= @StartDateDT)
         AND (@EndDateDT IS NULL OR [trx_date] <= @EndDateDT)

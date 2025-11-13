@@ -46,11 +46,14 @@ Solusi untuk export data dari database view (`VW_REKENING_KORAN`) ke Excel **tan
 ## 📋 Prerequisites
 
 ### 1. Database View
-✅ View `VW_REKENING_KORAN` sudah dibuat di database:
+✅ View `VW_MP_REKENING_KORAN` sudah dibuat di database:
 ```sql
-SELECT [id], [trx_date], [created_at], [updated_at], [credit], [btp], [desc]
+SELECT [id], [trx_date], [created_at], [updated_at], [btp], [desc], 
+       [Amount], [TransactionType], [BankType]
 FROM [POWERAPPS].[dbo].[MP_REKENING_KORAN]
 ```
+
+**Note:** Field `credit` **TIDAK DIIKUTSERTAKAN** dalam export (excluded).
 
 ### 2. Power Platform
 - ✅ Power Apps license
@@ -73,26 +76,21 @@ FROM [POWERAPPS].[dbo].[MP_REKENING_KORAN]
 
 #### 1.2 Add SQL Query Action
 
-**Action:** SQL Server → **Execute a SQL query (V2)**
+**Action:** SQL Server → **Execute stored procedure (V2)** (untuk on-premises gateway)
 
 **Configuration:**
 ```
 Connection: [Your SQL Server Connection]
-Query type: Text
-Query text:
-SELECT 
-    [id],
-    [trx_date],
-    [created_at],
-    [updated_at],
-    [credit],
-    [btp],
-    [desc]
-FROM [POWERAPPS].[dbo].[VW_REKENING_KORAN]
-ORDER BY [id] DESC
+Procedure name: [dbo].[SP_EXPORT_REKENING_KORAN]
+Parameters: (Optional - bisa dikosongkan)
+  - @StartDate
+  - @EndDate
+  - @BTP
 ```
 
 **Note:** 
+- Menggunakan stored procedure karena on-premises gateway tidak support "Execute SQL query (V2)"
+- Stored procedure sudah exclude `credit` dan include `Amount`, `TransactionType`, `BankType`
 - Credential SQL hanya di-setup sekali di Power Automate
 - User tidak akan pernah lihat credential ini!
 
@@ -118,7 +116,9 @@ Atau manual schema:
             "trx_date": {"type": "string"},
             "created_at": {"type": "string"},
             "updated_at": {"type": "string"},
-            "credit": {"type": "number"},
+            "Amount": {"type": "number"},
+            "TransactionType": {"type": "string"},
+            "BankType": {"type": "string"},
             "btp": {"type": "string"},
             "desc": {"type": "string"}
         }
@@ -349,7 +349,7 @@ export_to_excel/
 
 **SQL Query:**
 ```sql
-SELECT * FROM VW_REKENING_KORAN
+SELECT * FROM VW_MP_REKENING_KORAN
 WHERE 
     (@StartDate IS NULL OR trx_date >= @StartDate)
     AND (@EndDate IS NULL OR trx_date <= @EndDate)
@@ -379,7 +379,7 @@ Bisa buat flow terpisah untuk setiap view:
 
 - [Power Apps Quick Reference](../QUICK_REFERENCE.md)
 - [Power Automate SQL Connector](https://docs.microsoft.com/en-us/connectors/sql/)
-- [VW_REKENING_KORAN View](../../VW_REKENING_KORAN.sql)
+- [VW_MP_REKENING_KORAN View](../../stored_procedures/MASTER/[POWERAPPS].[dbo].[vw_MP_REKENING_KORAN].sql)
 
 ---
 
@@ -389,7 +389,7 @@ Bisa buat flow terpisah untuk setiap view:
 
 **Solution:**
 - Check SQL connection di Power Automate
-- Verify view `VW_REKENING_KORAN` exists
+- Verify view `VW_MP_REKENING_KORAN` exists
 - Check SQL query syntax
 
 ### Error: "File download failed"

@@ -95,8 +95,12 @@ ORDER BY [id] DESC
 
 **Content:**
 ```
-@body('Execute_a_SQL_query_(V2)')?['ResultSets']?['Table1']
+@body('Execute_stored_procedure_(V2)')?['ResultSets']?['Table1']
 ```
+
+**Note:** 
+- Ganti `Execute_a_SQL_query_(V2)` dengan nama action stored procedure yang kamu buat
+- Biasanya: `Execute_stored_procedure_(V2)` atau sesuai nama action di flow kamu
 
 **Schema:** (Click "Generate from sample" dan paste sample output)
 
@@ -119,13 +123,19 @@ ORDER BY [id] DESC
             "updated_at": {
                 "type": "string"
             },
-            "credit": {
-                "type": "number"
-            },
             "btp": {
                 "type": "string"
             },
             "desc": {
+                "type": "string"
+            },
+            "Amount": {
+                "type": "number"
+            },
+            "TransactionType": {
+                "type": "string"
+            },
+            "BankType": {
                 "type": "string"
             }
         },
@@ -133,6 +143,12 @@ ORDER BY [id] DESC
     }
 }
 ```
+
+**⚠️ IMPORTANT:** 
+- Field `credit` **TIDAK DIIKUTSERTAKAN** (excluded)
+- Field baru: `Amount`, `TransactionType`, `BankType` ditambahkan
+- `Amount` bisa `number` atau `string` tergantung database (jika error, ubah ke `"string"`)
+- Jika masih error, gunakan "Generate from sample" dengan copy output dari stored procedure
 
 ---
 
@@ -155,24 +171,22 @@ ORDER BY [id] DESC
 
 ### STEP 5: Convert to Base64
 
-**Action:** Data operation → **Compose** (Optional - untuk formatting)
+**⚠️ Jika "Convert to Base64" tidak tersedia, gunakan Compose dengan expression!**
+
+**Action:** Data operation → **Compose**
 
 **Input:**
 ```
-@body('Create_CSV_table')
+base64(body('Create_CSV_table'))
 ```
 
-**Action:** Data operation → **Convert to Base64**
+**Penjelasan:**
+- `base64()` adalah built-in function di Power Automate
+- Langsung convert output dari Create CSV table ke Base64
+- Tidak perlu action terpisah "Convert to Base64"
 
-**Input:**
-```
-@outputs('Compose')
-```
-
-**Or langsung:**
-```
-@body('Create_CSV_table')
-```
+**Alternative (jika Compose juga tidak ada):**
+- Langsung gunakan expression `base64()` di STEP 6 (Respond to PowerApps)
 
 ---
 
