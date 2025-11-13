@@ -280,7 +280,8 @@ BEGIN
             END,
             GETDATE()
         FROM #TRSF_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID;
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #TRSF_Temp;
@@ -340,7 +341,8 @@ BEGIN
             END,
             GETDATE()
         FROM #BIFAST_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID;
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
@@ -400,7 +402,8 @@ BEGIN
             END,
             GETDATE()
         FROM #MANDIRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID;
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
@@ -464,7 +467,8 @@ BEGIN
             END,
             GETDATE()
         FROM #GREENFIEL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID;
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
@@ -572,7 +576,8 @@ BEGIN
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
         FROM #VA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID;
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
