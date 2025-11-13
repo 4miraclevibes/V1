@@ -111,31 +111,22 @@ ORDER BY [id] DESC
     "items": {
         "type": "object",
         "properties": {
-            "id": {
+            "Tanggal Transaksi": {
+                "type": "string"
+            },
+            "Keterangan": {
+                "type": "string"
+            },
+            "Jumlah": {
                 "type": "number"
             },
-            "trx_date": {
+            "DB/CR": {
                 "type": "string"
             },
-            "created_at": {
+            "Bill To Party": {
                 "type": "string"
             },
-            "updated_at": {
-                "type": "string"
-            },
-            "btp": {
-                "type": "string"
-            },
-            "desc": {
-                "type": "string"
-            },
-            "Amount": {
-                "type": "number"
-            },
-            "TransactionType": {
-                "type": "string"
-            },
-            "BankType": {
+            "Bank Type": {
                 "type": "string"
             }
         },
@@ -145,9 +136,14 @@ ORDER BY [id] DESC
 ```
 
 **⚠️ IMPORTANT:** 
-- Field `credit` **TIDAK DIIKUTSERTAKAN** (excluded)
-- Field baru: `Amount`, `TransactionType`, `BankType` ditambahkan
-- `Amount` bisa `number` atau `string` tergantung database (jika error, ubah ke `"string"`)
+- Kolom sesuai dengan view `VW_MP_REKENING_KORAN`:
+  - `Tanggal Transaksi` (untuk filter StartDate/EndDate)
+  - `Keterangan`
+  - `Jumlah`
+  - `DB/CR` (TransactionType)
+  - `Bill To Party` (BTP - untuk filter BTP)
+  - `Bank Type`
+- `Jumlah` bisa `number` atau `string` tergantung database (jika error, ubah ke `"string"`)
 - Jika masih error, gunakan "Generate from sample" dengan copy output dari stored procedure
 
 ---

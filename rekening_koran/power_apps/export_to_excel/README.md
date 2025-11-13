@@ -48,12 +48,18 @@ Solusi untuk export data dari database view (`VW_REKENING_KORAN`) ke Excel **tan
 ### 1. Database View
 ✅ View `VW_MP_REKENING_KORAN` sudah dibuat di database:
 ```sql
-SELECT [id], [trx_date], [created_at], [updated_at], [btp], [desc], 
-       [Amount], [TransactionType], [BankType]
-FROM [POWERAPPS].[dbo].[MP_REKENING_KORAN]
+SELECT [Tanggal Transaksi], [Keterangan], [Jumlah], [DB/CR], 
+       [Bill To Party], [Bank Type]
+FROM [POWERAPPS].[dbo].[VW_MP_REKENING_KORAN]
 ```
 
-**Note:** Field `credit` **TIDAK DIIKUTSERTAKAN** dalam export (excluded).
+**Kolom yang di-export:**
+- `Tanggal Transaksi` - Tanggal transaksi
+- `Keterangan` - Deskripsi transaksi
+- `Jumlah` - Jumlah transaksi
+- `DB/CR` - Debit/Credit
+- `Bill To Party` - BTP Code
+- `Bank Type` - Tipe bank
 
 ### 2. Power Platform
 - ✅ Power Apps license
@@ -112,15 +118,12 @@ Atau manual schema:
     "items": {
         "type": "object",
         "properties": {
-            "id": {"type": "number"},
-            "trx_date": {"type": "string"},
-            "created_at": {"type": "string"},
-            "updated_at": {"type": "string"},
-            "Amount": {"type": "number"},
-            "TransactionType": {"type": "string"},
-            "BankType": {"type": "string"},
-            "btp": {"type": "string"},
-            "desc": {"type": "string"}
+            "Tanggal Transaksi": {"type": "string"},
+            "Keterangan": {"type": "string"},
+            "Jumlah": {"type": "number"},
+            "DB/CR": {"type": "string"},
+            "Bill To Party": {"type": "string"},
+            "Bank Type": {"type": "string"}
         }
     }
 }
@@ -351,10 +354,10 @@ export_to_excel/
 ```sql
 SELECT * FROM VW_MP_REKENING_KORAN
 WHERE 
-    (@StartDate IS NULL OR trx_date >= @StartDate)
-    AND (@EndDate IS NULL OR trx_date <= @EndDate)
-    AND (@BTP IS NULL OR btp = @BTP)
-ORDER BY id DESC
+    (@StartDate IS NULL OR [Tanggal Transaksi] >= @StartDate)
+    AND (@EndDate IS NULL OR [Tanggal Transaksi] <= @EndDate)
+    AND (@BTP IS NULL OR [Bill To Party] = @BTP)
+ORDER BY [Tanggal Transaksi] DESC
 ```
 
 **Power Apps:**

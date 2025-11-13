@@ -32,23 +32,20 @@ BEGIN
         SET @EndDateDT = TRY_CAST(@EndDate AS DATETIME);
     END
     
-    -- Query dengan filter (exclude credit, include Amount, TransactionType, BankType)
+    -- Query dengan filter menggunakan kolom dari VW_MP_REKENING_KORAN
     SELECT 
-        [id],
-        [trx_date],
-        [created_at],
-        [updated_at],
-        [btp],
-        [desc],
-        [Amount],
-        [TransactionType],
-        [BankType]
+        [Tanggal Transaksi],
+        [Keterangan],
+        [Jumlah],
+        [DB/CR],
+        [Bill To Party],
+        [Bank Type]
     FROM [dbo].[VW_MP_REKENING_KORAN]
     WHERE 
-        (@StartDateDT IS NULL OR [trx_date] >= @StartDateDT)
-        AND (@EndDateDT IS NULL OR [trx_date] <= @EndDateDT)
-        AND (@BTP IS NULL OR LEN(LTRIM(RTRIM(@BTP))) = 0 OR [btp] = @BTP)
-    ORDER BY [id] DESC;
+        (@StartDateDT IS NULL OR [Tanggal Transaksi] >= @StartDateDT)
+        AND (@EndDateDT IS NULL OR [Tanggal Transaksi] <= @EndDateDT)
+        AND (@BTP IS NULL OR LEN(LTRIM(RTRIM(@BTP))) = 0 OR [Bill To Party] = @BTP)
+    ORDER BY [Tanggal Transaksi] DESC;
     
 END
 GO
