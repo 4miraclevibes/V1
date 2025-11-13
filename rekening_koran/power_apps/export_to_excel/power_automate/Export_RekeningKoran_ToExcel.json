@@ -1,0 +1,115 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {}
+        }
+      }
+    },
+    "actions": {
+      "Execute_a_SQL_query_V2": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['sql']['connectionId']"
+            }
+          },
+          "method": "post",
+          "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))}/query/sql",
+          "body": {
+            "query": "SELECT [id], [trx_date], [created_at], [updated_at], [credit], [btp], [desc] FROM [POWERAPPS].[dbo].[VW_REKENING_KORAN] ORDER BY [id] DESC"
+          }
+        },
+        "runAfter": {}
+      },
+      "Parse_JSON": {
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@body('Execute_a_SQL_query_V2')?['ResultSets']?['Table1']",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "trx_date": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "credit": {
+                  "type": "number"
+                },
+                "btp": {
+                  "type": "string"
+                },
+                "desc": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Execute_a_SQL_query_V2": ["Succeeded"]
+        }
+      },
+      "Create_CSV_table": {
+        "type": "Compose",
+        "inputs": "@body('Parse_JSON')",
+        "runAfter": {
+          "Parse_JSON": ["Succeeded"]
+        }
+      },
+      "Convert_to_Base64": {
+        "type": "Compose",
+        "inputs": "@base64(body('Create_CSV_table'))",
+        "runAfter": {
+          "Create_CSV_table": ["Succeeded"]
+        }
+      },
+      "Respond_to_PowerApps": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "fileName": "@concat('RekeningKoran_Export_', formatDateTime(utcNow(), 'yyyyMMdd_HHmmss'), '.csv')",
+            "fileContent": "@outputs('Convert_to_Base64')",
+            "rowCount": "@length(body('Parse_JSON'))",
+            "exportDate": "@utcNow()",
+            "status": "success"
+          }
+        },
+        "runAfter": {
+          "Convert_to_Base64": ["Succeeded"]
+        }
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "sql": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/sql",
+          "connectionName": "sql",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/sql"
+        }
+      }
+    }
+  }
+}
+
