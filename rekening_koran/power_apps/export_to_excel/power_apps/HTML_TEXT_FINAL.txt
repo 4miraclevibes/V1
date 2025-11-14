@@ -1,0 +1,8 @@
+Copy paste EXACT ini ke HTMLText property HTML Text control:
+
+If(
+    varTriggerDownload && !IsBlank(varDownloadData),
+    "<a id='autoDownload' href='data:text/csv;base64," & varDownloadData & "' download='" & varDownloadFileName & "'></a><script>var link=document.getElementById('autoDownload');if(link){link.click();}</script>",
+    ""
+)
+
