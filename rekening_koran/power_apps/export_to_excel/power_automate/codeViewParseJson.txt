@@ -1,0 +1,41 @@
+{
+  "type": "ParseJson",
+  "inputs": {
+    "content": "@body('Execute_stored_procedure_(V2)')?['ResultSets']?['Table1']",
+    "schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Tanggal Transaksi": {
+            "type": "string"
+          },
+          "Keterangan": {
+            "type": "string"
+          },
+          "Jumlah": {
+            "type": "number"
+          },
+          "DB/CR": {
+            "type": "string"
+          },
+          "Bill To Party": {
+            "type": "string"
+          },
+          "Bank Type": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  "runAfter": {
+    "Execute_stored_procedure_(V2)": [
+      "Succeeded"
+    ]
+  },
+  "metadata": {
+    "operationMetadataId": "d1c90a0f-de6c-4c60-9de4-329d36f6e4f3"
+  }
+}

@@ -1,0 +1,63 @@
+===========================================
+EXPRESSION YANG BENAR UNTUK FX EDITOR
+===========================================
+
+DARI ANALISIS:
+- outputParseJson.txt baris 2: {"body": [...]}
+- Code View Parse JSON: "type": "ParseJson"
+- outputComposeExcelData.txt: masih array of objects (salah!)
+
+MASALAHNYA:
+Output Parse JSON punya wrapper {"body": [...]}, jadi harus akses array di dalam "body"
+
+EXPRESSION YANG BENAR (COPY-PASTE KE FX EDITOR):
+
+===========================================
+OPTION A: Pakai body() dengan akses ['body']
+===========================================
+map(body('ParseJson')?['body'], item => [item?['Tanggal Transaksi'], item?['Keterangan'], item?['Jumlah'], item?['DB/CR'], item?['Bill To Party'], item?['Bank Type']])
+
+===========================================
+OPTION B: Pakai outputs() dengan akses ['body']
+===========================================
+map(outputs('ParseJson')?['body'], item => [item?['Tanggal Transaksi'], item?['Keterangan'], item?['Jumlah'], item?['DB/CR'], item?['Bill To Party'], item?['Bank Type']])
+
+===========================================
+OPTION C: Jika body() langsung return array (tanpa wrapper)
+===========================================
+map(body('ParseJson'), item => [item?['Tanggal Transaksi'], item?['Keterangan'], item?['Jumlah'], item?['DB/CR'], item?['Bill To Party'], item?['Bank Type']])
+
+===========================================
+CARA CEK YANG BENAR:
+===========================================
+1. Buka run history → Cek output "Parse JSON"
+2. Jika output adalah {"body": [...]} → Pakai OPTION A atau B
+3. Jika output langsung [...] → Pakai OPTION C
+
+===========================================
+CARA TEST DI COMPOSE EXCEL DATA:
+===========================================
+1. Buka action "Compose Excel Data"
+2. Klik field "Inputs"
+3. Klik icon fx
+4. HAPUS semua yang ada
+5. Copy-paste OPTION A
+6. Klik "Update" atau "OK"
+7. Test flow
+8. Cek output "Compose Excel Data" di run history
+9. HARUS jadi array of arrays:
+   [
+     ["2025-12-11T00:00:00", "RPT: PT ERA KOPI", 1853078, "CR", "2300016953", "VA"],
+     ["2025-12-11T00:00:00", "RPT: PT PALEM", 463269, "CR", "2300017975", "VA"]
+   ]
+10. Jika masih array of objects, coba OPTION B
+11. Jika masih error, coba OPTION C
+
+===========================================
+PENTING:
+===========================================
+- Pastikan nama action Parse JSON benar: "ParseJson" (dari Code View)
+- Pastikan sudah klik "Update" atau "OK" setelah paste expression
+- Pastikan tidak ada spasi atau karakter aneh di expression
+- Expression harus satu baris (tidak ada line break)
+

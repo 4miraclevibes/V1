@@ -1,0 +1,302 @@
+{
+    "host": {
+        "connectionReferenceName": "shared_excelonlinebusiness",
+        "operationId": "AddRowV2"
+    },
+    "parameters": {
+        "source": "sites/greenfieldsdairy.sharepoint.com,be38fe68-8017-416b-af16-2b9dbcf59705,cf74dc82-cf5a-48e5-9625-5352d68cd59b",
+        "drive": "b!aP44vheAa0GvFiudvPWXBYLcdM9az-VIliVTUtaM1Zvcv_SO5IU-Sa9tUOI6T41y",
+        "file": "/Power Apps/Customer Profile/RK_EXPORT/RekeningKoran_Export_20251116_161801.xlsx",
+        "table": "A1",
+        "item": [
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: PT ERA KOPI AND | - | -",
+                "Jumlah": 1853078,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016953",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: PT ERA KOPI AND | - | -",
+                "Jumlah": 463270,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016953",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: PT PALEM PUTRI | Po no.250946334 | -",
+                "Jumlah": 463269,
+                "DB/CR": "CR",
+                "Bill To Party": "2300017975",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: PT CIPUTRA ADIG | 251112001391083 | -",
+                "Jumlah": 2607820,
+                "DB/CR": "CR",
+                "Bill To Party": "2300008788",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: ZAID RAMADHAN HA | - | -",
+                "Jumlah": 386280,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016481",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: PT TABLE SEMBIL | Pemb. Invoice | Greenfields",
+                "Jumlah": 463270,
+                "DB/CR": "CR",
+                "Bill To Party": "2300018915",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: MAYVEN | 179718 | -",
+                "Jumlah": 825040,
+                "DB/CR": "CR",
+                "Bill To Party": "2300012982",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: BANK CENTRAL ASI | - | -",
+                "Jumlah": 1034697,
+                "DB/CR": "CR",
+                "Bill To Party": "2300008125",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-12-11T00:00:00",
+                "Keterangan": "RPT: ADI RACHMAN SURY | 5222529085 | -",
+                "Jumlah": 1158840,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016997",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: ICAN SUGITA | studio kopi N93 | 28",
+                "Jumlah": 825040,
+                "DB/CR": "CR",
+                "Bill To Party": "2300012205",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: BENNY SANTOSO | UHT 5KRT Esteh | a Grande",
+                "Jumlah": 965700,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016493",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: AZWAR ANAS | FM 2 box, 7 Nov | -",
+                "Jumlah": 455520,
+                "DB/CR": "CR",
+                "Bill To Party": "2300011667",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: PT KYUNGSUNG IND | 251113001391633 | -",
+                "Jumlah": 4031591,
+                "DB/CR": "CR",
+                "Bill To Party": "2300018579",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: RAVI HIMAWAN SHA | Pembayaran 10 d | estehboulevard",
+                "Jumlah": 1931400,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016605",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: PT BREAD MART I | Inv No.52105688 | -",
+                "Jumlah": 920186,
+                "DB/CR": "CR",
+                "Bill To Party": "2300000682",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: DANNY LEO SUTEDJ | 1136363 | -",
+                "Jumlah": 1366560,
+                "DB/CR": "CR",
+                "Bill To Party": "2300004703",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: DANNY LEO SUTEDJ | 1130859 | -",
+                "Jumlah": 1138800,
+                "DB/CR": "CR",
+                "Bill To Party": "2300004703",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: DANNY LEO SUTEDJ | 1140732 | -",
+                "Jumlah": 1138800,
+                "DB/CR": "CR",
+                "Bill To Party": "2300004703",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: DANNY LEO SUTEDJ | 1140193 | -",
+                "Jumlah": 1138800,
+                "DB/CR": "CR",
+                "Bill To Party": "2300004703",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: ARIE ARDIANSYAH | squadron halim | -",
+                "Jumlah": 965700,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016537",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-14T00:00:00",
+                "Keterangan": "RPT: KIKIT ARIYANTO | Karawaci | -",
+                "Jumlah": 455520,
+                "DB/CR": "CR",
+                "Bill To Party": "2300015150",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: PT ISIHOMBING | 251111001390605 | -",
+                "Jumlah": 2037100,
+                "DB/CR": "CR",
+                "Bill To Party": "2300019110",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: TEOPILUS SUTJIAN | - | -",
+                "Jumlah": 2049840,
+                "DB/CR": "CR",
+                "Bill To Party": "2300005487",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: ICAN SUGITA | studio kopi N93 | 29",
+                "Jumlah": 455520,
+                "DB/CR": "CR",
+                "Bill To Party": "2300012205",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: PT INTRO BISTRO | uht 115 ml kiri | tgl 31 oktober",
+                "Jumlah": 122677,
+                "DB/CR": "CR",
+                "Bill To Party": "2300003995",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: CAFE AND RESTORA | inv N9312804 ge | ck coffee",
+                "Jumlah": 683280,
+                "DB/CR": "CR",
+                "Bill To Party": "2300000073",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: CAFE AND RESTORA | inv N9377063 ge | ck coffee",
+                "Jumlah": 683280,
+                "DB/CR": "CR",
+                "Bill To Party": "2300000073",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: PT JOOMBA KARYA | 5222523581/PO.2 | -",
+                "Jumlah": 1053878,
+                "DB/CR": "CR",
+                "Bill To Party": "2300011973",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: GRACIA S A PINON | 1222605118 | SUSU ESSEL GO",
+                "Jumlah": 463269,
+                "DB/CR": "CR",
+                "Bill To Party": "2300019232",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: ELIZABETH APRILI | 1222605806 | -",
+                "Jumlah": 694904,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016772",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: PAULUS RUDY KURN | Faktur Penjuala | 10 Nov 25",
+                "Jumlah": 579420,
+                "DB/CR": "CR",
+                "Bill To Party": "2300016621",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: BAKMI MANIA REST | so1222605843 | -",
+                "Jumlah": 163552,
+                "DB/CR": "CR",
+                "Bill To Party": "2000115089",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: DAPUR BOGA LESTA | MENTENG 27 OKTO | MENTENG 27 OKT",
+                "Jumlah": 1020000,
+                "DB/CR": "CR",
+                "Bill To Party": "2300017530",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-11-11T00:00:00",
+                "Keterangan": "RPT: PT SUMBER PERMA | 5222527118 | 5222527487",
+                "Jumlah": 1667864,
+                "DB/CR": "CR",
+                "Bill To Party": "2300018783",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-10-11T00:00:00",
+                "Keterangan": "RPT: ESKOPI INDONESIA | PI.2025.11.0002 | 5210576647",
+                "Jumlah": 1158840,
+                "DB/CR": "CR",
+                "Bill To Party": "2300019191",
+                "Bank Type": "VA"
+            },
+            {
+                "Tanggal Transaksi": "2025-10-11T00:00:00",
+                "Keterangan": "RPT: NIKITA MILANOVA | N9382983 | -",
+                "Jumlah": 2317680,
+                "DB/CR": "CR",
+                "Bill To Party": "2300019131",
+                "Bank Type": "VA"
+            }
+        ]
+    }
+}

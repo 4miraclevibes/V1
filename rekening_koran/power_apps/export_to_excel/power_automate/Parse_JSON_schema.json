@@ -1,0 +1,27 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "Tanggal Transaksi": {
+                "type": "string"
+            },
+            "Keterangan": {
+                "type": "string"
+            },
+            "Jumlah": {
+                "type": "number"
+            },
+            "DB/CR": {
+                "type": "string"
+            },
+            "Bill To Party": {
+                "type": "string"
+            },
+            "Bank Type": {
+                "type": "string"
+            }
+        },
+        "required": []
+    }
+}

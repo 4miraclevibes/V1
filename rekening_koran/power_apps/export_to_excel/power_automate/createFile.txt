@@ -1,0 +1,29 @@
+{
+  "type": "OpenApiConnection",
+  "inputs": {
+    "parameters": {
+      "dataset": "https://greenfieldsdairy.sharepoint.com/sites/dairy",
+      "folderPath": "/Power Apps/Customer Profile/RK_EXPORT",
+      "name": "@variables('varFileName')",
+      "body": "@outputs('Compose')"
+    },
+    "host": {
+      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "connection": "shared_sharepointonline",
+      "operationId": "CreateFile"
+    }
+  },
+  "runAfter": {
+    "Initialize_variable": [
+      "Succeeded"
+    ]
+  },
+  "runtimeConfiguration": {
+    "contentTransfer": {
+      "transferMode": "Chunked"
+    }
+  },
+  "metadata": {
+    "operationMetadataId": "8702f163-aab5-4182-b6a2-8cbc3ffda13e"
+  }
+}
