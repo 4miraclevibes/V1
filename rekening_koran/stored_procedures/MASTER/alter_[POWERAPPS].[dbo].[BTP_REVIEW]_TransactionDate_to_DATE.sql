@@ -1,0 +1,3 @@
+ALTER TABLE [POWERAPPS].[dbo].[BTP_REVIEW]
+ALTER COLUMN [TransactionDate] DATE;
+
