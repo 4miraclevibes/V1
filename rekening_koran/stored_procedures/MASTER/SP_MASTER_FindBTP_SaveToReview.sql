@@ -123,15 +123,15 @@ BEGIN
                         )))
                     END + '-' +
                     -- Bulan: ambil bagian antara slash pertama dan kedua
-                    RIGHT('0' + SUBSTRING(
+                    RIGHT(CONCAT('0', SUBSTRING(
                         LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
                         CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1,
                         CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 
                             CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1) - 
                             CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) - 1)
-                    ), 2) + '-' +
+                    )), 2) + '-' +
                     -- Tanggal: ambil bagian sebelum slash pertama
-                    RIGHT('0' + LEFT(
+                    RIGHT(CONCAT('0', LEFT(
                         LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
                         CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) - 1)
                     ), 2)
