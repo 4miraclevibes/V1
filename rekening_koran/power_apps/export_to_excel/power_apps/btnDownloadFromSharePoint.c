@@ -9,11 +9,18 @@
 // Prepare filter parameters
 // Format date untuk SQL Server: yyyy-MM-dd (format ISO yang kompatibel dengan TRY_CAST)
 // SP akan handle waktu sendiri (StartDate >= dan EndDate <=)
+
+// DEBUG: Pastikan kontrol input benar-benar ada dan mengambil nilai yang benar
+// Jika masih error, cek nama kontrol: StartDateInputExport, EndDateInputExport, BtpInputExport
+
 Set(
     varStartDate,
     If(
         !IsBlank(StartDateInputExport.SelectedDate),
-        Text(StartDateInputExport.SelectedDate, "yyyy-MM-dd"),
+        // Format: yyyy-MM-dd (contoh: 2025-01-03)
+        Year(StartDateInputExport.SelectedDate) & "-" & 
+        Right("0" & Month(StartDateInputExport.SelectedDate), 2) & "-" & 
+        Right("0" & Day(StartDateInputExport.SelectedDate), 2),
         ""
     )
 );
@@ -21,15 +28,19 @@ Set(
     varEndDate,
     If(
         !IsBlank(EndDateInputExport.SelectedDate),
-        Text(EndDateInputExport.SelectedDate, "yyyy-MM-dd"),
+        // Format: yyyy-MM-dd (contoh: 2025-01-31)
+        Year(EndDateInputExport.SelectedDate) & "-" & 
+        Right("0" & Month(EndDateInputExport.SelectedDate), 2) & "-" & 
+        Right("0" & Day(EndDateInputExport.SelectedDate), 2),
         ""
     )
 );
 Set(
     varBTPFilter,
     If(
-        !IsBlank(BtpInputExport.Text),
-        BtpInputExport.Text,
+        !IsBlank(BtpInputExport.Text) && Len(Trim(BtpInputExport.Text)) > 0,
+        // Pastikan mengambil nilai dari Text property, bukan placeholder/label
+        Trim(BtpInputExport.Text),
         ""
     )
 );
