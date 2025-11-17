@@ -62,17 +62,8 @@ BEGIN
             [BankType]
         )
         SELECT
-            -- Convert TransactionDate (NVARCHAR) to DATE
-            CASE
-                -- Try format: DD/MM/YYYY
-                WHEN ISDATE(TransactionDate) = 1 AND TransactionDate LIKE '%/%' 
-                    THEN TRY_CAST(TransactionDate AS DATE)
-                -- Try format: YYYY-MM-DD
-                WHEN ISDATE(TransactionDate) = 1 
-                    THEN TRY_CAST(TransactionDate AS DATE)
-                -- Default to current date if invalid
-                ELSE CAST(GETDATE() AS DATE)
-            END AS [trx_date],
+            -- TransactionDate sudah bertipe DATE di BTP_REVIEW, langsung pakai atau default ke current date jika NULL
+            COALESCE(TransactionDate, CAST(GETDATE() AS DATE)) AS [trx_date],
             
             GETDATE() AS [created_at],
             GETDATE() AS [updated_at],
