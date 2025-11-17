@@ -59,7 +59,7 @@ BEGIN
     -- Input transactions
     DECLARE @Transactions TABLE (
         TransactionID INT,
-        TransactionDate NVARCHAR(50),
+        TransactionDate DATE,
         Description NVARCHAR(MAX),
         BankType NVARCHAR(50),
         BTP NVARCHAR(50),
@@ -89,7 +89,8 @@ BEGIN
     )
     SELECT 
         COALESCE(TransactionID, TransactionIDLower) AS TransactionID,
-        COALESCE(TransactionDate, TransactionDateLower) AS TransactionDate,
+        -- Convert TransactionDate string ke DATE (handle berbagai format: '2025-11-11', '2025-11-11T00:00:00Z', '08/10/2024', dll)
+        TRY_CAST(COALESCE(TransactionDate, TransactionDateLower) AS DATE) AS TransactionDate,
         COALESCE(Description, DescriptionLower) AS Description,
         CASE
             WHEN UPPER(ISNULL(BankTypeInput, '')) = 'VA' OR UPPER(ISNULL(BankTypeInputLower, '')) = 'VA' THEN 'VA'
@@ -240,6 +241,7 @@ BEGIN
         );
         
         -- Create temp table for TRSF results
+        -- Note: SP bank-specific masih mengembalikan TransactionDate sebagai NVARCHAR, jadi kita convert saat INSERT ke BTP_REVIEW
         CREATE TABLE #TRSF_Temp (
             TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
             BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
@@ -264,7 +266,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, temp.TransactionDate, temp.Description,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'TRSF', temp.ProcessedAt,
@@ -325,7 +327,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, temp.TransactionDate, temp.Description,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BIFAST', temp.ProcessedAt,
@@ -386,7 +388,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, temp.TransactionDate, temp.Description,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MANDIRI', temp.ProcessedAt,
@@ -448,7 +450,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, temp.TransactionDate, temp.Description,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'GREENFIEL', temp.ProcessedAt,
@@ -502,7 +504,7 @@ BEGIN
 
         CREATE TABLE #VA_Temp (
             TransactionID INT,
-            TransactionDate NVARCHAR(50),
+            TransactionDate NVARCHAR(50), -- SP bank-specific masih mengembalikan NVARCHAR, convert saat INSERT ke BTP_REVIEW
             Description NVARCHAR(MAX),
             CustomerName NVARCHAR(200),
             BTP NVARCHAR(50),
@@ -548,7 +550,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, temp.TransactionDate, temp.Description,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'VA', temp.ProcessedAt,
@@ -613,7 +615,7 @@ BEGIN
             @UploadedBy,
             @UploadTime,
             TransactionID,
-            TransactionDate,
+            TransactionDate, -- Sudah DATE dari @Transactions
             Description,
             NULL AS CustomerName,
             NULL AS BTP,
