@@ -1,0 +1,1 @@
+SELECT PARSENAME(REPLACE('05/11/25', '/', '.'), 1) AS Part1, PARSENAME(REPLACE('05/11/25', '/', '.'), 2) AS Part2, PARSENAME(REPLACE('05/11/25', '/', '.'), 3) AS Part3;
