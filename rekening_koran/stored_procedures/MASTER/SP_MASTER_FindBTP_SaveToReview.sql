@@ -89,8 +89,31 @@ BEGIN
     )
     SELECT 
         COALESCE(TransactionID, TransactionIDLower) AS TransactionID,
-        -- Convert TransactionDate string ke DATE (handle berbagai format: '2025-11-11', '2025-11-11T00:00:00Z', '08/10/2024', dll)
-        TRY_CAST(COALESCE(TransactionDate, TransactionDateLower) AS DATE) AS TransactionDate,
+        -- Convert TransactionDate string ke DATE
+        -- Handle format: DD/MM/YY (contoh: '05/11/25' = 5 November 2025), YYYY-MM-DD, ISO format, dll
+        CASE
+            -- Format DD/MM/YY atau DD/MM/YYYY (contoh: '05/11/25' atau '05/11/2025')
+            -- Parse: DD/MM/YY → YYYY-MM-DD
+            -- Menggunakan PARSENAME untuk split berdasarkan '/'
+            WHEN COALESCE(TransactionDate, TransactionDateLower) LIKE '%/%' 
+                THEN TRY_CAST(
+                    -- Tahun: bagian ketiga (setelah slash kedua), tambahkan '20' jika 2 digit
+                    CASE 
+                        WHEN LEN(LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 3)))) = 2 
+                        THEN '20' + LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 3)))
+                        ELSE LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 3)))
+                    END + '-' +
+                    -- Bulan: bagian kedua (antara slash pertama dan kedua)
+                    RIGHT('0' + LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 2))), 2) + '-' +
+                    -- Tanggal: bagian pertama (sebelum slash pertama)
+                    RIGHT('0' + LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 1))), 2)
+                    AS DATE)
+            -- Format YYYY-MM-DD atau ISO (contoh: '2025-11-05' atau '2025-11-05T00:00:00Z')
+            WHEN COALESCE(TransactionDate, TransactionDateLower) LIKE '%-%-%'
+                THEN TRY_CAST(LEFT(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 10) AS DATE)
+            -- Format lainnya, coba parse langsung
+            ELSE TRY_CAST(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))) AS DATE)
+        END AS TransactionDate,
         COALESCE(Description, DescriptionLower) AS Description,
         CASE
             WHEN UPPER(ISNULL(BankTypeInput, '')) = 'VA' OR UPPER(ISNULL(BankTypeInputLower, '')) = 'VA' THEN 'VA'
