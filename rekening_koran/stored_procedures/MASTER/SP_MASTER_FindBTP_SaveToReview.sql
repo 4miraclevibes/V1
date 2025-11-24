@@ -294,7 +294,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'TRSF', temp.ProcessedAt,
@@ -355,7 +355,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BIFAST', temp.ProcessedAt,
@@ -416,7 +416,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MANDIRI', temp.ProcessedAt,
@@ -478,7 +478,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'GREENFIEL', temp.ProcessedAt,
@@ -579,9 +579,9 @@ BEGIN
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
             temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-            -- Untuk VA/RPT, Description diambil langsung dari temp (hasil SP_RPT) karena sudah diproses dengan benar
-            -- Fallback ke t.Description hanya jika temp.Description NULL (seharusnya tidak terjadi untuk VA)
-            ISNULL(temp.Description, t.Description) AS Description,
+            -- Description selalu diambil dari input JSON (t.Description) karena Description original dari JSON input, bukan dari hasil SP bank
+            -- SP bank mungkin memproses Description berbeda, tapi kita perlu Description original dari input
+            t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'VA', temp.ProcessedAt,
@@ -656,7 +656,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BNI', temp.ProcessedAt,
@@ -715,7 +715,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BTPN', temp.ProcessedAt,
@@ -776,7 +776,7 @@ BEGIN
             @BatchID, @UploadedBy, @UploadTime,
             temp.TransactionID, 
             COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate,
-            COALESCE(temp.Description, t.Description) AS Description,
+            t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BRI', temp.ProcessedAt,
@@ -835,7 +835,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MEGA', temp.ProcessedAt,
@@ -894,7 +894,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'PERMATA', temp.ProcessedAt,
@@ -953,7 +953,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'DANAMON', temp.ProcessedAt,
@@ -1012,7 +1012,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CITIBANK', temp.ProcessedAt,
@@ -1071,7 +1071,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'SINARMAS', temp.ProcessedAt,
@@ -1134,7 +1134,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CIMB', temp.ProcessedAt,
@@ -1193,7 +1193,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MAYBANK', temp.ProcessedAt,
@@ -1252,7 +1252,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'HSBC', temp.ProcessedAt,
@@ -1311,7 +1311,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'UOB', temp.ProcessedAt,
@@ -1370,7 +1370,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MUAMALAT', temp.ProcessedAt,
@@ -1429,7 +1429,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'OCBC', temp.ProcessedAt,
@@ -1488,7 +1488,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'DBS', temp.ProcessedAt,
@@ -1547,7 +1547,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CAPITAL', temp.ProcessedAt,
@@ -1606,7 +1606,7 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'WOORI', temp.ProcessedAt,
