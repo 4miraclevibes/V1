@@ -94,47 +94,24 @@ BEGIN
         CASE
             -- Format DD/MM/YY atau DD/MM/YYYY (contoh: '05/11/25' atau '05/11/2025')
             -- Parse: DD/MM/YY → YYYY-MM-DD
-            -- Menggunakan SUBSTRING dan CHARINDEX untuk parsing yang lebih eksplisit
+            -- Menggunakan PARSENAME untuk split berdasarkan '/'
+            -- PARSENAME membaca dari belakang: posisi 1 = bagian terakhir, posisi 3 = bagian pertama
             WHEN COALESCE(TransactionDate, TransactionDateLower) LIKE '%/%' 
                 THEN TRY_CAST(
-                    -- Parse format DD/MM/YY atau DD/MM/YYYY
-                    -- Contoh: '05/11/25' → '2025-11-05'
-                    --         '05/11/2025' → '2025-11-05'
-                    -- Variabel untuk memudahkan parsing
-                    -- Tahun: ambil bagian setelah slash kedua
-                    CASE 
-                        WHEN LEN(LTRIM(RTRIM(SUBSTRING(
-                            LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
-                            CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 
-                                CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1) + 1,
-                            LEN(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))))
-                        )))) = 2 
-                        THEN '20' + LTRIM(RTRIM(SUBSTRING(
-                            LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
-                            CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 
-                                CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1) + 1,
-                            LEN(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))))
-                        )))
-                        ELSE LTRIM(RTRIM(SUBSTRING(
-                            LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
-                            CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 
-                                CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1) + 1,
-                            LEN(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))))
-                        )))
-                    END + '-' +
-                    -- Bulan: ambil bagian antara slash pertama dan kedua
-                    RIGHT(CONCAT('0', SUBSTRING(
-                        LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
-                        CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1,
-                        CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 
-                            CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) + 1) - 
-                            CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) - 1)
-                    )), 2) + '-' +
-                    -- Tanggal: ambil bagian sebelum slash pertama
-                    RIGHT(CONCAT('0', LEFT(
-                        LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))),
-                        CHARINDEX('/', LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), 1) - 1)
-                    ), 2)
+                    CONCAT(
+                        -- Tahun: PARSENAME posisi 1 (bagian terakhir), tambahkan '20' jika 2 digit
+                        CASE 
+                            WHEN LEN(LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 1)))) = 2 
+                            THEN CONCAT('20', LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 1))))
+                            ELSE LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 1)))
+                        END,
+                        '-',
+                        -- Bulan: PARSENAME posisi 2 (bagian tengah)
+                        RIGHT(CONCAT('0', LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 2)))), 2),
+                        '-',
+                        -- Tanggal: PARSENAME posisi 3 (bagian pertama)
+                        RIGHT(CONCAT('0', LTRIM(RTRIM(PARSENAME(REPLACE(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))), '/', '.'), 3)))), 2)
+                    )
                     AS DATE)
             -- Format YYYY-MM-DD atau ISO (contoh: '2025-11-05' atau '2025-11-05T00:00:00Z')
             WHEN COALESCE(TransactionDate, TransactionDateLower) LIKE '%-%-%'
