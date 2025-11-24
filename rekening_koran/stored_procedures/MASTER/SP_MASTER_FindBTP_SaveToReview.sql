@@ -578,17 +578,19 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
+            COALESCE(temp.TransactionID, t.TransactionID) AS TransactionID, 
+            TRY_CAST(COALESCE(temp.TransactionDate, t.TransactionDate) AS DATE) AS TransactionDate, 
+            COALESCE(temp.Description, t.Description) AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-            temp.Label, temp.Status, temp.Message, 'VA', temp.ProcessedAt,
-            COALESCE(temp.Amount, t.Amount),
+            temp.Label, temp.Status, temp.Message, 'VA' AS BankType, COALESCE(temp.ProcessedAt, GETDATE()) AS ProcessedAt,
+            COALESCE(temp.Amount, t.Amount) AS Amount,
             CASE 
                 WHEN temp.TransactionType IN ('CR', 'DB') THEN temp.TransactionType
                 WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType
                 ELSE NULL
-            END,
-            0,
+            END AS TransactionType,
+            0 AS IsApproved,
             CASE
                 WHEN temp.Status = 'NO_BTP' THEN 'BTP kosong pada data RPT - periksa file sumber'
                 WHEN temp.Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(temp.BTP, '') + '" belum ada di master ataupun MP_CUSTOMER_NEW'
@@ -603,11 +605,41 @@ BEGIN
             + ' / Ket2: ' + ISNULL(temp.Keterangan2, '-')
             + CASE WHEN temp.TransactionTime IS NOT NULL THEN ' / Jam: ' + temp.TransactionTime ELSE '' END
             + CASE WHEN COALESCE(temp.Amount, t.Amount) IS NOT NULL THEN ' / Amount: ' + FORMAT(COALESCE(temp.Amount, t.Amount), 'N2') ELSE '' END
-            + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
-            GETDATE()
+            + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END AS Notes,
+            GETDATE() AS CreatedAt
         FROM #VA_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
+        
+        -- Handle transaksi yang tidak ada di #VA_Temp (misalnya karena error parsing atau validasi di SP_RPT)
+        -- Fallback: insert langsung dari @Transactions dengan status NO_PATTERN
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            Amount, TransactionType,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            t.TransactionID, t.TransactionDate, t.Description,
+            t.CustomerNameFromInput AS CustomerName, NULL AS BTP, 0.00 AS MatchPercentage, 0 AS MatchCount, 0 AS TotalTransactions,
+            0 AS LastLineNumber, 0 AS TotalBTPOptions, 0 AS OptionNumber, '' AS BestFlag, '' AS LatestFlag,
+            '' AS Label, 'NO_PATTERN' AS Status, 'Transaksi tidak berhasil diproses oleh SP_RPT - kemungkinan format data tidak valid atau error parsing' AS Message, 'VA' AS BankType, GETDATE() AS ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0 AS IsApproved,
+            'Transaksi tidak berhasil diproses oleh SP_RPT_FindBTP_Batch - periksa format JSON input atau validasi di SP_RPT' AS Notes,
+            GETDATE() AS CreatedAt
+        FROM @Transactions AS t
+        WHERE t.BankType = 'VA'
+            AND NOT EXISTS (
+                SELECT 1 FROM #VA_Temp AS temp 
+                WHERE temp.TransactionID = t.TransactionID 
+                    AND (temp.OptionNumber IS NULL OR temp.OptionNumber = 1)
+            );
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
