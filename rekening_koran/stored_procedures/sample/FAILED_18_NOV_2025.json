@@ -1,0 +1,30 @@
+[
+    {
+        "TransactionID": 2,
+        "TransactionDate": "18/11/2025",
+        "Description": "KR OTOMATIS LLG-MAYBANK INDONE CIPTA ANUGERAH REZ IDIG251115711210",
+        "Amount": 78447447,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 5,
+        "TransactionDate": "18/11/2025",
+        "Description": "KR OTOMATIS LLG-BRI PUNCAK LEMBAH HIJA Fresh Milk Greenfi eld",
+        "Amount": 1366560,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 24,
+        "TransactionDate": "18/11/2025",
+        "Description": "KR OTOMATIS LLG-CIMB NIAGA PT.GREENFIELDS IND PG_TXN: 2025100001 491102.2025100001 4911",
+        "Amount": 5068986,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 34,
+        "TransactionDate": "18/11/2025",
+        "Description": "KR OTOMATIS LLG-DANAMON ANUGRAH BERKAT AND PCM0053061777",
+        "Amount": 239806815,
+        "TransactionType": "CR"
+      }
+]

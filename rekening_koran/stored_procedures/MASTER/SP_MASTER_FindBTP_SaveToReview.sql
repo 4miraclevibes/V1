@@ -264,7 +264,9 @@ BEGIN
         
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
             FROM @Transactions WHERE BankType = 'TRSF' FOR JSON PATH
         );
         
@@ -328,7 +330,9 @@ BEGIN
         
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
         
@@ -389,7 +393,9 @@ BEGIN
         
         DECLARE @MANDIRI_JSON NVARCHAR(MAX);
         SELECT @MANDIRI_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
             FROM @Transactions WHERE BankType = 'MANDIRI' FOR JSON PATH
         );
         
@@ -450,7 +456,9 @@ BEGIN
         
         DECLARE @GREENFIEL_JSON NVARCHAR(MAX);
         SELECT @GREENFIEL_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
             FROM @Transactions WHERE BankType = 'GREENFIEL' FOR JSON PATH
         );
         
@@ -615,8 +623,257 @@ BEGIN
         PRINT '✅ VA (RPT TXT) completed';
     END
     
-    -- ... Add other banks as needed (BNI, BTPN, BRI, etc.)
-    -- For now, just these 4 banks: TRSF, BIFAST, MANDIRI, GREENFIEL
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- MAYBANK
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'MAYBANK')
+    BEGIN
+        PRINT '🔄 Processing MAYBANK...';
+        
+        DECLARE @MAYBANK_JSON NVARCHAR(MAX);
+        SELECT @MAYBANK_JSON = (
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
+            FROM @Transactions WHERE BankType = 'MAYBANK' FOR JSON PATH
+        );
+        
+        CREATE TABLE #MAYBANK_Temp (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #MAYBANK_Temp
+        EXEC SP_MAYBANK_FindBTP_Batch @InputJSON = @MAYBANK_JSON;
+        
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            Amount, TransactionType,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'MAYBANK', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #MAYBANK_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
+        
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DROP TABLE #MAYBANK_Temp;
+        
+        PRINT '✅ MAYBANK completed';
+    END
+    
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- BRI
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'BRI')
+    BEGIN
+        PRINT '🔄 Processing BRI...';
+        
+        DECLARE @BRI_JSON NVARCHAR(MAX);
+        SELECT @BRI_JSON = (
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
+            FROM @Transactions WHERE BankType = 'BRI' FOR JSON PATH
+        );
+        
+        CREATE TABLE #BRI_Temp (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #BRI_Temp
+        EXEC SP_BRI_FindBTP_Batch @InputJSON = @BRI_JSON;
+        
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            Amount, TransactionType,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'BRI', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #BRI_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
+        
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DROP TABLE #BRI_Temp;
+        
+        PRINT '✅ BRI completed';
+    END
+    
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- CIMB
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'CIMB')
+    BEGIN
+        PRINT '🔄 Processing CIMB...';
+        
+        DECLARE @CIMB_JSON NVARCHAR(MAX);
+        SELECT @CIMB_JSON = (
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
+            FROM @Transactions WHERE BankType = 'CIMB' FOR JSON PATH
+        );
+        
+        CREATE TABLE #CIMB_Temp (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #CIMB_Temp
+        EXEC SP_CIMB_FindBTP_Batch @InputJSON = @CIMB_JSON;
+        
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            Amount, TransactionType,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'CIMB', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #CIMB_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
+        
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DROP TABLE #CIMB_Temp;
+        
+        PRINT '✅ CIMB completed';
+    END
+    
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- DANAMON
+    -- ═══════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'DANAMON')
+    BEGIN
+        PRINT '🔄 Processing DANAMON...';
+        
+        DECLARE @DANAMON_JSON NVARCHAR(MAX);
+        SELECT @DANAMON_JSON = (
+            SELECT TransactionID AS transaction_id, 
+                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   Description AS description
+            FROM @Transactions WHERE BankType = 'DANAMON' FOR JSON PATH
+        );
+        
+        CREATE TABLE #DANAMON_Temp (
+            TransactionID INT, TransactionDate NVARCHAR(50), Description NVARCHAR(MAX), CustomerName NVARCHAR(200),
+            BTP NVARCHAR(50), MatchPercentage DECIMAL(5,2), MatchCount INT,
+            TotalTransactions INT, LastLineNumber INT, TotalBTPOptions INT,
+            OptionNumber INT, BestFlag NVARCHAR(10), LatestFlag NVARCHAR(10),
+            Label NVARCHAR(50), Status NVARCHAR(20), Message NVARCHAR(500),
+            ProcessedAt DATETIME
+        );
+        
+        INSERT INTO #DANAMON_Temp
+        EXEC SP_DANAMON_FindBTP_Batch @InputJSON = @DANAMON_JSON;
+        
+        INSERT INTO dbo.BTP_REVIEW (
+            BatchID, UploadedBy, UploadedAt,
+            TransactionID, TransactionDate, Description,
+            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
+            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
+            Label, Status, Message, BankType, ProcessedAt,
+            Amount, TransactionType,
+            IsApproved, Notes, CreatedAt
+        )
+        SELECT
+            @BatchID, @UploadedBy, @UploadTime,
+            temp.TransactionID, TRY_CAST(temp.TransactionDate AS DATE), temp.Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'DANAMON', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #DANAMON_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1;
+        
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DROP TABLE #DANAMON_Temp;
+        
+        PRINT '✅ DANAMON completed';
+    END
     
     -- ═══════════════════════════════════════════════════════════════════════
     -- Handle UNKNOWN bank types (save all with proper notes)

@@ -1,0 +1,415 @@
+[
+    {
+      "TransactionID": 1,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95031 452520.00 valitas cafe EVAN JAYA PUTERA",
+      "Amount": 452520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 2,
+      "TransactionDate": "18/11/2025",
+      "Description": "KR OTOMATIS LLG-MAYBANK INDONE CIPTA ANUGERAH REZ IDIG251115711210",
+      "Amount": 78447447,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 3,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95011 911040.00 K002000179099 tgl 11/11/25 NELLY WIDIANA",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 4,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95011 455520.00 k67086 DEEPAK RAMCHAND ME",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 5,
+      "TransactionDate": "18/11/2025",
+      "Description": "KR OTOMATIS LLG-BRI PUNCAK LEMBAH HIJA Fresh Milk Greenfi eld",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 6,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95271 455520.00 fresh milk 2 dus CLAUDIA P S OR AUD",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 7,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95271 227760.00 Spoonify Gandaria STACY BARIN",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 8,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTSCY/WS95051 1590000.00 LIAN MAYLIATI",
+      "Amount": 1590000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 9,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTSCY/WS95051 4710000.00 MIFTAHUL ULUM",
+      "Amount": 4710000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 10,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTSCY/WS95051 3470205.00 SUCIANA SUHATMAN",
+      "Amount": 3470205,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 11,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTSCY/WS95051 1992894.00 SELECTRO INDONESIA",
+      "Amount": 1992894,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 12,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTLLG/0000100 1530016PT. BANK SI TRANSFER VIA LLG REF NO PPU =GMT1 PT. SECURINDO PACK",
+      "Amount": 500000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 13,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 2900,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 14,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTFVA/WS95051 00254/PT BLUE BIRD - - 01000021657",
+      "Amount": 17107840,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 15,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTFVA/WS95051 20085/CYBERINDO AD - - 50093806",
+      "Amount": 17014000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 16,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTFVA/WS95051 88827/PT.MITRA INT - - 020028465",
+      "Amount": 23917310,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 17,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTFVA/WS95051 13127/PANTHERA BIR - - 0331068000672",
+      "Amount": 7779350,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 18,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTLLG/0000100 0090010PT. BANK NE TRANSFER VIA LLG REF NO PPU =GMT3 Kandita Meiza Iswa",
+      "Amount": 84505400,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 19,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 2900,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 20,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 11581740.00 PT SECRET RECIPE SECRET RECIPE INDO",
+      "Amount": 11581740,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 21,
+      "TransactionDate": "18/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 008 RAJASA INTAMA",
+      "Amount": 1594320,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 22,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 945532.00 REFUND UM FS GREENFIELDS INDONE",
+      "Amount": 945532,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 23,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 487890.00 CLAIM PARSEL BUAH TO DIKI GREENFIELDS INDONE",
+      "Amount": 487890,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 24,
+      "TransactionDate": "18/11/2025",
+      "Description": "KR OTOMATIS LLG-CIMB NIAGA PT.GREENFIELDS IND PG_TXN: 2025100001 491102.2025100001 4911",
+      "Amount": 5068986,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 25,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 1650081.60 F-CASH 18 NOV 25 ST JKT SAWARNA SANTAP BER",
+      "Amount": 1650081.6,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 26,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 825040.80 F-CASH 18 NOV 25 ST JKT SAWARNA SANTAP BER",
+      "Amount": 825040.8,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 27,
+      "TransactionDate": "18/11/2025",
+      "Description": "KR OTOMATIS NTRF@992680209X0Z0 053@BCA25112248039 @Pengembalian sisa @AFR Muammar Syarifuddi",
+      "Amount": 211600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 28,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95031 227760.00 MELIANA",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 29,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 1822080.00 2136,3745,5919 MULTI BOGA MAKMUR",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 30,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 911040.00 0416,2832 MULTI BOGA MAKMUR",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 31,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 911040.00 2905,3859 MULTI BOGA MAKMUR",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 32,
+      "TransactionDate": "18/11/2025",
+      "Description": "KR OTOMATIS RTGS-PT. BANK UOB BBIJIDJA/004865 COLAMASS SUKSES MA PAYMENT",
+      "Amount": 179819588,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 33,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95011 408784.00 LINGGAWATI SUTANTO",
+      "Amount": 408784,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 34,
+      "TransactionDate": "18/11/2025",
+      "Description": "KR OTOMATIS LLG-DANAMON ANUGRAH BERKAT AND PCM0053061777",
+      "Amount": 239806815,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 35,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95031 455520.00 gf bananarover 2ct n ULPIANDA RISZKIAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 36,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTSCY/WS95051 432661179.00 TRANS KONTAINER SO",
+      "Amount": 432661179,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 37,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0870010PT. BANK HS TRANSFER VIA RTGS REF NO PPU =GV2P PT. WIRA PAMUNGKAS",
+      "Amount": 1215450971,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 38,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 39,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0220026PT. BANK CI TRANSFER VIA RTGS REF NO PPU =GV2Q PT. GREENFIELDS IN",
+      "Amount": 1477489477,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 40,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 41,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0220026PT. BANK CI TRANSFER VIA RTGS REF NO PPU =GV2R PT. GREENFIELDS IN",
+      "Amount": 1498012666,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 42,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 43,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0220026PT. BANK CI TRANSFER VIA RTGS REF NO PPU =GV2S PT. GREENFIELDS IN",
+      "Amount": 1461235749,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 44,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 45,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0220026PT. BANK CI TRANSFER VIA RTGS REF NO PPU =GV2T PT. GREENFIELDS IN",
+      "Amount": 1495759710,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 46,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 47,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0220026PT. BANK CI TRANSFER VIA RTGS REF NO PPU =GV2V PT. GREENFIELDS IN",
+      "Amount": 1482983776,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 48,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 49,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING DB 1811/FTRTG/0000100 0220026PT. BANK CI TRANSFER VIA RTGS REF NO PPU =GV2W PT. GREENFIELDS DA",
+      "Amount": 1450000000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 50,
+      "TransactionDate": "18/11/2025",
+      "Description": "BA JASA E-BANKING 1811/DMCHG/0000100 BIAYA TRANSFER SME",
+      "Amount": 25000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 51,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95271 455520.00 Kawa 176659 GUNAWAN HUSEN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 52,
+      "TransactionDate": "18/11/2025",
+      "Description": "SETORAN PEMBAYARAN INV",
+      "Amount": 600499539,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 53,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95271 227760.00 Susu greenfields 1 karton IVON NATALIA PITRA",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 54,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 2039958.00 1222605282 120 kotak susu MINUM KOPI NUSANTA",
+      "Amount": 2039958,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 55,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 683280.00 Susu GF Brookland INV 5210576619 KOPI UNTUNG INDONE",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 56,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 1204594.00 1030 LEHE FOODS INDO T",
+      "Amount": 1204594,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 57,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 2409188.00 08/14 LEHE FOODS INDO T",
+      "Amount": 2409188,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 58,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 1811/FTSCY/WS95051 240919.00 08/11 LEHE FOODS INDO T",
+      "Amount": 240919,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 59,
+      "TransactionDate": "18/11/2025",
+      "Description": "TRSF E-BANKING CR 11/18 Z1AK1 ANDRE ISKANDAR",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    }
+  ]
