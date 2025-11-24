@@ -265,7 +265,7 @@ BEGIN
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
             SELECT TransactionID AS transaction_id, 
-                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   ISNULL(CONVERT(VARCHAR, TransactionDate, 103), '') AS transaction_date, 
                    Description AS description
             FROM @Transactions WHERE BankType = 'TRSF' FOR JSON PATH
         );
@@ -331,7 +331,7 @@ BEGIN
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
             SELECT TransactionID AS transaction_id, 
-                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   ISNULL(CONVERT(VARCHAR, TransactionDate, 103), '') AS transaction_date, 
                    Description AS description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
@@ -394,7 +394,7 @@ BEGIN
         DECLARE @MANDIRI_JSON NVARCHAR(MAX);
         SELECT @MANDIRI_JSON = (
             SELECT TransactionID AS transaction_id, 
-                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   ISNULL(CONVERT(VARCHAR, TransactionDate, 103), '') AS transaction_date, 
                    Description AS description
             FROM @Transactions WHERE BankType = 'MANDIRI' FOR JSON PATH
         );
@@ -457,7 +457,7 @@ BEGIN
         DECLARE @GREENFIEL_JSON NVARCHAR(MAX);
         SELECT @GREENFIEL_JSON = (
             SELECT TransactionID AS transaction_id, 
-                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   ISNULL(CONVERT(VARCHAR, TransactionDate, 103), '') AS transaction_date, 
                    Description AS description
             FROM @Transactions WHERE BankType = 'GREENFIEL' FOR JSON PATH
         );
@@ -633,7 +633,7 @@ BEGIN
         DECLARE @MAYBANK_JSON NVARCHAR(MAX);
         SELECT @MAYBANK_JSON = (
             SELECT TransactionID AS transaction_id, 
-                   CONVERT(VARCHAR, TransactionDate, 103) AS transaction_date, 
+                   ISNULL(CONVERT(VARCHAR, TransactionDate, 103), '') AS transaction_date, 
                    Description AS description
             FROM @Transactions WHERE BankType = 'MAYBANK' FOR JSON PATH
         );
@@ -648,7 +648,7 @@ BEGIN
         );
         
         INSERT INTO #MAYBANK_Temp
-        EXEC SP_MAYBANK_FindBTP_Batch @InputJSON = @MAYBANK_JSON;
+        EXEC SP_MAYBANK_FindBTP_Batch @TransactionsJSON = @MAYBANK_JSON;
         
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
@@ -711,7 +711,7 @@ BEGIN
         );
         
         INSERT INTO #BRI_Temp
-        EXEC SP_BRI_FindBTP_Batch @InputJSON = @BRI_JSON;
+        EXEC SP_BRI_FindBTP_Batch @TransactionsJSON = @BRI_JSON;
         
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
@@ -774,7 +774,7 @@ BEGIN
         );
         
         INSERT INTO #CIMB_Temp
-        EXEC SP_CIMB_FindBTP_Batch @InputJSON = @CIMB_JSON;
+        EXEC SP_CIMB_FindBTP_Batch @TransactionsJSON = @CIMB_JSON;
         
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
@@ -837,7 +837,7 @@ BEGIN
         );
         
         INSERT INTO #DANAMON_Temp
-        EXEC SP_DANAMON_FindBTP_Batch @InputJSON = @DANAMON_JSON;
+        EXEC SP_DANAMON_FindBTP_Batch @TransactionsJSON = @DANAMON_JSON;
         
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
