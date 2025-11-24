@@ -17,7 +17,8 @@
                     (IsBlank(searchDescRv.Text) || searchDescRv.Text in Description) &&
                     (IsBlank(searchBtRv.Text) || searchBtRv.Text in BankType) &&
                     //(IsBlank(UaDpRvRk.SelectedDate) || DateValue(UploadedAt) = UaDpRvRk.SelectedDate) &&
-                    (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP)
+                    (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP) &&
+                    (rkToggleRvCd.Checked && TransactionType = "DB" || !rkToggleRvCd.Checked && TransactionType = "CR")
                 ),
                 Filter(
                     BTP_REVIEW,
@@ -30,7 +31,8 @@
                     (IsBlank(searchDescRv.Text) || searchDescRv.Text in Description) &&
                     (IsBlank(searchBtRv.Text) || searchBtRv.Text in BankType) &&
                     //(IsBlank(UaDpRvRk.SelectedDate) || DateValue(UploadedAt) = UaDpRvRk.SelectedDate) &&
-                    (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP)
+                    (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP) &&
+                    (rkToggleRvCd.Checked && TransactionType = "DB" || !rkToggleRvCd.Checked && TransactionType = "CR")
                 )
             ),
             MatchPercentage,

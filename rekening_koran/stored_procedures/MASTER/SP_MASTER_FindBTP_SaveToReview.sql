@@ -578,7 +578,10 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, COALESCE(temp.Description, t.Description) AS Description,
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
+            -- Untuk VA/RPT, Description diambil langsung dari temp (hasil SP_RPT) karena sudah diproses dengan benar
+            -- Fallback ke t.Description hanya jika temp.Description NULL (seharusnya tidak terjadi untuk VA)
+            ISNULL(temp.Description, t.Description) AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'VA', temp.ProcessedAt,
