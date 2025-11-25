@@ -310,7 +310,7 @@ BEGIN
             END,
             GETDATE()
         FROM #TRSF_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'TRSF'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -371,7 +371,7 @@ BEGIN
             END,
             GETDATE()
         FROM #BIFAST_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BIFAST'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -432,7 +432,7 @@ BEGIN
             END,
             GETDATE()
         FROM #MANDIRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MANDIRI'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -497,7 +497,7 @@ BEGIN
             END,
             GETDATE()
         FROM #GREENFIEL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'GREENFIEL'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -579,8 +579,8 @@ BEGIN
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
             temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-            -- Description selalu diambil dari input JSON (t.Description) karena Description original dari JSON input, bukan dari hasil SP bank
-            -- SP bank mungkin memproses Description berbeda, tapi kita perlu Description original dari input
+            -- Description selalu diambil dari input JSON (t.Description) untuk konsistensi dengan semua bank
+            -- Meskipun BankType berbeda, Description harus tetap sama dengan input JSON original
             t.Description AS Description,
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
@@ -609,7 +609,7 @@ BEGIN
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
         FROM #VA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'VA'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -672,7 +672,7 @@ BEGIN
             END,
             GETDATE()
         FROM #BNI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BNI'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -731,7 +731,7 @@ BEGIN
             END,
             GETDATE()
         FROM #BTPN_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BTPN'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -792,7 +792,7 @@ BEGIN
             END,
             GETDATE()
         FROM #BRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BRI'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -851,7 +851,7 @@ BEGIN
             END,
             GETDATE()
         FROM #MEGA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MEGA'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -910,7 +910,7 @@ BEGIN
             END,
             GETDATE()
         FROM #PERMATA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'PERMATA'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -969,7 +969,7 @@ BEGIN
             END,
             GETDATE()
         FROM #DANAMON_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DANAMON'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1028,7 +1028,7 @@ BEGIN
             END,
             GETDATE()
         FROM #CITIBANK_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CITIBANK'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1087,7 +1087,7 @@ BEGIN
             END,
             GETDATE()
         FROM #SINARMAS_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'SINARMAS'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1150,7 +1150,7 @@ BEGIN
             END,
             GETDATE()
         FROM #CIMB_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CIMB'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1209,7 +1209,7 @@ BEGIN
             END,
             GETDATE()
         FROM #MAYBANK_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MAYBANK'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1268,7 +1268,7 @@ BEGIN
             END,
             GETDATE()
         FROM #HSBC_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'HSBC'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1327,7 +1327,7 @@ BEGIN
             END,
             GETDATE()
         FROM #UOB_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'UOB'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1386,7 +1386,7 @@ BEGIN
             END,
             GETDATE()
         FROM #MUAMALAT_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MUAMALAT'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1445,7 +1445,7 @@ BEGIN
             END,
             GETDATE()
         FROM #OCBC_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'OCBC'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1504,7 +1504,7 @@ BEGIN
             END,
             GETDATE()
         FROM #DBS_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DBS'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1563,7 +1563,7 @@ BEGIN
             END,
             GETDATE()
         FROM #CAPITAL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CAPITAL'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
@@ -1622,7 +1622,7 @@ BEGIN
             END,
             GETDATE()
         FROM #WOORI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'WOORI'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
