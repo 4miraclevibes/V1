@@ -283,7 +283,6 @@ BEGIN
         EXEC SP_TRSF_FindBTP_Batch @InputJSON = @TRSF_JSON;
         
         -- Insert directly to BTP_REVIEW (with auto-populate Notes)
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -295,46 +294,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'TRSF' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #TRSF_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'TRSF'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'TRSF', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #TRSF_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
-        DECLARE @TRSF_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TRSF_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #TRSF_Temp;
         
         PRINT '✅ TRSF completed';
@@ -365,7 +344,6 @@ BEGIN
         INSERT INTO #BIFAST_Temp
         EXEC SP_BIFAST_FindBTP_Batch @InputJSON = @BIFAST_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -377,46 +355,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'BIFAST' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #BIFAST_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BIFAST'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'BIFAST', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #BIFAST_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
-        DECLARE @BIFAST_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @BIFAST_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
         
         PRINT '✅ BIFAST completed';
@@ -447,7 +405,6 @@ BEGIN
         INSERT INTO #MANDIRI_Temp
         EXEC SP_MANDIRI_FindBTP_Batch @InputJSON = @MANDIRI_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -459,46 +416,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'MANDIRI' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #MANDIRI_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MANDIRI'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'MANDIRI', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #MANDIRI_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
-        DECLARE @MANDIRI_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @MANDIRI_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
         
         PRINT '✅ MANDIRI completed';
@@ -560,12 +497,10 @@ BEGIN
             END,
             GETDATE()
         FROM #GREENFIEL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'GREENFIEL'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
-        DECLARE @GREENFIEL_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @GREENFIEL_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
         
         PRINT '✅ GREENFIEL completed';
@@ -674,12 +609,10 @@ BEGIN
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
         FROM #VA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'VA'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
 
-        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
-        DECLARE @VA_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @VA_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
 
         PRINT '✅ VA (RPT TXT) completed';
@@ -712,7 +645,6 @@ BEGIN
         INSERT INTO #BNI_Temp
         EXEC SP_BNI_FindBTP_Batch @TransactionsJSON = @BNI_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -724,45 +656,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'BNI' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #BNI_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BNI'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'BNI', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #BNI_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BNI_Temp;
         
         PRINT '✅ BNI completed';
@@ -791,7 +704,6 @@ BEGIN
         INSERT INTO #BTPN_Temp
         EXEC SP_BTPN_FindBTP_Batch @TransactionsJSON = @BTPN_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -803,45 +715,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'BTPN' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #BTPN_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BTPN'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'BTPN', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #BTPN_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BTPN_Temp;
         
         PRINT '✅ BTPN completed';
@@ -899,11 +792,10 @@ BEGIN
             END,
             GETDATE()
         FROM #BRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BRI'
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BRI_Temp;
         
         PRINT '✅ BRI completed';
@@ -932,7 +824,6 @@ BEGIN
         INSERT INTO #MEGA_Temp
         EXEC SP_MEGA_FindBTP_Batch @TransactionsJSON = @MEGA_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -944,45 +835,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'MEGA' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #MEGA_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MEGA'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'MEGA', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #MEGA_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MEGA_Temp;
         
         PRINT '✅ MEGA completed';
@@ -1011,7 +883,6 @@ BEGIN
         INSERT INTO #PERMATA_Temp
         EXEC SP_PERMATA_FindBTP_Batch @TransactionsJSON = @PERMATA_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1023,45 +894,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'PERMATA' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #PERMATA_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'PERMATA'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'PERMATA', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #PERMATA_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #PERMATA_Temp;
         
         PRINT '✅ PERMATA completed';
@@ -1090,7 +942,6 @@ BEGIN
         INSERT INTO #DANAMON_Temp
         EXEC SP_DANAMON_FindBTP_Batch @TransactionsJSON = @DANAMON_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1102,45 +953,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'DANAMON' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #DANAMON_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DANAMON'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'DANAMON', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #DANAMON_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DANAMON_Temp;
         
         PRINT '✅ DANAMON completed';
@@ -1169,7 +1001,6 @@ BEGIN
         INSERT INTO #CITIBANK_Temp
         EXEC SP_CITIBANK_FindBTP_Batch @TransactionsJSON = @CITIBANK_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1181,45 +1012,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'CITIBANK' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #CITIBANK_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CITIBANK'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'CITIBANK', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #CITIBANK_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CITIBANK_Temp;
         
         PRINT '✅ CITIBANK completed';
@@ -1248,7 +1060,6 @@ BEGIN
         INSERT INTO #SINARMAS_Temp
         EXEC SP_SINARMAS_FindBTP_Batch @TransactionsJSON = @SINARMAS_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1260,45 +1071,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'SINARMAS' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #SINARMAS_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'SINARMAS'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'SINARMAS', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #SINARMAS_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #SINARMAS_Temp;
         
         PRINT '✅ SINARMAS completed';
@@ -1331,7 +1123,6 @@ BEGIN
         INSERT INTO #CIMB_Temp
         EXEC SP_CIMB_FindBTP_Batch @TransactionsJSON = @CIMB_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1343,45 +1134,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'CIMB' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #CIMB_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CIMB'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'CIMB', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #CIMB_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CIMB_Temp;
         
         PRINT '✅ CIMB completed';
@@ -1410,7 +1182,6 @@ BEGIN
         INSERT INTO #MAYBANK_Temp
         EXEC SP_MAYBANK_FindBTP_Batch @TransactionsJSON = @MAYBANK_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1422,45 +1193,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'MAYBANK' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #MAYBANK_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MAYBANK'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'MAYBANK', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #MAYBANK_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MAYBANK_Temp;
         
         PRINT '✅ MAYBANK completed';
@@ -1489,7 +1241,6 @@ BEGIN
         INSERT INTO #HSBC_Temp
         EXEC SP_HSBC_FindBTP_Batch @TransactionsJSON = @HSBC_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1501,45 +1252,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'HSBC' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #HSBC_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'HSBC'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'HSBC', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #HSBC_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #HSBC_Temp;
         
         PRINT '✅ HSBC completed';
@@ -1568,7 +1300,6 @@ BEGIN
         INSERT INTO #UOB_Temp
         EXEC SP_UOB_FindBTP_Batch @TransactionsJSON = @UOB_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1580,45 +1311,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'UOB' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #UOB_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'UOB'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'UOB', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #UOB_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #UOB_Temp;
         
         PRINT '✅ UOB completed';
@@ -1647,7 +1359,6 @@ BEGIN
         INSERT INTO #MUAMALAT_Temp
         EXEC SP_MUAMALAT_FindBTP_Batch @TransactionsJSON = @MUAMALAT_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1659,45 +1370,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'MUAMALAT' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #MUAMALAT_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MUAMALAT'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'MUAMALAT', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #MUAMALAT_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MUAMALAT_Temp;
         
         PRINT '✅ MUAMALAT completed';
@@ -1726,7 +1418,6 @@ BEGIN
         INSERT INTO #OCBC_Temp
         EXEC SP_OCBC_FindBTP_Batch @TransactionsJSON = @OCBC_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1738,45 +1429,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'OCBC' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #OCBC_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'OCBC'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'OCBC', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #OCBC_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #OCBC_Temp;
         
         PRINT '✅ OCBC completed';
@@ -1805,7 +1477,6 @@ BEGIN
         INSERT INTO #DBS_Temp
         EXEC SP_DBS_FindBTP_Batch @TransactionsJSON = @DBS_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1817,45 +1488,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'DBS' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #DBS_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DBS'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'DBS', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #DBS_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DBS_Temp;
         
         PRINT '✅ DBS completed';
@@ -1884,7 +1536,6 @@ BEGIN
         INSERT INTO #CAPITAL_Temp
         EXEC SP_CAPITAL_FindBTP_Batch @TransactionsJSON = @CAPITAL_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1896,45 +1547,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'CAPITAL' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #CAPITAL_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CAPITAL'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'CAPITAL', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #CAPITAL_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CAPITAL_Temp;
         
         PRINT '✅ CAPITAL completed';
@@ -1963,7 +1595,6 @@ BEGIN
         INSERT INTO #WOORI_Temp
         EXEC SP_WOORI_FindBTP_Batch @TransactionsJSON = @WOORI_JSON;
         
-        -- Pastikan hanya 1 row per TransactionID (gunakan ROW_NUMBER untuk memilih yang terbaik)
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1975,45 +1606,26 @@ BEGIN
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
-            TransactionID, TransactionDate, Description,
-            CustomerName, BTP, MatchPercentage, MatchCount, TotalTransactions,
-            LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
-            Label, Status, Message, BankType, ProcessedAt,
-            Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
-        FROM (
-            SELECT
-                temp.TransactionID, 
-                COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, 
-                t.Description AS Description,
-                temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
-                temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
-                temp.Label, temp.Status, temp.Message, 'WOORI' AS BankType, temp.ProcessedAt,
-                t.Amount,
-                CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END AS TransactionType,
-                0 AS IsApproved,
-                CASE
-                    WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
-                    WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
-                    WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
-                    WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
-                    ELSE NULL
-                END AS Notes,
-                GETDATE() AS CreatedAt,
-                ROW_NUMBER() OVER (
-                    PARTITION BY temp.TransactionID 
-                    ORDER BY 
-                        CASE WHEN temp.OptionNumber = 1 THEN 1 ELSE 2 END, -- Prioritaskan OptionNumber = 1
-                        temp.OptionNumber ASC -- Lalu urutkan berdasarkan OptionNumber
-                ) AS RowNum
-            FROM #WOORI_Temp AS temp
-            INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'WOORI'
-            WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN'
-        ) AS Ranked
-        WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
+            temp.TransactionID, COALESCE(TRY_CAST(temp.TransactionDate AS DATE), t.TransactionDate) AS TransactionDate, t.Description AS Description,
+            temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
+            temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
+            temp.Label, temp.Status, temp.Message, 'WOORI', temp.ProcessedAt,
+            t.Amount,
+            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            0,
+            CASE
+                WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
+                WHEN temp.Status = 'NO_MATCH' THEN 'Customer "' + temp.CustomerName + '" belum ada di master data - perlu ditambahkan ke MASTER_CUSTOMER_BTP_PATTERN'
+                WHEN temp.Status = 'LOW' THEN 'Match confidence rendah (' + CAST(temp.MatchPercentage AS VARCHAR) + '%) - perlu verifikasi manual'
+                WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
+                ELSE NULL
+            END,
+            GETDATE()
+        FROM #WOORI_Temp AS temp
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #WOORI_Temp;
         
         PRINT '✅ WOORI completed';
