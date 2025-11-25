@@ -149,7 +149,7 @@ BEGIN
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-DBS INDONESIA%' THEN 'DBS'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CAPITAL INDONE%' THEN 'CAPITAL'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-WOORI SAUDARA%' THEN 'WOORI'
-            ELSE NULL
+            ELSE 'UNKNOWN'
         END as BankType,
         COALESCE(BTPValue, BTPValueLower) AS BTP,
         COALESCE(CustomerNameInput, CustomerNameLower) AS CustomerNameFromInput,
@@ -206,7 +206,7 @@ BEGIN
         t.Keterangan1 = ISNULL(t.Keterangan1, j.keterangan1),
         t.Keterangan2 = ISNULL(t.Keterangan2, j.keterangan2),
         t.BankType = CASE
-            WHEN t.BankType IS NULL AND UPPER(ISNULL(j.bank_type, '')) = 'VA' THEN 'VA'
+            WHEN t.BankType = 'UNKNOWN' AND UPPER(ISNULL(j.bank_type, '')) = 'VA' THEN 'VA'
             ELSE t.BankType
         END
     FROM @Transactions t
@@ -264,7 +264,10 @@ BEGIN
         
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'TRSF' FOR JSON PATH
         );
         
@@ -328,7 +331,10 @@ BEGIN
         
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
         
@@ -389,7 +395,10 @@ BEGIN
         
         DECLARE @MANDIRI_JSON NVARCHAR(MAX);
         SELECT @MANDIRI_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'MANDIRI' FOR JSON PATH
         );
         
@@ -450,7 +459,10 @@ BEGIN
         
         DECLARE @GREENFIEL_JSON NVARCHAR(MAX);
         SELECT @GREENFIEL_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'GREENFIEL' FOR JSON PATH
         );
         
@@ -629,7 +641,10 @@ BEGIN
         
         DECLARE @BNI_JSON NVARCHAR(MAX);
         SELECT @BNI_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'BNI' FOR JSON PATH
         );
         
@@ -688,7 +703,10 @@ BEGIN
         
         DECLARE @BTPN_JSON NVARCHAR(MAX);
         SELECT @BTPN_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'BTPN' FOR JSON PATH
         );
         
@@ -747,7 +765,10 @@ BEGIN
         
         DECLARE @BRI_JSON NVARCHAR(MAX);
         SELECT @BRI_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'BRI' FOR JSON PATH
         );
         
@@ -808,7 +829,10 @@ BEGIN
         
         DECLARE @MEGA_JSON NVARCHAR(MAX);
         SELECT @MEGA_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'MEGA' FOR JSON PATH
         );
         
@@ -867,7 +891,10 @@ BEGIN
         
         DECLARE @PERMATA_JSON NVARCHAR(MAX);
         SELECT @PERMATA_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'PERMATA' FOR JSON PATH
         );
         
@@ -926,7 +953,10 @@ BEGIN
         
         DECLARE @DANAMON_JSON NVARCHAR(MAX);
         SELECT @DANAMON_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'DANAMON' FOR JSON PATH
         );
         
@@ -985,7 +1015,10 @@ BEGIN
         
         DECLARE @CITIBANK_JSON NVARCHAR(MAX);
         SELECT @CITIBANK_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'CITIBANK' FOR JSON PATH
         );
         
@@ -1044,7 +1077,10 @@ BEGIN
         
         DECLARE @SINARMAS_JSON NVARCHAR(MAX);
         SELECT @SINARMAS_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'SINARMAS' FOR JSON PATH
         );
         
@@ -1107,7 +1143,10 @@ BEGIN
         
         DECLARE @CIMB_JSON NVARCHAR(MAX);
         SELECT @CIMB_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'CIMB' FOR JSON PATH
         );
         
@@ -1166,7 +1205,10 @@ BEGIN
         
         DECLARE @MAYBANK_JSON NVARCHAR(MAX);
         SELECT @MAYBANK_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'MAYBANK' FOR JSON PATH
         );
         
@@ -1225,7 +1267,10 @@ BEGIN
         
         DECLARE @HSBC_JSON NVARCHAR(MAX);
         SELECT @HSBC_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'HSBC' FOR JSON PATH
         );
         
@@ -1284,7 +1329,10 @@ BEGIN
         
         DECLARE @UOB_JSON NVARCHAR(MAX);
         SELECT @UOB_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'UOB' FOR JSON PATH
         );
         
@@ -1343,7 +1391,10 @@ BEGIN
         
         DECLARE @MUAMALAT_JSON NVARCHAR(MAX);
         SELECT @MUAMALAT_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'MUAMALAT' FOR JSON PATH
         );
         
@@ -1402,7 +1453,10 @@ BEGIN
         
         DECLARE @OCBC_JSON NVARCHAR(MAX);
         SELECT @OCBC_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'OCBC' FOR JSON PATH
         );
         
@@ -1461,7 +1515,10 @@ BEGIN
         
         DECLARE @DBS_JSON NVARCHAR(MAX);
         SELECT @DBS_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'DBS' FOR JSON PATH
         );
         
@@ -1520,7 +1577,10 @@ BEGIN
         
         DECLARE @CAPITAL_JSON NVARCHAR(MAX);
         SELECT @CAPITAL_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'CAPITAL' FOR JSON PATH
         );
         
@@ -1579,7 +1639,10 @@ BEGIN
         
         DECLARE @WOORI_JSON NVARCHAR(MAX);
         SELECT @WOORI_JSON = (
-            SELECT TransactionID AS transaction_id, TransactionDate AS transaction_date, Description AS description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'WOORI' FOR JSON PATH
         );
         
@@ -1632,16 +1695,16 @@ BEGIN
     END
     
     -- ═══════════════════════════════════════════════════════════════════════
-    -- Handle NULL bank types (bank type tidak dikenali)
+    -- Handle UNKNOWN bank types (save all with proper notes)
     -- ═══════════════════════════════════════════════════════════════════════
-    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType IS NULL)
+    IF EXISTS (SELECT 1 FROM @Transactions WHERE BankType = 'UNKNOWN')
     BEGIN
-        PRINT '⚠️  Processing transactions dengan BankType NULL (tidak dikenali)...';
+        PRINT '⚠️  Processing UNKNOWN bank types...';
         
         DECLARE @UnknownCount INT;
-        SELECT @UnknownCount = COUNT(*) FROM @Transactions WHERE BankType IS NULL;
+        SELECT @UnknownCount = COUNT(*) FROM @Transactions WHERE BankType = 'UNKNOWN';
         
-        -- Insert transactions dengan BankType NULL langsung dengan helpful notes
+        -- Insert UNKNOWN transactions directly with helpful notes
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
             TransactionID, TransactionDate, Description,
@@ -1657,7 +1720,7 @@ BEGIN
             @UploadTime,
             TransactionID,
             TransactionDate, -- Sudah DATE dari @Transactions
-            Description, -- Description dari input JSON
+            Description,
             NULL AS CustomerName,
             NULL AS BTP,
             0.00 AS MatchPercentage,
@@ -1671,7 +1734,7 @@ BEGIN
             '' AS Label,
             'UNKNOWN_BANK' AS Status,
             'Bank type tidak dikenali - perlu dicek manual atau tambahkan pattern deteksi bank' AS Message,
-            NULL AS BankType, -- Set ke NULL, bukan 'UNKNOWN'
+            'UNKNOWN' AS BankType,
             GETDATE() AS ProcessedAt,
             Amount,
             CASE WHEN TransactionType IN ('CR', 'DB') THEN TransactionType ELSE NULL END,
@@ -1686,11 +1749,11 @@ BEGIN
             END AS Notes,
             GETDATE() AS CreatedAt
         FROM @Transactions
-        WHERE BankType IS NULL;
+        WHERE BankType = 'UNKNOWN';
         
         SET @ProcessedCount = @ProcessedCount + @UnknownCount;
         
-        PRINT '⚠️  Transactions dengan BankType NULL disimpan: ' + CAST(@UnknownCount AS VARCHAR);
+        PRINT '⚠️  UNKNOWN bank types saved: ' + CAST(@UnknownCount AS VARCHAR);
         PRINT '   → These require manual review';
     END
     
