@@ -255,6 +255,9 @@ BEGIN
     
     DECLARE @ProcessedCount INT = 0;
     
+    -- Track TransactionID yang sudah diproses untuk menghindari duplikasi
+    DECLARE @ProcessedTransactionIDs TABLE (TransactionID INT PRIMARY KEY);
+    
     -- ═══════════════════════════════════════════════════════════════════════
     -- TRSF
     -- ═══════════════════════════════════════════════════════════════════════
@@ -310,8 +313,16 @@ BEGIN
             END,
             GETDATE()
         FROM #TRSF_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'TRSF'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #TRSF_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #TRSF_Temp;
@@ -371,8 +382,16 @@ BEGIN
             END,
             GETDATE()
         FROM #BIFAST_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BIFAST'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #BIFAST_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
@@ -432,8 +451,16 @@ BEGIN
             END,
             GETDATE()
         FROM #MANDIRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MANDIRI'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #MANDIRI_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
@@ -497,8 +524,16 @@ BEGIN
             END,
             GETDATE()
         FROM #GREENFIEL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'GREENFIEL'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #GREENFIEL_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
@@ -609,8 +644,16 @@ BEGIN
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
         FROM #VA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'VA'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #VA_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
@@ -672,8 +715,16 @@ BEGIN
             END,
             GETDATE()
         FROM #BNI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BNI'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #BNI_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BNI_Temp;
@@ -731,8 +782,16 @@ BEGIN
             END,
             GETDATE()
         FROM #BTPN_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BTPN'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #BTPN_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BTPN_Temp;
@@ -792,8 +851,16 @@ BEGIN
             END,
             GETDATE()
         FROM #BRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BRI'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #BRI_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BRI_Temp;
@@ -851,8 +918,16 @@ BEGIN
             END,
             GETDATE()
         FROM #MEGA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MEGA'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #MEGA_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MEGA_Temp;
@@ -910,8 +985,16 @@ BEGIN
             END,
             GETDATE()
         FROM #PERMATA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'PERMATA'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #PERMATA_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #PERMATA_Temp;
@@ -969,8 +1052,16 @@ BEGIN
             END,
             GETDATE()
         FROM #DANAMON_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DANAMON'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #DANAMON_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DANAMON_Temp;
@@ -1028,8 +1119,16 @@ BEGIN
             END,
             GETDATE()
         FROM #CITIBANK_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CITIBANK'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #CITIBANK_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CITIBANK_Temp;
@@ -1087,8 +1186,16 @@ BEGIN
             END,
             GETDATE()
         FROM #SINARMAS_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'SINARMAS'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #SINARMAS_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #SINARMAS_Temp;
@@ -1150,8 +1257,16 @@ BEGIN
             END,
             GETDATE()
         FROM #CIMB_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CIMB'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #CIMB_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CIMB_Temp;
@@ -1209,8 +1324,16 @@ BEGIN
             END,
             GETDATE()
         FROM #MAYBANK_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MAYBANK'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #MAYBANK_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MAYBANK_Temp;
@@ -1268,8 +1391,16 @@ BEGIN
             END,
             GETDATE()
         FROM #HSBC_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'HSBC'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #HSBC_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #HSBC_Temp;
@@ -1327,8 +1458,16 @@ BEGIN
             END,
             GETDATE()
         FROM #UOB_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'UOB'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #UOB_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #UOB_Temp;
@@ -1386,8 +1525,16 @@ BEGIN
             END,
             GETDATE()
         FROM #MUAMALAT_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MUAMALAT'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #MUAMALAT_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MUAMALAT_Temp;
@@ -1445,8 +1592,16 @@ BEGIN
             END,
             GETDATE()
         FROM #OCBC_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'OCBC'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #OCBC_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #OCBC_Temp;
@@ -1504,8 +1659,16 @@ BEGIN
             END,
             GETDATE()
         FROM #DBS_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DBS'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #DBS_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DBS_Temp;
@@ -1563,8 +1726,16 @@ BEGIN
             END,
             GETDATE()
         FROM #CAPITAL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CAPITAL'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #CAPITAL_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CAPITAL_Temp;
@@ -1622,8 +1793,16 @@ BEGIN
             END,
             GETDATE()
         FROM #WOORI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'WOORI'
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
+        
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT temp.TransactionID
+        FROM #WOORI_Temp AS temp
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN')
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = temp.TransactionID);
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #WOORI_Temp;
@@ -1685,10 +1864,18 @@ BEGIN
                 ELSE 'Format transaksi tidak dikenali - perlu review manual untuk identifikasi bank atau kategori'
             END AS Notes,
             GETDATE() AS CreatedAt
-        FROM @Transactions
-        WHERE BankType = 'UNKNOWN';
+        FROM @Transactions AS t
+        WHERE t.BankType = 'UNKNOWN'
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = t.TransactionID);
         
-        SET @ProcessedCount = @ProcessedCount + @UnknownCount;
+        -- Track TransactionID yang sudah diproses
+        INSERT INTO @ProcessedTransactionIDs (TransactionID)
+        SELECT DISTINCT t.TransactionID
+        FROM @Transactions AS t
+        WHERE t.BankType = 'UNKNOWN'
+        AND NOT EXISTS (SELECT 1 FROM @ProcessedTransactionIDs WHERE TransactionID = t.TransactionID);
+        
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         
         PRINT '⚠️  UNKNOWN bank types saved: ' + CAST(@UnknownCount AS VARCHAR);
         PRINT '   → These require manual review';
