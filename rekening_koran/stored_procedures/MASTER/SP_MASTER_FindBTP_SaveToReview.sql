@@ -55,28 +55,6 @@ BEGIN
     -- Variables
     DECLARE @TotalTransactions INT;
     DECLARE @UploadTime DATETIME = GETDATE();
-    DECLARE @TRSF_RowCount INT;
-    DECLARE @BIFAST_RowCount INT;
-    DECLARE @MANDIRI_RowCount INT;
-    DECLARE @GREENFIEL_RowCount INT;
-    DECLARE @VA_RowCount INT;
-    DECLARE @BNI_RowCount INT;
-    DECLARE @BTPN_RowCount INT;
-    DECLARE @BRI_RowCount INT;
-    DECLARE @MEGA_RowCount INT;
-    DECLARE @PERMATA_RowCount INT;
-    DECLARE @DANAMON_RowCount INT;
-    DECLARE @CITIBANK_RowCount INT;
-    DECLARE @SINARMAS_RowCount INT;
-    DECLARE @CIMB_RowCount INT;
-    DECLARE @MAYBANK_RowCount INT;
-    DECLARE @HSBC_RowCount INT;
-    DECLARE @UOB_RowCount INT;
-    DECLARE @MUAMALAT_RowCount INT;
-    DECLARE @OCBC_RowCount INT;
-    DECLARE @DBS_RowCount INT;
-    DECLARE @CAPITAL_RowCount INT;
-    DECLARE @WOORI_RowCount INT;
     
     -- Input transactions
     DECLARE @Transactions TABLE (
@@ -286,10 +264,7 @@ BEGIN
         
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'TRSF' FOR JSON PATH
         );
         
@@ -338,8 +313,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @TRSF_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @TRSF_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #TRSF_Temp;
         
         PRINT '✅ TRSF completed';
@@ -354,10 +328,7 @@ BEGIN
         
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
         
@@ -403,8 +374,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @BIFAST_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @BIFAST_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
         
         PRINT '✅ BIFAST completed';
@@ -419,10 +389,7 @@ BEGIN
         
         DECLARE @MANDIRI_JSON NVARCHAR(MAX);
         SELECT @MANDIRI_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'MANDIRI' FOR JSON PATH
         );
         
@@ -468,8 +435,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @MANDIRI_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @MANDIRI_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
         
         PRINT '✅ MANDIRI completed';
@@ -484,10 +450,7 @@ BEGIN
         
         DECLARE @GREENFIEL_JSON NVARCHAR(MAX);
         SELECT @GREENFIEL_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'GREENFIEL' FOR JSON PATH
         );
         
@@ -537,8 +500,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @GREENFIEL_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @GREENFIEL_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
         
         PRINT '✅ GREENFIEL completed';
@@ -650,8 +612,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
 
-        SET @VA_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @VA_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
 
         PRINT '✅ VA (RPT TXT) completed';
@@ -668,10 +629,7 @@ BEGIN
         
         DECLARE @BNI_JSON NVARCHAR(MAX);
         SELECT @BNI_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'BNI' FOR JSON PATH
         );
         
@@ -717,8 +675,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @BNI_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @BNI_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BNI_Temp;
         
         PRINT '✅ BNI completed';
@@ -731,10 +688,7 @@ BEGIN
         
         DECLARE @BTPN_JSON NVARCHAR(MAX);
         SELECT @BTPN_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'BTPN' FOR JSON PATH
         );
         
@@ -780,8 +734,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @BTPN_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @BTPN_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BTPN_Temp;
         
         PRINT '✅ BTPN completed';
@@ -794,10 +747,7 @@ BEGIN
         
         DECLARE @BRI_JSON NVARCHAR(MAX);
         SELECT @BRI_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'BRI' FOR JSON PATH
         );
         
@@ -845,8 +795,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @BRI_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @BRI_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BRI_Temp;
         
         PRINT '✅ BRI completed';
@@ -859,10 +808,7 @@ BEGIN
         
         DECLARE @MEGA_JSON NVARCHAR(MAX);
         SELECT @MEGA_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'MEGA' FOR JSON PATH
         );
         
@@ -908,8 +854,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @MEGA_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @MEGA_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MEGA_Temp;
         
         PRINT '✅ MEGA completed';
@@ -922,10 +867,7 @@ BEGIN
         
         DECLARE @PERMATA_JSON NVARCHAR(MAX);
         SELECT @PERMATA_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'PERMATA' FOR JSON PATH
         );
         
@@ -971,8 +913,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @PERMATA_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @PERMATA_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #PERMATA_Temp;
         
         PRINT '✅ PERMATA completed';
@@ -985,10 +926,7 @@ BEGIN
         
         DECLARE @DANAMON_JSON NVARCHAR(MAX);
         SELECT @DANAMON_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'DANAMON' FOR JSON PATH
         );
         
@@ -1034,8 +972,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @DANAMON_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @DANAMON_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DANAMON_Temp;
         
         PRINT '✅ DANAMON completed';
@@ -1048,10 +985,7 @@ BEGIN
         
         DECLARE @CITIBANK_JSON NVARCHAR(MAX);
         SELECT @CITIBANK_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'CITIBANK' FOR JSON PATH
         );
         
@@ -1097,8 +1031,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @CITIBANK_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @CITIBANK_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CITIBANK_Temp;
         
         PRINT '✅ CITIBANK completed';
@@ -1111,10 +1044,7 @@ BEGIN
         
         DECLARE @SINARMAS_JSON NVARCHAR(MAX);
         SELECT @SINARMAS_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'SINARMAS' FOR JSON PATH
         );
         
@@ -1160,8 +1090,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @SINARMAS_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @SINARMAS_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #SINARMAS_Temp;
         
         PRINT '✅ SINARMAS completed';
@@ -1178,10 +1107,7 @@ BEGIN
         
         DECLARE @CIMB_JSON NVARCHAR(MAX);
         SELECT @CIMB_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'CIMB' FOR JSON PATH
         );
         
@@ -1227,8 +1153,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @CIMB_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @CIMB_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CIMB_Temp;
         
         PRINT '✅ CIMB completed';
@@ -1241,10 +1166,7 @@ BEGIN
         
         DECLARE @MAYBANK_JSON NVARCHAR(MAX);
         SELECT @MAYBANK_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'MAYBANK' FOR JSON PATH
         );
         
@@ -1290,8 +1212,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @MAYBANK_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @MAYBANK_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MAYBANK_Temp;
         
         PRINT '✅ MAYBANK completed';
@@ -1304,10 +1225,7 @@ BEGIN
         
         DECLARE @HSBC_JSON NVARCHAR(MAX);
         SELECT @HSBC_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'HSBC' FOR JSON PATH
         );
         
@@ -1353,8 +1271,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @HSBC_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @HSBC_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #HSBC_Temp;
         
         PRINT '✅ HSBC completed';
@@ -1367,10 +1284,7 @@ BEGIN
         
         DECLARE @UOB_JSON NVARCHAR(MAX);
         SELECT @UOB_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'UOB' FOR JSON PATH
         );
         
@@ -1416,8 +1330,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @UOB_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @UOB_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #UOB_Temp;
         
         PRINT '✅ UOB completed';
@@ -1430,10 +1343,7 @@ BEGIN
         
         DECLARE @MUAMALAT_JSON NVARCHAR(MAX);
         SELECT @MUAMALAT_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'MUAMALAT' FOR JSON PATH
         );
         
@@ -1479,8 +1389,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @MUAMALAT_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @MUAMALAT_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MUAMALAT_Temp;
         
         PRINT '✅ MUAMALAT completed';
@@ -1493,10 +1402,7 @@ BEGIN
         
         DECLARE @OCBC_JSON NVARCHAR(MAX);
         SELECT @OCBC_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'OCBC' FOR JSON PATH
         );
         
@@ -1542,8 +1448,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @OCBC_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @OCBC_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #OCBC_Temp;
         
         PRINT '✅ OCBC completed';
@@ -1556,10 +1461,7 @@ BEGIN
         
         DECLARE @DBS_JSON NVARCHAR(MAX);
         SELECT @DBS_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'DBS' FOR JSON PATH
         );
         
@@ -1605,8 +1507,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @DBS_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @DBS_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DBS_Temp;
         
         PRINT '✅ DBS completed';
@@ -1619,10 +1520,7 @@ BEGIN
         
         DECLARE @CAPITAL_JSON NVARCHAR(MAX);
         SELECT @CAPITAL_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'CAPITAL' FOR JSON PATH
         );
         
@@ -1668,8 +1566,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @CAPITAL_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @CAPITAL_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CAPITAL_Temp;
         
         PRINT '✅ CAPITAL completed';
@@ -1682,10 +1579,7 @@ BEGIN
         
         DECLARE @WOORI_JSON NVARCHAR(MAX);
         SELECT @WOORI_JSON = (
-            SELECT 
-                TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
-                Description AS description
+            SELECT TransactionID, TransactionDate, Description
             FROM @Transactions WHERE BankType = 'WOORI' FOR JSON PATH
         );
         
@@ -1731,8 +1625,7 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @WOORI_RowCount = @@ROWCOUNT;
-        SET @ProcessedCount = @ProcessedCount + @WOORI_RowCount;
+        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #WOORI_Temp;
         
         PRINT '✅ WOORI completed';
