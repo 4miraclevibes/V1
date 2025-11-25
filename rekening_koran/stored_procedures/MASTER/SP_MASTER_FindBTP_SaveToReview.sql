@@ -332,7 +332,9 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
+        DECLARE @TRSF_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TRSF_RowCount;
         DROP TABLE #TRSF_Temp;
         
         PRINT '✅ TRSF completed';
@@ -412,7 +414,9 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
+        DECLARE @BIFAST_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @BIFAST_RowCount;
         DROP TABLE #BIFAST_Temp;
         
         PRINT '✅ BIFAST completed';
@@ -492,7 +496,9 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
+        DECLARE @MANDIRI_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @MANDIRI_RowCount;
         DROP TABLE #MANDIRI_Temp;
         
         PRINT '✅ MANDIRI completed';
@@ -557,7 +563,9 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'GREENFIEL'
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
+        DECLARE @GREENFIEL_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @GREENFIEL_RowCount;
         DROP TABLE #GREENFIEL_Temp;
         
         PRINT '✅ GREENFIEL completed';
@@ -669,7 +677,9 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'VA'
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
 
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        -- Simpan @@ROWCOUNT ke variabel lokal segera setelah INSERT untuk menghindari error connection recovery
+        DECLARE @VA_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @VA_RowCount;
         DROP TABLE #VA_Temp;
 
         PRINT '✅ VA (RPT TXT) completed';
@@ -751,7 +761,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #BNI_Temp;
         
         PRINT '✅ BNI completed';
@@ -829,7 +840,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #BTPN_Temp;
         
         PRINT '✅ BTPN completed';
@@ -890,7 +902,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BRI'
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #BRI_Temp;
         
         PRINT '✅ BRI completed';
@@ -968,7 +981,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #MEGA_Temp;
         
         PRINT '✅ MEGA completed';
@@ -1046,7 +1060,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #PERMATA_Temp;
         
         PRINT '✅ PERMATA completed';
@@ -1124,7 +1139,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #DANAMON_Temp;
         
         PRINT '✅ DANAMON completed';
@@ -1202,7 +1218,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #CITIBANK_Temp;
         
         PRINT '✅ CITIBANK completed';
@@ -1280,7 +1297,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #SINARMAS_Temp;
         
         PRINT '✅ SINARMAS completed';
@@ -1362,7 +1380,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #CIMB_Temp;
         
         PRINT '✅ CIMB completed';
@@ -1440,7 +1459,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #MAYBANK_Temp;
         
         PRINT '✅ MAYBANK completed';
@@ -1518,7 +1538,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #HSBC_Temp;
         
         PRINT '✅ HSBC completed';
@@ -1596,7 +1617,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #UOB_Temp;
         
         PRINT '✅ UOB completed';
@@ -1674,7 +1696,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #MUAMALAT_Temp;
         
         PRINT '✅ MUAMALAT completed';
@@ -1752,7 +1775,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #OCBC_Temp;
         
         PRINT '✅ OCBC completed';
@@ -1830,7 +1854,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #DBS_Temp;
         
         PRINT '✅ DBS completed';
@@ -1908,7 +1933,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #CAPITAL_Temp;
         
         PRINT '✅ CAPITAL completed';
@@ -1986,7 +2012,8 @@ BEGIN
         ) AS Ranked
         WHERE RowNum = 1; -- Hanya ambil 1 row per TransactionID
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        DECLARE @TEMP_RowCount INT = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TEMP_RowCount;
         DROP TABLE #WOORI_Temp;
         
         PRINT '✅ WOORI completed';
