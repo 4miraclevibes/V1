@@ -195,13 +195,13 @@ BEGIN
     SET t.BTP = ISNULL(t.BTP, j.btp),
         t.CustomerNameFromInput = ISNULL(t.CustomerNameFromInput, j.customer_name),
         t.TransactionTime = ISNULL(t.TransactionTime, j.transaction_time),
-        temp.TransactionType = CASE
-            WHEN temp.TransactionType IN ('CR', 'DB') THEN temp.TransactionType
+        t.TransactionType = CASE
+            WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType
             WHEN j.transaction_type IS NOT NULL AND UPPER(LEFT(j.transaction_type, 2)) IN ('CR', 'DB')
                 THEN UPPER(LEFT(j.transaction_type, 2))
-            ELSE temp.TransactionType
+            ELSE t.TransactionType
         END,
-        temp.Amount = ISNULL(temp.Amount, TRY_CAST(j.amount AS DECIMAL(18,2))),
+        t.Amount = ISNULL(t.Amount, TRY_CAST(j.amount AS DECIMAL(18,2))),
         t.Location = ISNULL(t.Location, j.location),
         t.Keterangan1 = ISNULL(t.Keterangan1, j.keterangan1),
         t.Keterangan2 = ISNULL(t.Keterangan2, j.keterangan2),
