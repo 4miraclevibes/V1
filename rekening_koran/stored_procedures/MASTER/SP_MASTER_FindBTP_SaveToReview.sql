@@ -298,8 +298,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'TRSF', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -359,8 +359,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BIFAST', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -420,8 +420,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MANDIRI', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -482,8 +482,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'GREENFIEL', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Array[4] bukan "GREENFIEL" - transaksi tidak match dengan pattern GREENFIEL'
@@ -656,8 +656,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BNI', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -715,8 +715,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BTPN', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -776,8 +776,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BRI', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -835,8 +835,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MEGA', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -894,8 +894,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'PERMATA', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -953,8 +953,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'DANAMON', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1012,8 +1012,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CITIBANK', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1071,8 +1071,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'SINARMAS', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1134,8 +1134,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CIMB', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1193,8 +1193,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MAYBANK', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1252,8 +1252,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'HSBC', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1311,8 +1311,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'UOB', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1370,8 +1370,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MUAMALAT', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1429,8 +1429,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'OCBC', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1488,8 +1488,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'DBS', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1547,8 +1547,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CAPITAL', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1606,8 +1606,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'WOORI', temp.ProcessedAt,
-            temp.Amount,
-            temp.TransactionType,
+            t.Amount,
+            t.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
