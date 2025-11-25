@@ -195,13 +195,13 @@ BEGIN
     SET t.BTP = ISNULL(t.BTP, j.btp),
         t.CustomerNameFromInput = ISNULL(t.CustomerNameFromInput, j.customer_name),
         t.TransactionTime = ISNULL(t.TransactionTime, j.transaction_time),
-        t.TransactionType = CASE
-            WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType
+        temp.TransactionType = CASE
+            WHEN temp.TransactionType IN ('CR', 'DB') THEN temp.TransactionType
             WHEN j.transaction_type IS NOT NULL AND UPPER(LEFT(j.transaction_type, 2)) IN ('CR', 'DB')
                 THEN UPPER(LEFT(j.transaction_type, 2))
-            ELSE t.TransactionType
+            ELSE temp.TransactionType
         END,
-        t.Amount = ISNULL(t.Amount, TRY_CAST(j.amount AS DECIMAL(18,2))),
+        temp.Amount = ISNULL(temp.Amount, TRY_CAST(j.amount AS DECIMAL(18,2))),
         t.Location = ISNULL(t.Location, j.location),
         t.Keterangan1 = ISNULL(t.Keterangan1, j.keterangan1),
         t.Keterangan2 = ISNULL(t.Keterangan2, j.keterangan2),
@@ -298,8 +298,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'TRSF', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -311,7 +311,7 @@ BEGIN
             GETDATE()
         FROM #TRSF_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #TRSF_Temp;
@@ -359,8 +359,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BIFAST', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -372,7 +372,7 @@ BEGIN
             GETDATE()
         FROM #BIFAST_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
@@ -420,8 +420,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MANDIRI', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -433,7 +433,7 @@ BEGIN
             GETDATE()
         FROM #MANDIRI_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
@@ -482,8 +482,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'GREENFIEL', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Array[4] bukan "GREENFIEL" - transaksi tidak match dengan pattern GREENFIEL'
@@ -498,7 +498,7 @@ BEGIN
             GETDATE()
         FROM #GREENFIEL_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
@@ -585,12 +585,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'VA', temp.ProcessedAt,
-            COALESCE(temp.Amount, t.Amount),
-            CASE 
-                WHEN temp.TransactionType IN ('CR', 'DB') THEN temp.TransactionType
-                WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType
-                ELSE NULL
-            END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_BTP' THEN 'BTP kosong pada data RPT - periksa file sumber'
@@ -605,12 +601,12 @@ BEGIN
             + ' / Ket1: ' + ISNULL(temp.Keterangan1, '-')
             + ' / Ket2: ' + ISNULL(temp.Keterangan2, '-')
             + CASE WHEN temp.TransactionTime IS NOT NULL THEN ' / Jam: ' + temp.TransactionTime ELSE '' END
-            + CASE WHEN COALESCE(temp.Amount, t.Amount) IS NOT NULL THEN ' / Amount: ' + FORMAT(COALESCE(temp.Amount, t.Amount), 'N2') ELSE '' END
+            + CASE WHEN temp.Amount IS NOT NULL THEN ' / Amount: ' + FORMAT(temp.Amount, 'N2') ELSE '' END
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
         FROM #VA_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
@@ -660,8 +656,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BNI', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -673,7 +669,7 @@ BEGIN
             GETDATE()
         FROM #BNI_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BNI_Temp;
@@ -719,8 +715,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BTPN', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -732,7 +728,7 @@ BEGIN
             GETDATE()
         FROM #BTPN_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BTPN_Temp;
@@ -780,8 +776,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'BRI', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -793,7 +789,7 @@ BEGIN
             GETDATE()
         FROM #BRI_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BRI_Temp;
@@ -839,8 +835,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MEGA', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -852,7 +848,7 @@ BEGIN
             GETDATE()
         FROM #MEGA_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MEGA_Temp;
@@ -898,8 +894,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'PERMATA', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -911,7 +907,7 @@ BEGIN
             GETDATE()
         FROM #PERMATA_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #PERMATA_Temp;
@@ -957,8 +953,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'DANAMON', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -970,7 +966,7 @@ BEGIN
             GETDATE()
         FROM #DANAMON_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DANAMON_Temp;
@@ -1016,8 +1012,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CITIBANK', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1029,7 +1025,7 @@ BEGIN
             GETDATE()
         FROM #CITIBANK_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CITIBANK_Temp;
@@ -1075,8 +1071,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'SINARMAS', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1088,7 +1084,7 @@ BEGIN
             GETDATE()
         FROM #SINARMAS_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #SINARMAS_Temp;
@@ -1138,8 +1134,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CIMB', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1151,7 +1147,7 @@ BEGIN
             GETDATE()
         FROM #CIMB_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CIMB_Temp;
@@ -1197,8 +1193,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MAYBANK', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1210,7 +1206,7 @@ BEGIN
             GETDATE()
         FROM #MAYBANK_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MAYBANK_Temp;
@@ -1256,8 +1252,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'HSBC', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1269,7 +1265,7 @@ BEGIN
             GETDATE()
         FROM #HSBC_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #HSBC_Temp;
@@ -1315,8 +1311,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'UOB', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1328,7 +1324,7 @@ BEGIN
             GETDATE()
         FROM #UOB_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #UOB_Temp;
@@ -1374,8 +1370,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'MUAMALAT', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1387,7 +1383,7 @@ BEGIN
             GETDATE()
         FROM #MUAMALAT_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MUAMALAT_Temp;
@@ -1433,8 +1429,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'OCBC', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1446,7 +1442,7 @@ BEGIN
             GETDATE()
         FROM #OCBC_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #OCBC_Temp;
@@ -1492,8 +1488,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'DBS', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1505,7 +1501,7 @@ BEGIN
             GETDATE()
         FROM #DBS_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DBS_Temp;
@@ -1551,8 +1547,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'CAPITAL', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1564,7 +1560,7 @@ BEGIN
             GETDATE()
         FROM #CAPITAL_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CAPITAL_Temp;
@@ -1610,8 +1606,8 @@ BEGIN
             temp.CustomerName, temp.BTP, temp.MatchPercentage, temp.MatchCount, temp.TotalTransactions,
             temp.LastLineNumber, temp.TotalBTPOptions, temp.OptionNumber, temp.BestFlag, temp.LatestFlag,
             temp.Label, temp.Status, temp.Message, 'WOORI', temp.ProcessedAt,
-            t.Amount,
-            CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
+            temp.Amount,
+            temp.TransactionType,
             0,
             CASE
                 WHEN temp.Status = 'NO_PATTERN' THEN 'Customer name tidak ditemukan di description - perlu review format extraction'
@@ -1623,7 +1619,7 @@ BEGIN
             GETDATE()
         FROM #WOORI_Temp AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        WHERE temp.OptionNumber = 1 OR temp.OptionNumber IS NULL;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #WOORI_Temp;
