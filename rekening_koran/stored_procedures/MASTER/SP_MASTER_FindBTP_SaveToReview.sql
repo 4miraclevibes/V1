@@ -55,6 +55,28 @@ BEGIN
     -- Variables
     DECLARE @TotalTransactions INT;
     DECLARE @UploadTime DATETIME = GETDATE();
+    DECLARE @TRSF_RowCount INT;
+    DECLARE @BIFAST_RowCount INT;
+    DECLARE @MANDIRI_RowCount INT;
+    DECLARE @GREENFIEL_RowCount INT;
+    DECLARE @VA_RowCount INT;
+    DECLARE @BNI_RowCount INT;
+    DECLARE @BTPN_RowCount INT;
+    DECLARE @BRI_RowCount INT;
+    DECLARE @MEGA_RowCount INT;
+    DECLARE @PERMATA_RowCount INT;
+    DECLARE @DANAMON_RowCount INT;
+    DECLARE @CITIBANK_RowCount INT;
+    DECLARE @SINARMAS_RowCount INT;
+    DECLARE @CIMB_RowCount INT;
+    DECLARE @MAYBANK_RowCount INT;
+    DECLARE @HSBC_RowCount INT;
+    DECLARE @UOB_RowCount INT;
+    DECLARE @MUAMALAT_RowCount INT;
+    DECLARE @OCBC_RowCount INT;
+    DECLARE @DBS_RowCount INT;
+    DECLARE @CAPITAL_RowCount INT;
+    DECLARE @WOORI_RowCount INT;
     
     -- Input transactions
     DECLARE @Transactions TABLE (
@@ -316,7 +338,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @TRSF_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @TRSF_RowCount;
         DROP TABLE #TRSF_Temp;
         
         PRINT '✅ TRSF completed';
@@ -380,7 +403,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @BIFAST_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @BIFAST_RowCount;
         DROP TABLE #BIFAST_Temp;
         
         PRINT '✅ BIFAST completed';
@@ -444,7 +468,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @MANDIRI_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @MANDIRI_RowCount;
         DROP TABLE #MANDIRI_Temp;
         
         PRINT '✅ MANDIRI completed';
@@ -512,7 +537,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @GREENFIEL_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @GREENFIEL_RowCount;
         DROP TABLE #GREENFIEL_Temp;
         
         PRINT '✅ GREENFIEL completed';
@@ -624,7 +650,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
 
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @VA_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @VA_RowCount;
         DROP TABLE #VA_Temp;
 
         PRINT '✅ VA (RPT TXT) completed';
@@ -690,7 +717,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @BNI_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @BNI_RowCount;
         DROP TABLE #BNI_Temp;
         
         PRINT '✅ BNI completed';
@@ -752,7 +780,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @BTPN_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @BTPN_RowCount;
         DROP TABLE #BTPN_Temp;
         
         PRINT '✅ BTPN completed';
@@ -816,7 +845,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @BRI_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @BRI_RowCount;
         DROP TABLE #BRI_Temp;
         
         PRINT '✅ BRI completed';
@@ -878,7 +908,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @MEGA_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @MEGA_RowCount;
         DROP TABLE #MEGA_Temp;
         
         PRINT '✅ MEGA completed';
@@ -940,7 +971,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @PERMATA_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @PERMATA_RowCount;
         DROP TABLE #PERMATA_Temp;
         
         PRINT '✅ PERMATA completed';
@@ -1002,7 +1034,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @DANAMON_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @DANAMON_RowCount;
         DROP TABLE #DANAMON_Temp;
         
         PRINT '✅ DANAMON completed';
@@ -1064,7 +1097,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @CITIBANK_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @CITIBANK_RowCount;
         DROP TABLE #CITIBANK_Temp;
         
         PRINT '✅ CITIBANK completed';
@@ -1126,7 +1160,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @SINARMAS_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @SINARMAS_RowCount;
         DROP TABLE #SINARMAS_Temp;
         
         PRINT '✅ SINARMAS completed';
@@ -1192,7 +1227,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @CIMB_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @CIMB_RowCount;
         DROP TABLE #CIMB_Temp;
         
         PRINT '✅ CIMB completed';
@@ -1254,7 +1290,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @MAYBANK_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @MAYBANK_RowCount;
         DROP TABLE #MAYBANK_Temp;
         
         PRINT '✅ MAYBANK completed';
@@ -1316,7 +1353,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @HSBC_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @HSBC_RowCount;
         DROP TABLE #HSBC_Temp;
         
         PRINT '✅ HSBC completed';
@@ -1378,7 +1416,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @UOB_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @UOB_RowCount;
         DROP TABLE #UOB_Temp;
         
         PRINT '✅ UOB completed';
@@ -1440,7 +1479,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @MUAMALAT_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @MUAMALAT_RowCount;
         DROP TABLE #MUAMALAT_Temp;
         
         PRINT '✅ MUAMALAT completed';
@@ -1502,7 +1542,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @OCBC_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @OCBC_RowCount;
         DROP TABLE #OCBC_Temp;
         
         PRINT '✅ OCBC completed';
@@ -1564,7 +1605,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @DBS_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @DBS_RowCount;
         DROP TABLE #DBS_Temp;
         
         PRINT '✅ DBS completed';
@@ -1626,7 +1668,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @CAPITAL_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @CAPITAL_RowCount;
         DROP TABLE #CAPITAL_Temp;
         
         PRINT '✅ CAPITAL completed';
@@ -1688,7 +1731,8 @@ BEGIN
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
         WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
         
-        SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
+        SET @WOORI_RowCount = @@ROWCOUNT;
+        SET @ProcessedCount = @ProcessedCount + @WOORI_RowCount;
         DROP TABLE #WOORI_Temp;
         
         PRINT '✅ WOORI completed';
