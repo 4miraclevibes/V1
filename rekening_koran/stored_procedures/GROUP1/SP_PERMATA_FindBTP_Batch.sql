@@ -118,6 +118,36 @@ BEGIN
         SET @CustomerName = NULL;
         DELETE FROM @Words;
         
+        -- Skip if description is NULL or empty
+        IF @CurrentDescription IS NULL OR LEN(LTRIM(RTRIM(@CurrentDescription))) = 0
+        BEGIN
+            -- Insert NO_PATTERN result for empty description
+            INSERT INTO @Results (
+                TransactionID, TransactionDate, Description, CustomerName, BTP,
+                MatchPercentage, MatchCount, TotalTransactions, LastLineNumber,
+                TotalBTPOptions, OptionNumber, IsBest, IsLatest, Status
+            )
+            VALUES (
+                @CurrentTransactionID,
+                @CurrentTransactionDate,
+                @CurrentDescription,
+                NULL,
+                NULL,
+                0.00,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                'NO_PATTERN'
+            );
+            
+            FETCH NEXT FROM trans_cursor INTO @CurrentTransactionID, @CurrentTransactionDate, @CurrentDescription;
+            CONTINUE;
+        END
+        
         -- ═══════════════════════════════════════════════════════════════════
         -- Step 1: Parse description into words
         -- ═══════════════════════════════════════════════════════════════════
