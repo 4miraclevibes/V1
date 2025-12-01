@@ -119,27 +119,26 @@ BEGIN
             -- Format lainnya, coba parse langsung
             ELSE TRY_CAST(LTRIM(RTRIM(COALESCE(TransactionDate, TransactionDateLower))) AS DATE)
         END AS TransactionDate,
+        -- Description SELALU diambil dari input JSON (tidak pernah diubah)
         COALESCE(Description, DescriptionLower) AS Description,
+        -- Deteksi BankType dengan urutan yang eksklusif (lebih spesifik dulu)
         CASE
+            -- Priority 1: BankType dari input JSON (jika ada, langsung pakai)
             WHEN UPPER(ISNULL(BankTypeInput, '')) = 'VA' OR UPPER(ISNULL(BankTypeInputLower, '')) = 'VA' THEN 'VA'
+            -- Priority 2: VA detection berdasarkan BTP dan format RPT
             WHEN COALESCE(BTPValue, BTPValueLower) IS NOT NULL AND (
-                    COALESCE(Description, DescriptionLower) IS NULL OR COALESCE(Description, DescriptionLower) LIKE 'RPT:%' OR LEN(ISNULL(COALESCE(TransactionTimeInput, TransactionTimeLower), '')) > 0
+                    COALESCE(Description, DescriptionLower) IS NULL OR 
+                    COALESCE(Description, DescriptionLower) LIKE 'RPT:%' OR 
+                    LEN(ISNULL(COALESCE(TransactionTimeInput, TransactionTimeLower), '')) > 0
                 ) THEN 'VA'
-            -- Group 3: Special Logic
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE 'TRSF E-BANKING%' OR COALESCE(Description, DescriptionLower, '') LIKE 'TRSF FROM%' THEN 'TRSF'
+            -- Priority 3: Special Logic (TRSF dan BIFAST harus di-check sebelum LLG patterns)
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE 'TRSF E-BANKING%' OR 
+                 COALESCE(Description, DescriptionLower, '') LIKE 'TRSF FROM%' THEN 'TRSF'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE 'BI-FAST%' THEN 'BIFAST'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL %' OR COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL,%' OR COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL' THEN 'GREENFIEL'
-            -- Group 1
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BNI %' THEN 'BNI'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BTPN %' THEN 'BTPN'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MANDIRI %' THEN 'MANDIRI'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BRI %' THEN 'BRI'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MEGA %' THEN 'MEGA'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-PERMATA %' THEN 'PERMATA'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-DANAMON %' THEN 'DANAMON'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CITIBANK %' THEN 'CITIBANK'
-            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-SINARMAS %' THEN 'SINARMAS'
-            -- Group 2
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL %' OR 
+                 COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL,%' OR 
+                 COALESCE(Description, DescriptionLower, '') LIKE '% GREENFIEL' THEN 'GREENFIEL'
+            -- Priority 4: Group 2 (lebih spesifik, harus di-check sebelum Group 1)
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CIMB NIAGA%' THEN 'CIMB'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MAYBANK INDONE%' THEN 'MAYBANK'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-HSBC INDONESIA%' THEN 'HSBC'
@@ -149,6 +148,19 @@ BEGIN
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-DBS INDONESIA%' THEN 'DBS'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CAPITAL INDONE%' THEN 'CAPITAL'
             WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-WOORI SAUDARA%' THEN 'WOORI'
+            -- Priority 5: Group 1 (pattern sederhana)
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BNI %' THEN 'BNI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BTPN %' THEN 'BTPN'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MANDIRI %' THEN 'MANDIRI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-BRI %' THEN 'BRI'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-MEGA %' THEN 'MEGA'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-PERMATA %' THEN 'PERMATA'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-DANAMON %' THEN 'DANAMON'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-CITIBANK %' THEN 'CITIBANK'
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE '%LLG-SINARMAS %' THEN 'SINARMAS'
+            -- Priority 6: RTGS pattern (untuk CIMB RTGS)
+            WHEN COALESCE(Description, DescriptionLower, '') LIKE 'KR OTOMATIS RTGS-PT BANK CIMB%' THEN 'CIMB'
+            -- Default: UNKNOWN
             ELSE 'UNKNOWN'
         END as BankType,
         COALESCE(BTPValue, BTPValueLower) AS BTP,
@@ -205,8 +217,11 @@ BEGIN
         t.Location = ISNULL(t.Location, j.location),
         t.Keterangan1 = ISNULL(t.Keterangan1, j.keterangan1),
         t.Keterangan2 = ISNULL(t.Keterangan2, j.keterangan2),
+        -- BankType hanya diubah jika masih UNKNOWN dan ada bank_type dari JSON
+        -- JANGAN ubah BankType jika sudah ditentukan sebelumnya!
         t.BankType = CASE
             WHEN t.BankType = 'UNKNOWN' AND UPPER(ISNULL(j.bank_type, '')) = 'VA' THEN 'VA'
+            WHEN t.BankType = 'UNKNOWN' AND UPPER(ISNULL(j.bank_type, '')) IN ('TRSF', 'BIFAST', 'GREENFIEL', 'BNI', 'BTPN', 'MANDIRI', 'BRI', 'MEGA', 'PERMATA', 'DANAMON', 'CITIBANK', 'SINARMAS', 'CIMB', 'MAYBANK', 'HSBC', 'UOB', 'MUAMALAT', 'OCBC', 'DBS', 'CAPITAL', 'WOORI') THEN UPPER(ISNULL(j.bank_type, ''))
             ELSE t.BankType
         END
     FROM @Transactions t
@@ -234,7 +249,8 @@ BEGIN
             ELSE NULL
         END;
 
-    -- Bentuk description default untuk data VA (RPT) jika kosong
+    -- Bentuk description default untuk data VA (RPT) HANYA jika benar-benar kosong
+    -- JANGAN ubah Description jika sudah ada dari input JSON!
     UPDATE @Transactions
     SET Description = CONCAT(
             'RPT: ', ISNULL(CustomerNameFromInput, '-'),
@@ -242,8 +258,7 @@ BEGIN
             ' | ', ISNULL(Keterangan2, '-')
         )
     WHERE BankType = 'VA' AND (
-        Description IS NULL OR LTRIM(RTRIM(Description)) = '' OR
-        Description NOT LIKE 'RPT:%'
+        Description IS NULL OR LTRIM(RTRIM(Description)) = ''
     );
     
     SELECT @TotalTransactions = COUNT(*) FROM @Transactions;
@@ -310,8 +325,8 @@ BEGIN
             END,
             GETDATE()
         FROM #TRSF_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'TRSF'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #TRSF_Temp;
@@ -371,8 +386,8 @@ BEGIN
             END,
             GETDATE()
         FROM #BIFAST_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BIFAST'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
@@ -432,8 +447,8 @@ BEGIN
             END,
             GETDATE()
         FROM #MANDIRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MANDIRI'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
@@ -497,8 +512,8 @@ BEGIN
             END,
             GETDATE()
         FROM #GREENFIEL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'GREENFIEL'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
@@ -609,8 +624,8 @@ BEGIN
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
         FROM #VA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'VA'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
@@ -672,8 +687,8 @@ BEGIN
             END,
             GETDATE()
         FROM #BNI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BNI'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BNI_Temp;
@@ -731,8 +746,8 @@ BEGIN
             END,
             GETDATE()
         FROM #BTPN_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BTPN'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BTPN_Temp;
@@ -792,8 +807,8 @@ BEGIN
             END,
             GETDATE()
         FROM #BRI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BRI'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BRI_Temp;
@@ -851,8 +866,8 @@ BEGIN
             END,
             GETDATE()
         FROM #MEGA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MEGA'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MEGA_Temp;
@@ -910,8 +925,8 @@ BEGIN
             END,
             GETDATE()
         FROM #PERMATA_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'PERMATA'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #PERMATA_Temp;
@@ -969,8 +984,8 @@ BEGIN
             END,
             GETDATE()
         FROM #DANAMON_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DANAMON'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DANAMON_Temp;
@@ -1028,8 +1043,8 @@ BEGIN
             END,
             GETDATE()
         FROM #CITIBANK_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CITIBANK'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CITIBANK_Temp;
@@ -1087,8 +1102,8 @@ BEGIN
             END,
             GETDATE()
         FROM #SINARMAS_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'SINARMAS'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #SINARMAS_Temp;
@@ -1150,8 +1165,8 @@ BEGIN
             END,
             GETDATE()
         FROM #CIMB_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CIMB'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CIMB_Temp;
@@ -1209,8 +1224,8 @@ BEGIN
             END,
             GETDATE()
         FROM #MAYBANK_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MAYBANK'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MAYBANK_Temp;
@@ -1268,8 +1283,8 @@ BEGIN
             END,
             GETDATE()
         FROM #HSBC_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'HSBC'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #HSBC_Temp;
@@ -1327,8 +1342,8 @@ BEGIN
             END,
             GETDATE()
         FROM #UOB_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'UOB'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #UOB_Temp;
@@ -1386,8 +1401,8 @@ BEGIN
             END,
             GETDATE()
         FROM #MUAMALAT_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MUAMALAT'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MUAMALAT_Temp;
@@ -1445,8 +1460,8 @@ BEGIN
             END,
             GETDATE()
         FROM #OCBC_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'OCBC'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #OCBC_Temp;
@@ -1504,8 +1519,8 @@ BEGIN
             END,
             GETDATE()
         FROM #DBS_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DBS'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DBS_Temp;
@@ -1563,8 +1578,8 @@ BEGIN
             END,
             GETDATE()
         FROM #CAPITAL_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CAPITAL'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CAPITAL_Temp;
@@ -1622,8 +1637,8 @@ BEGIN
             END,
             GETDATE()
         FROM #WOORI_Temp AS temp
-        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID
-        WHERE temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN';
+        INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'WOORI'
+        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1 OR temp.Status = 'NO_PATTERN');
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #WOORI_Temp;
