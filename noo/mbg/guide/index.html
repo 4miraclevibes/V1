@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Pengguna Power Apps - NOO MBG</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6fb;
+            color: #222;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d8659, #4caf50);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        h1, h2 {
+            margin: 0 0 16px;
+        }
+
+        h2 {
+            color: #2d8659;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .step {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .step img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .step-content {
+            padding: 24px 28px 32px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 32px;
+            min-width: 32px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(45, 134, 89, 0.1);
+            color: #2d8659;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .note {
+            background: rgba(45, 134, 89, 0.08);
+            border-left: 4px solid #2d8659;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .inline-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+            border-radius: 50%;
+            background: rgba(45, 134, 89, 0.12);
+            font-size: 18px;
+        }
+
+        .highlight {
+            background: rgba(255, 235, 59, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        ul {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Panduan Pengguna Power Apps - NOO MBG</h1>
+        <p>Ikuti langkah-langkah berikut untuk mengelola data Customer Profile NOO (New Outlet Opening) dan mengatur status MBG.</p>
+    </header>
+    <main>
+        <section class="step">
+            <img src="../images/1.LOGIN.png" alt="Login ke Power Apps">
+            <div class="step-content">
+                <div class="badge">Langkah 1</div>
+                <h2>Masuk ke Power Apps</h2>
+                <p>Buka aplikasi Power Apps dan lakukan login menggunakan akun perusahaan Anda. Masukkan <strong>Username</strong> dan <strong>Password</strong> pada form login yang muncul.</p>
+                <ul>
+                    <li>Username: Masukkan username Anda (contoh: ferry.silaban)</li>
+                    <li>Password: Masukkan password Anda</li>
+                    <li>Klik tombol <span class="highlight">Login</span> untuk masuk ke aplikasi</li>
+                </ul>
+                <div class="note">
+                    <strong>Catatan:</strong> Pastikan Anda menggunakan akun yang memiliki akses ke aplikasi Customer Profile NOO.
+                </div>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../images/2.NOO.png" alt="Halaman NOO Customer Profile">
+            <div class="step-content">
+                <div class="badge">Langkah 2</div>
+                <h2>Akses Halaman NOO</h2>
+                <p>Setelah login berhasil, Anda akan melihat halaman utama Customer Profile. Di sidebar kiri, klik menu <span class="highlight">NOO</span> untuk membuka halaman New Outlet Opening.</p>
+                <p>Halaman NOO menampilkan tabel data customer dengan informasi berikut:</p>
+                <ul>
+                    <li><strong>isNoo:</strong> Status NOO (New Outlet Opening) dengan tombol <span class="highlight">"Yes" (hijau)</span> untuk aktif dan <span class="highlight">"No" (merah)</span> untuk tidak aktif</li>
+                    <li><strong>MBG:</strong> Status MBG (Makan Bergizi Gratis) dengan tombol <span class="highlight">"Check" (hijau)</span> untuk aktif dan <span class="highlight">"X" (merah)</span> untuk tidak aktif</li>
+                    <li><strong>Region:</strong> Wilayah customer (contoh: GREATER JAKARTA & WEST JAVA)</li>
+                    <li><strong>Distributor:</strong> Nama distributor (contoh: KACS)</li>
+                    <li><strong>Customer Code:</strong> Kode unik customer</li>
+                    <li><strong>Customer Name:</strong> Nama customer</li>
+                    <li><strong>Account:</strong> Tipe akun customer</li>
+                    <li><strong>Create Date:</strong> Tanggal pembuatan data</li>
+                    <li><strong>Account Trading Term:</strong> Term trading akun</li>
+                    <li><strong>Channel:</strong> Saluran bisnis customer</li>
+                </ul>
+                <div class="note">
+                    <strong>Tips:</strong> Di bagian atas tabel, Anda dapat melihat total data yang ditampilkan (contoh: "Total data: 125 | name: ferry.silaban").
+                </div>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../images/3.EDIT.png" alt="Filter dan Edit Customer Profile">
+            <div class="step-content">
+                <div class="badge">Langkah 3</div>
+                <h2>Filter dan Edit Data Customer</h2>
+                <p>Pada halaman NOO, Anda dapat melakukan berbagai operasi untuk mengelola data customer:</p>
+                
+                <h3>Filter Berdasarkan Tipe:</h3>
+                <p>Di bagian atas tabel, terdapat tiga tombol filter:</p>
+                <ul>
+                    <li><span class="highlight">KC & OUTLET DISTRIBUTOR</span> - Menampilkan data KC dan Outlet Distributor (tombol aktif berwarna hijau lebih gelap)</li>
+                    <li><span class="highlight">DIST</span> - Menampilkan data Distributor</li>
+                    <li><span class="highlight">DIRECT</span> - Menampilkan data Direct</li>
+                </ul>
+
+                <h3>Filter Berdasarkan Kolom:</h3>
+                <p>Setiap kolom memiliki field filter di bawah header:</p>
+                <ul>
+                    <li>Kolom dengan dropdown: Klik field "Find items" untuk memilih nilai filter</li>
+                    <li>Kolom Customer Code & Customer Name: Gunakan field "search" untuk mencari dengan kata kunci</li>
+                </ul>
+
+                <h3>Edit Data Customer:</h3>
+                <p>Untuk mengedit data customer tertentu, ada dua cara:</p>
+                <ul>
+                    <li><strong>Ikon Pencil (Warna Ungu):</strong> Klik ikon <span class="highlight">pencil warna ungu</span> di baris data customer yang ingin diedit. Ini akan <strong>mengaktifkan mode edit</strong> untuk customer tersebut.</li>
+                    <li><strong>Checklist (Checkbox):</strong> Centang <span class="highlight">checklist (checkbox)</span> di baris customer yang ingin diproses untuk <strong>approve NOO</strong>. Setelah di-approve, customer tersebut akan <strong>otomatis dimasukkan ke dalam mapping customer</strong>.</li>
+                </ul>
+                
+                <h3>Kolom yang Dapat Diedit:</h3>
+                <p>Setelah mengaktifkan mode edit dengan ikon pencil, Anda hanya dapat mengubah kolom-kolom berikut:</p>
+                <ul>
+                    <li><strong>MBG:</strong> Status Makan Bergizi Gratis (Check hijau / X merah)</li>
+                    <li><strong>isNoo:</strong> Status NOO (Yes hijau / No merah)</li>
+                    <li><strong>Account:</strong> Tipe akun customer</li>
+                    <li><strong>Account Trading Term:</strong> Term trading akun</li>
+                </ul>
+                
+                <div class="note">
+                    <strong>Kolom yang Tidak Dapat Diedit:</strong>
+                    <ul style="margin-top: 8px;">
+                        <li>Region, Distributor, Customer Code, Customer Name, Create Date, dan Channel adalah kolom yang <strong>tidak dapat diubah</strong> karena merupakan data master yang sudah terintegrasi dengan sistem.</li>
+                    </ul>
+                </div>
+                
+                <div class="note">
+                    <strong>Perbedaan Fungsi:</strong>
+                    <ul style="margin-top: 8px;">
+                        <li><strong>Ikon Pencil (Ungu):</strong> Mengaktifkan mode edit untuk mengubah kolom MBG, isNoo, Account, dan Account Trading Term.</li>
+                        <li><strong>Checklist (Checkbox):</strong> Memilih customer untuk approve status NOO. Setelah approve, customer akan otomatis masuk ke mapping customer dan status NOO berubah menjadi approved.</li>
+                    </ul>
+                </div>
+
+                <h3>Refresh Data:</h3>
+                <p>
+                    <span class="inline-icon" aria-hidden="true">🔄</span>
+                    Klik ikon refresh (panah melingkar) di atas kolom "isNoo" untuk memuat ulang data terbaru.
+                </p>
+
+                <div class="note">
+                    <strong>Catatan:</strong> Gunakan pagination di bagian bawah tabel untuk navigasi ke halaman berikutnya jika data lebih dari satu halaman.
+                </div>
+            </div>
+        </section>
+
+        <section class="step">
+            <img src="../images/4.MbgButton.png" alt="Tombol MBG untuk mengatur status">
+            <div class="step-content">
+                <div class="badge">Langkah 4</div>
+                <h2>Mengatur Status MBG</h2>
+                <p>Kolom <span class="highlight">MBG</span> memungkinkan Anda untuk mengatur status MBG (Makan Bergizi Gratis) untuk setiap customer.</p>
+                
+                <h3>Cara Menggunakan Tombol MBG:</h3>
+                <ul>
+                    <li><strong>Tombol "Check" (Hijau):</strong> Klik untuk mengaktifkan status MBG untuk customer tersebut</li>
+                    <li><strong>Tombol "X" (Merah):</strong> Klik untuk menonaktifkan status MBG</li>
+                </ul>
+
+                <h3>Indikator Status:</h3>
+                <ul>
+                    <li>Jika tombol "Check" berwarna hijau lebih gelap, berarti status MBG <strong>aktif</strong></li>
+                    <li>Jika tombol "X" berwarna merah lebih gelap, berarti status MBG <strong>tidak aktif</strong></li>
+                </ul>
+
+                <div class="note">
+                    <strong>Perbedaan dengan isNoo:</strong>
+                    <ul style="margin-top: 8px;">
+                        <li><strong>isNoo:</strong> Menggunakan tombol "Yes" (hijau) dan "No" (merah)</li>
+                        <li><strong>MBG:</strong> Menggunakan tombol "Check" (hijau) dan "X" (merah)</li>
+                    </ul>
+                </div>
+
+                <h3>Langkah-langkah:</h3>
+                <ol>
+                    <li>Gunakan filter atau search untuk menemukan customer yang ingin diubah status MBG-nya</li>
+                    <li>Scroll ke kolom "MBG" pada baris customer tersebut</li>
+                    <li>Klik tombol <span class="highlight">"Check" (hijau)</span> untuk mengaktifkan, atau tombol <span class="highlight">"X" (merah)</span> untuk menonaktifkan</li>
+                    <li>Status akan langsung tersimpan dan terlihat di tabel</li>
+                </ol>
+
+                <div class="note">
+                    <strong>Penting:</strong> Pastikan Anda memiliki hak akses untuk mengubah status MBG. Perubahan status akan langsung tersimpan ke database.
+                </div>
+            </div>
+        </section>
+
+        <section class="step">
+            <div class="step-content">
+                <div class="badge">Tips & Trik</div>
+                <h2>Tips Penggunaan</h2>
+                <ul>
+                    <li><strong>Navigasi Sidebar:</strong> Gunakan menu di sidebar kiri untuk beralih antara NOO, MP Customer, MP FSS, dan USERS</li>
+                    <li><strong>Kombinasi Filter:</strong> Anda dapat menggunakan beberapa filter sekaligus untuk mendapatkan hasil yang lebih spesifik</li>
+                    <li><strong>Search Customer:</strong> Gunakan field search di kolom Customer Code atau Customer Name untuk mencari customer dengan cepat</li>
+                    <li><strong>Pagination:</strong> Gunakan tombol panah kiri/kanan di bagian bawah tabel untuk navigasi antar halaman</li>
+                    <li><strong>Refresh Data:</strong> Selalu refresh data sebelum melakukan perubahan penting untuk memastikan data yang ditampilkan adalah data terbaru</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+    <footer>
+        &copy; <script>document.write(new Date().getFullYear());</script> Tim NOO MBG - Greenfields. Semua hak dilindungi.
+    </footer>
+</body>
+</html>
+
