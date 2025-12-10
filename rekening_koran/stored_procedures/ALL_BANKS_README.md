@@ -3,8 +3,8 @@
 # 🏦 ALL BANKS STORED PROCEDURES - COMPLETE GUIDE
 
 **Status:** ✅ Production Ready  
-**Total Banks:** 20 banks  
-**Total SPs:** 21 (20 individual + 1 MASTER)  
+**Total Banks:** 20 banks + 1 RPT (Virtual Account)  
+**Total SPs:** 22 (21 individual + 1 MASTER)  
 **Latest Update:** 9 Nov 2025 — Added `Amount` & `TransactionType` support (MASTER + RPT parser + converter)  
 **Cost:** $0 (NO AZURE!)  
 
@@ -12,7 +12,7 @@
 
 ## 📦 What's Included
 
-### Individual Bank SPs (20 banks)
+### Individual Bank SPs (20 banks + 1 RPT)
 
 **Group 1: Array[3] + Array[4] (9 banks)**
 - SP_BNI_FindBTP_Batch (19 patterns)
@@ -36,9 +36,10 @@
 - SP_CAPITAL_FindBTP_Batch (2 patterns)
 - SP_WOORI_FindBTP_Batch (2 patterns)
 
-**Group 3: Special Logic (2 banks)**
+**Group 3: Special Logic (3 banks)**
 - SP_TRSF_FindBTP_Batch (6900 patterns) ⭐⭐
 - SP_BIFAST_FindBTP_Batch (763 patterns)
+- SP_RPT_FindBTP_Batch (Virtual Account / RPT) ⭐
 
 ### MASTER SP (1 SP) ⭐⭐⭐
 
@@ -186,7 +187,7 @@ TransactionID | Description           | CustomerName    | BTP        | Amount   
 -- Then execute each SP file:
 :r GROUP1/SP_BNI_FindBTP_Batch.sql
 :r GROUP1/SP_BTPN_FindBTP_Batch.sql
--- ... (all 20 individual SPs)
+-- ... (all 20 bank SPs + RPT)
 :r MASTER/SP_MASTER_FindBTP_Batch.sql
 :r MASTER/SP_MASTER_FindBTP_SaveToReview.sql
 :r RPT/SP_RPT_FindBTP_Batch.sql
@@ -239,6 +240,10 @@ OCBC:      Description LIKE '%LLG-OCBC NISP%'
 DBS:       Description LIKE '%LLG-DBS INDONESIA%'
 CAPITAL:   Description LIKE '%LLG-CAPITAL INDONE%'
 WOORI:     Description LIKE '%LLG-WOORI SAUDARA%'
+
+-- Group 3: Special Logic
+RPT/VA:    Description LIKE 'RPT:%' (Virtual Account - BTP langsung dari file, tidak perlu parsing)
+           → Dipanggil via SP_MASTER_FindBTP_SaveToReview dengan BankType = 'VA'
 ```
 
 ---
@@ -412,8 +417,8 @@ Power Apps (display results with BankType)
 
 ### What You Have Now:
 
-✅ **20 Individual Bank SPs** - One for each bank  
-✅ **1 MASTER SP** - Auto-routing to all banks  
+✅ **21 Individual SPs** - 20 banks + 1 RPT (Virtual Account)  
+✅ **1 MASTER SP** - Auto-routing to all banks + RPT  
 ✅ **8,012 Total Patterns** - Across all banks  
 ✅ **Zero Azure Cost** - Pure SQL Server  
 ✅ **Power Apps Ready** - Simple 1-SP integration  
@@ -440,7 +445,7 @@ EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
 **Version:** 1.0.0  
 **Date:** October 21, 2025  
 **Status:** ✅ Production Ready  
-**Total SPs:** 21 (20 banks + 1 master)  
+**Total SPs:** 22 (21 individual + 1 master)  
 **Total Patterns:** 8,012  
 **Latest Update:** 9 Nov 2025 — MASTER_SaveToReview + RPT kini menyertakan `Amount` & `TransactionType`  
 **Cost:** $0 (NO AZURE!)  
