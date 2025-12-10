@@ -514,9 +514,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #GREENFIEL_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #GREENFIEL_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'GREENFIEL'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #GREENFIEL_Temp;
