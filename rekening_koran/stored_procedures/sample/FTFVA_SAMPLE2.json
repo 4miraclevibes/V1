@@ -1,0 +1,2424 @@
+[
+    {
+      "TransactionID": 1,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95031 455520.00 homegrown koja 6 n ov AFIF ALAYYUBI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 2,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 64486350.00 5210563495 SUFO TRITAMA MANDI",
+      "Amount": 64486350,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 3,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 6492854.00 5210563496 SUFO TRITAMA MANDI",
+      "Amount": 6492854,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 4,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 2719911.00 5210563497 SUFO TRITAMA MANDI",
+      "Amount": 2719911,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 5,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 4111724.00 5210563498 SUFO TRITAMA MANDI",
+      "Amount": 4111724,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 6,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 3589840.00 5210563499 SUFO TRITAMA MANDI",
+      "Amount": 3589840,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 7,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 1385626.00 5210563500 SUFO TRITAMA MANDI",
+      "Amount": 1385626,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 8,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 2879518.00 5210563501 SUFO TRITAMA MANDI",
+      "Amount": 2879518,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 9,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 2316301.00 BSD DUTA CAHAYA SUKSES",
+      "Amount": 2316301,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 10,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 2579323.00 BSD DUTA CAHAYA SUKSES",
+      "Amount": 2579323,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 11,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 4659695.00 BSD DUTA CAHAYA SUKSES",
+      "Amount": 4659695,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 12,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95031 455520.00 Koffie Haus 4 Nov 2025 SYLVIA DHARMAWAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 13,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 911040.00 FRESH MILK BOGA SELERA BERSAM",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 14,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95031 455520.00 CERELIA CHANDRA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 15,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1011/FTFVA/WS95231 01660/PT GREENFIEL 20251110I824874011 - 2300017514",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 16,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 911040.00 susu PANCA INTI BOGA CV",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 17,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95271 455520.00 Susu 2 dus NICKY VICTORY SANJ",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 18,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1011/FTFVA/WS95031 01660/PT GREENFIEL 176726 surveyor - 2300011478",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 19,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95031 455520.00 Susu 24 pcs, Nov 1 x LIANA PRAWIRA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 20,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1011/FTFVA/WS95011 01660/PT GREENFIEL K002000176231 Reservo Cafe 2300006705",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 21,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1011/FTFVA/WS438K1 01660/PT GREENFIEL - - 2300011732",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 22,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95051 3003127.00 Whiping cream 4ctn 18 Okt 2025 Jkt GELATO BALI PT",
+      "Amount": 3003127,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 23,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1011/FTSCY/WS95271 455520.00 DEWANDARU AGUNG PR",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 24,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1011/FTFVA/WS95271 01660/PT GREENFIEL Grit Coffee Bar Pu ri-S/O 1210597431 2300006375",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 25,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 7359486.00 INV 575533, 573627 GREENFIELDS INDONE INARA KULINA PURA",
+      "Amount": 7359486,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 26,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL Nenen nyok Lunas s ampai 103025 2300009900",
+      "Amount": 18220800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 27,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 683280.00 pembayaran 4 agust us GILANG RAMADHAN",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 28,
+      "TransactionDate": "11/11/2025",
+      "Description": "DB OTOMATIS BA JASA BCA VA 11/11 01660/00000",
+      "Amount": 87000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 29,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 10221568.00 Green Garden DUTA MANDIRI JAYA",
+      "Amount": 10221568,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 30,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 10294644.00 Green Garden DUTA MANDIRI JAYA",
+      "Amount": 10294644,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 31,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 6615460.00 Green Garden DUTA MANDIRI JAYA",
+      "Amount": 6615460,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 32,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 028 RIVA LAURITZ",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 33,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL byr 12 pc freshmil k gendhis 2300018053",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 34,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 The Grit 08 Nov 25 2ctn ANNISA WULANDARI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 35,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 251111001390597134 - 2300013243",
+      "Amount": 8654880,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 36,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 251111001390597332 - 2300013243",
+      "Amount": 5466240,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 37,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 213 EVIELINA HERMAWATY",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 38,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL INV N9367687 - 2300012642",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 39,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 384000.00 5210566708 LUSIDA OKTAFIA",
+      "Amount": 384000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 40,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 299846.00 PEMBAYARAN MINI SU PER MARIYANI",
+      "Amount": 299846,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 41,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL - - 2300018217",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 42,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 A KIAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 43,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 Kandank SO12106019 97 05nov2025 RATIH TRISARDJANI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 44,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-MAYBANK INDONE CIPTA ANUGERAH REZ IDIG251108603544",
+      "Amount": 21060004,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 45,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 472 GENTA RAMA SUFIS",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 46,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 20251111I828409761 - 2300017344",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 47,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 2505360.00 113783.1117517.112 2207.1125372 SHELVI ADELIA",
+      "Amount": 2505360,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 48,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL SO 1210532452 - 2300017472",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 49,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL SO 1210544337 - 2300017472",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 50,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL SO 1210557948 - 2300017472",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 51,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL 1210578449 - 2300017472",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 52,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL SO 1210593823 - 2300017472",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 53,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL Payment klan pama Greenfield 2300017350",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 54,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 20251111I828570291 - 2300019070",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 55,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 4782960.00 JANSEN GOUNAWAN",
+      "Amount": 4782960,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 56,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ACSCY/0000100 25111000056397 null HERO RETAIL NUSANT",
+      "Amount": 287997611,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 57,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-BNI SWALAYAN SUKSES AB |2511101500005266",
+      "Amount": 27687,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 58,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-BNI SWALAYAN SUKSES AB |2511101500005207",
+      "Amount": 32656,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 59,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-BNI SWALAYAN SUKSES AB |2511101500005187",
+      "Amount": 33992,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 60,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 683280.00 Byr SO 1210580047 Kopi Jiwaku LESMANA PRAMANA",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 61,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1138800.00 PO 11 Nov KOPI UNTUK NEGERI",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 62,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 Byr SO 1210573593 Kopi Jiwaku LESMANA PRAMANA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 63,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 MAGIA TOGO GATSU 1 1 NOV 1 LAURENTIUS ADE WID",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 64,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 683280.00 MAGIA TOGO GATSU 1 1 NOV 2 LAURENTIUS ADE WID",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 65,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL Order 7&10oct 2+3c rtn Motivationcoff 2300015011",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 66,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2202228.00 TOTAL BUAH BUNCIT MULTI SUMBER REZEK",
+      "Amount": 2202228,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 67,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL N9444795 Kedai tapi 2300008193",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 68,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2746491.00 TOTAL BUAH BUNCIT MULTI SUMBER REZEK",
+      "Amount": 2746491,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 69,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL - - 2300009066",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 70,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 013 FELICIA APRILIANY",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 71,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL payment kupinami - 2300005091",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 72,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL N9419464 - 2300013070",
+      "Amount": 1650081,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 73,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 002 NUNUNG SOBIATY",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 74,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Deli resto tgl krm 30 okt 2025 2300015826",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 75,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 642000.00 2 INVOICE BUHLER INDONESIA P",
+      "Amount": 642000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 76,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 683280.00 PO tgl 7 nov YOSHUA PRM TOBING",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 77,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 455520.00 Amyrea Moi 5210556896 ERIC SWIDJA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 78,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL invoice 11 novembe r 2025 2300018375",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 79,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 455520.00 Amyrea Moi 5210562981 ERIC SWIDJA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 80,
+      "TransactionDate": "11/11/2025",
+      "Description": "SETORAN TUNAI PT DELTA RAYA S ENTOSA",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 81,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 722757.00 SUKACITA TEKNOLOGI",
+      "Amount": 722757,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 82,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL 11 nov 4ctn order num 160-S8717249 2300018219",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 83,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 smd ht 23 okt BEBEKKU ADA LIMA P",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 84,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2845389.00 YOSHAN JAYA SENTOS",
+      "Amount": 2845389,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 85,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL 1210603076 6 NOV 25 2300014731",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 86,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 68598000.00 Greenfields - 5210527359 YUMMYFOOD UTAMA PT",
+      "Amount": 68598000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 87,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 251111001390784499 - 2300001531",
+      "Amount": 5238480,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 88,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1366560.00 PO 08 Nov 25 PT INTI MULIA TANG",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 89,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ACBCA/WS95082 KURS000000100 PI-202510000513 52 10557880 SELALU BAHAGIA SEJ",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 90,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ACBCA/WS95082 KURS000000100 PI-202510000511 52 10561055 SELALU BAHAGIA SEJ",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 91,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 664200.00 2 FM 1 UHT FC 8-11 DEKOMINDO RASA ABA",
+      "Amount": 664200,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 92,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 susu bar4 ANDI DWI DARMAWAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 93,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 2000175715 - 2300004899",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 94,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL 8308 - 2300008694",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 95,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2277600.00 79531 72806 68731 14 - 23 OKT ROTI OLLIE INDONES",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 96,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL S/O Number 1210594 753 2300018201",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 97,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 251111001390792271 - 2300004162",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 98,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL SUSU - OCT 2025 - 2300004393",
+      "Amount": 9110400,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 99,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 2 INV GREENFIELDS 18&28 OKT ASURA HARSA INDONE",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 100,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL ejji gs - 2300015041",
+      "Amount": 3644160,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 101,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 455520.00 Sgpr xprss 28 okt RUDI HARTANTO",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 102,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2733120.00 NITRO NUGRA ABADI",
+      "Amount": 2733120,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 103,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2277600.00 KWT/GDI-INDO202510 PT DIG PIK - 28/10 DAMAI INDAH GOLF P",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 104,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 5210576453 ASA BASWARA ABADI",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 105,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 5210576638 KARSA BENAYA ABADI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 106,
+      "TransactionDate": "11/11/2025",
+      "Description": "SETORAN TUNAI PT DELTA RAYA S EJAHTERA",
+      "Amount": 15032160,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 107,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 683280.00 Ineru 3 karton tgl 6/11 NI KETUT ASTUTY",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 108,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 5210576605 SIMETRI KOPI NUSAN",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 109,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB TRANSFER KE 011 EINGANG HARAPAN IN KBB",
+      "Amount": 1414485,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 110,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB BIAYA TXN KE 011 EINGANG HARAPAN IN KBB",
+      "Amount": 2500,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 111,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 1026000.00 UM PAJAK N3764EBU HAMAM ABI ANDRIKA",
+      "Amount": 1026000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 112,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 3250000.00 UM DANA KOORDINASI SUPRIADI",
+      "Amount": 3250000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 113,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB TRANSFER KE 050 PT BIROTIKA SEMEST KBB",
+      "Amount": 971676,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 114,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB BIAYA TXN KE 050 PT BIROTIKA SEMEST KBB",
+      "Amount": 2500,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 115,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB TRANSFER KE 031 PT BIROTIKA SEMEST KBB",
+      "Amount": 379761,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 116,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB BIAYA TXN KE 031 PT BIROTIKA SEMEST KBB",
+      "Amount": 2500,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 117,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 19960000.00 UM PERPANJ STNK B1641JJB ISMURYANTI",
+      "Amount": 19960000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 118,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 650000.00 BPOM CAMBODIA FENDY YUANTO",
+      "Amount": 650000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 119,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 K168002-GF MILK 08/10/25 BERKAH TERUS MAJU",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 120,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1216548.00 TOTAL BUAH CINERE MULTI BUAH SUKSES",
+      "Amount": 1216548,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 121,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 3613126.00 TOTAL BUAH CINERE MULTI BUAH SUKSES",
+      "Amount": 3613126,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 122,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 FM Kopi Peron LEGIA MAISARI RANA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 123,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL N9444808 - 2300017055",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 124,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 KWT-GDI-INDO/2025/ 10/1132230 03OKT DIANA BOGA GEMILAN",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 125,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-MANDIRI SAKSI-SAKSI YEHUWA SSYI",
+      "Amount": 4652999,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 126,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 1366560.00 K002000176632, 886 0, 8250 YENNY",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 127,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL ACTAGS GI 1133336-1139480 2300017242",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 128,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-MANDIRI FAJAR MITRA INDAH PT. Fajar Mitra In da",
+      "Amount": 4311173,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 129,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 BOARD&BREW CAFE TGL 11/11/2025 LENNA SOETRISNO",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 130,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 694904.00 5222526793 GORDI KREASI INDON",
+      "Amount": 694904,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 131,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2733120.00 5210563088 GORDI KREASI INDON",
+      "Amount": 2733120,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 132,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 008 PASKAHITA DEVIE IN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 133,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 251111001390848501 - 2300018538",
+      "Amount": 647352,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 134,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 2277600.00 RIO RAMANDHA",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 135,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 PO-00893 0968 AGRAPANA WIRAMA HA",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 136,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 inv 22 oct tokokoe VIRIYA PRAMUDITA A",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 137,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 Wande Eatery PO 17 Sept 2025 MANEKA ASA SAMESTA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 138,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL N9444582 - 2300007769",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 139,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 23678394.00 PEMB INV TGL 11,15 18,17,20,22,24,25 SHASANDA PANCA JAY",
+      "Amount": 23678394,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 140,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 K002000171722 18 OCT, BLINK CAFE BLINKK BINTANG TIM",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 141,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 6605040.00 PANCIOUS TIRTA JAY",
+      "Amount": 6605040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 142,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 K002000174632 27 OCT, BLINK CAFE BLINKK BINTANG TIM",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 143,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 1822080.00 Susu tgl 29/10 n tgl 3/11/25 Polca HENDY TAMARA",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 144,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 2000000000.00 REFUND UM DIST GREENFIELDS DAIRY",
+      "Amount": 2000000000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 145,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 2000000000.00 REFUND UM DIST GREENFIELDS DAIRY",
+      "Amount": 2000000000,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 146,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING DB 1111/FTSCY/WS95051 1249003247.00 REFUND UM DIST GREENFIELDS DAIRY",
+      "Amount": 1249003247,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 147,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB TRANSFER KE 213 INDOMOBIL PRIMA EN KBB",
+      "Amount": 106799760,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 148,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST DB BIAYA TXN KE 213 INDOMOBIL PRIMA EN KBB",
+      "Amount": 2500,
+      "TransactionType": "DB"
+    },
+    {
+      "TransactionID": 149,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL - - 2300007495",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 150,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 Freshmilk INV 5210562293 LOMMA BOGA ASIA PT",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 151,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 TF291025 Wyls GPK GRAHA PAKUBUWONO K",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 152,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 2277600.00 10 Karton WIEKE RINDIYANI",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 153,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 367005.00 SAYUR BUAH SEGAR P",
+      "Amount": 367005,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 154,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Kopi4Mata Pasarkem is N9414833 2300014355",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 155,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Kopi4Mata Villa To mang N9414832 2300014355",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 156,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 8884440.00 Pembayaran uht PASKAR SADIQ EL FI",
+      "Amount": 8884440,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 157,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 6507600.00 ABIRAMA MAKMUR SED",
+      "Amount": 6507600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 158,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Kopi4Mata villa To mang N9435508 2300014355",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 159,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Kopi4Mata Pasarkem is N9435509 2300014355",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 160,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 SUSU TGL 4 NOV TIGA REZEKI BERSAM",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 161,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL - - 2300016088",
+      "Amount": 15690960,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 162,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 683280.00 H9444583 MOHAMMAD FAHMI ARI",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 163,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 436800.00 SO 1210607110 KONN I DIGITAL HUB ANGELINE WIDJAJA",
+      "Amount": 436800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 164,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 3898346.00 pum hrga KHARIS NAFIAN",
+      "Amount": 3898346,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 165,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Nims - 2300009879",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 166,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 2277600.00 N9428987 ANASTASYA LARASWAT",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 167,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 1366560.00 N9419977 ANASTASYA LARASWAT",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 168,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL N9445426 - 2300015473",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 169,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 1822080.00 N9410705 ANASTASYA LARASWAT",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 170,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL Kopiapi Cikini 11 Nov 2025 2300016199",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 171,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-MANDIRI IAS SUPPORT INDONE ANR_5210542063 IP-2501546 -0053008",
+      "Amount": 2957980,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 172,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-CIMB NIAGA PT.KUDO TEKNOLOGI PG_TXN: 34263.0000 0",
+      "Amount": 11307024,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 173,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-MANDIRI IAS SUPPORT INDONE ANR_5210543636 IP-2501545 -0053008",
+      "Amount": 680380,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 174,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PO202510300003 PT SEIA SEKATA SER",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 175,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL SUSU GREENFIELDS PS PIK NT.11/11/25 2300012528",
+      "Amount": 4800000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 176,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 911040.00 N9419713 RADHITYA AKMAL RAZ",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 177,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 1138800.00 N9428976 RADHITYA AKMAL RAZ",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 178,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 911040.00 N9439662 RADHITYA AKMAL RAZ",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 179,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 Butter n Brew 5210 579584 RICHELLE BRIANA HA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 180,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Pemesanan 10 Nov d iantar 11 Nov 2300012845",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 181,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 PI8808 BB. 1210587748 VIRTUS MAGNA NOVUS",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 182,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 683280.00 Greenfld Bar Padel.inc TIARA ALFIONISSA",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 183,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2733120.00 97631,75574, 75367,74731 PT BACH COFFEE IND",
+      "Amount": 2733120,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 184,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL 12 Karton - 2300016422",
+      "Amount": 2733120,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 185,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 Freshmilk 2 ctn WIJAYA RASA PUSAKA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 186,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ATSCY/WS95051 REF:25111100320710 PGI 499378 9/10 SAYUR UNTUK SEMUA",
+      "Amount": 670356,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 187,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 5210505285/PO.2025 5210522132/PO.2025 2300011973",
+      "Amount": 10979144,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 188,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 683280.00 k002000177886 ANEKA KULINER RAYA",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 189,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 CP202510170003 BB. 1210583277 VIRTUS MAHA NIRMAY",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 190,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL KEBUN LATTE INV 07/11/25 2300013507",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 191,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 3416400.00 Pby Wawat Catherin g 051125 CHRISTIAN DWI ANGG",
+      "Amount": 3416400,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 192,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 2277600.00 Pby Wawat Catherin g 061125 CHRISTIAN DWI ANGG",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 193,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 EVAN ADRIANTO / MA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 194,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 REGINALD CAMILLE",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 195,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL PO 9413,9414,9415, 9422,9430, & 9468 2300014513",
+      "Amount": 4099680,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 196,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 2277600.00 Pby Wawat Catherin g 071125 CHRISTIAN DWI ANGG",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 197,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 Susu greenfield 2 dus NUGRAHA WIJAYA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 198,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 pembelian greenfie lds 2 ctn RIZKI AKBAR IBRAHI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 199,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL K002000179264 - 2300007497",
+      "Amount": 683380,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 200,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL - - 2300006900",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 201,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 N9445441 AMALDA RAMDHANI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 202,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1366560.00 1210600930 BERAWAL DARI KOPI",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 203,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 pelunasan ONOK KOP I MARCELINA DENISE L",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 204,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS LLG-MANDIRI MAHADANA DASHA UTA",
+      "Amount": 16162574,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 205,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 683280.00 freshmilk 07 nov ANDHISA FIKA SAVIT",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 206,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 17127360.00 TAN A TIE",
+      "Amount": 17127360,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 207,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PT TRIVINDO BOGA N",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 208,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 VINA NOVIANTI",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 209,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL K002000179027 BDGLC-Milk GF11/11 2300012292",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 210,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL susu 3 dus timeoff coffee 2300012393",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 211,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL diterima 2 oktober 2025 2300011056",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 212,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 4800000.00 Pagi Sore Jeruk Pu rut 11 Nov ELSA FARINA SATI",
+      "Amount": 4800000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 213,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 876456.00 aliumara0180 ALI UMAR AMIR AL D",
+      "Amount": 876456,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 214,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1360068.00 174326 174329 5716 6096 6391 WISMA KANTA UTAMA",
+      "Amount": 1360068,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 215,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 672840.00 AQSHAMART MITRA BERKAH RETAI",
+      "Amount": 672840,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 216,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1138800.00 bbb 29 okt BON KREASI INDONES",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 217,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL payment kupinami - 2300005091",
+      "Amount": 4099680,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 218,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 invoice N9424906 m rhusband 6 nov RENE JAYAPRANA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 219,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 3224722.00 Gf 11/11 PRIMA ARGO NUSANTA",
+      "Amount": 3224722,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 220,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PEMBAYARAN INV.5210555763 WILKEA MAKMUR PERK",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 221,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PEMBAYARAN INV.5210559364 WILKEA MAKMUR PERK",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 222,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PEMBAYARAN INV.5210565457 WILKEA MAKMUR PERK",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 223,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PEMBAYARAN INV.5210566829 WILKEA MAKMUR PERK",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 224,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PEMBAYARAN INV.5210573755 WILKEA MAKMUR PERK",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 225,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 PEMBAYARAN INV.5210578078 WILKEA MAKMUR PERK",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 226,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Coloffee - 2300015122",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 227,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL freshmilk - 2300014481",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 228,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 Hasko KOSWANTO",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 229,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 BUNTUT GAJAH ALSUT Faktur N9416476 GAJAH MAKMUR SEJAH",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 230,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 911040.00 Freshmilk 28okt HANARA BOGA INDONE",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 231,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL roemah cerita - 2300016843",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 232,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 683280.00 FM 3CTN TEKUNO COFFEE MUHAMMAD IRFAN KAN",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 233,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 2049840.00 n9398212 29 okt 2 5 clement ANDIKA NUGRAHA",
+      "Amount": 2049840,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 234,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 012630 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 235,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013444 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 236,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013449 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 237,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 013530 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 238,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013533 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 239,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013610 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 240,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL so121606075 - 2000115089",
+      "Amount": 120000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 241,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013695 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 242,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013837 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 243,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 013840 - CAFE-MGF MATAHARI GRAHA FAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 244,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 028 MAXIM JAYADI ABADI",
+      "Amount": 1585680,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 245,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 028 MAXIM JAYADI ABADI",
+      "Amount": 1567053,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 246,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1138800.00 1210519159/k3/26ag fm 5crtn KASIMA ANUGRAH NUS",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 247,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 1138800.00 BignoseSpace Banja rWijaya N9444051 NYIMAS RAHMAWATI",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 248,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL N9422253, 5/11 DE BONI RESTO 2300008213",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 249,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL N9422252, 5/11 DE BONI RESTO 2300008213",
+      "Amount": 482850,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 250,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL caths PO 31.10.25 - 2300012287",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 251,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL ACTA GI 28-31/10 1134989, 1136482 2300009998",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 252,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL caths PO 08.11.25 - 2300012287",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 253,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL K002000179302 11No v Koffiehome 2300008440",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 254,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL INV.1132691 EMILIA SCBD 2300012480",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 255,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 2029440.00 LDF LIM FRENKY HONAIDY",
+      "Amount": 2029440,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 256,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL PASTACATO - SO 121 0607884 2300017080",
+      "Amount": 701071,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 257,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 1138800.00 MAMAGAIO GRAND WIS ATA INDAH RAHAYU",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 258,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 683280.00 tt no 1137230 RACIK RAGAM RASA C",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 259,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL bon 11 nov - 2300015851",
+      "Amount": 1585560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 260,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2424204.00 TAGIHAN CAVALESE - GREENFIELDS KIDETA BOGA MULTIR",
+      "Amount": 2424204,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 261,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL bon 8 nov - 2300015851",
+      "Amount": 1576800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 262,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 002 GEDUNG PINANG SELA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 263,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL INV.1130272 EMILIA MENTENG 2300012480",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 264,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL Pay to Greenfields 5210568767,5210570 2300018264",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 265,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL INV.1131450 CENTRAL KITCHEN 2300012480",
+      "Amount": 388318,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 266,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 227760.00 Greenfield,1133708 Komeya RACIKAN ANAK BANGS",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 267,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 455520.00 Pembayaran P.O tgl 30 oktober FITRAN DIAN HERYAN",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 268,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 683280.00 Fresh milk maru 11 /11 GERALDUS ARISTOPHA",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 269,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL N9338176 - 2300015063",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 270,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL Kalimera 11 nov - 2300015178",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 271,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 683280.00 PO 090402 fresh milk CITA SARI ALAM PT",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 272,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2523152.00 Pemb milk fresh , keju mozarela BENIKA PRIMA LOKA",
+      "Amount": 2523152,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 273,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL PO202510060001 SUSU SBK 2300017958",
+      "Amount": 436800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 274,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Kaitaka homebakes jersey 2300015611",
+      "Amount": 384000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 275,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Senopati kopi - 2300019269",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 276,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL Doc 11836. SO 1210 605778 2300011953",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 277,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 009 RFA KHARISMA INTER",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 278,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 2505360.00 RANDY SUMANTO ALIW",
+      "Amount": 2505360,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 279,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 008 GEETEE ROSEN TANUW",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 280,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 1594320.00 4,7,10 nov celco ANCILLA BETARIA TI",
+      "Amount": 1594320,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 281,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 LUKLA ROOFTOP SO 1210607409 PT HASTRI TRIPTA U",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 282,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1138800.00 LUKLA ROOFTOP SO 1210607410 PT HASTRI TRIPTA U",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 283,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 701071.00 LUKLA ROOFTOP SO 1210607454 PT HASTRI TRIPTA U",
+      "Amount": 701071,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 284,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 6462000.00 LIGAWATI TIRTADINA",
+      "Amount": 6462000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 285,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL Byr fresh milk GF Nikitabakery 2300012751",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 286,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 13879300.00 DD 1 Nov ROBERTUS EDUARDUS",
+      "Amount": 13879300,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 287,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 977630.00 5210566109 5210566221 BUAH DELAPAN DELAP",
+      "Amount": 977630,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 288,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL kiriman tgl 10 Nov - 2300018061",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 289,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 2025/10/1134773 - 2300009435",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 290,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 683280.00 byrsusugallerycafe psrpagi mg2 AHMAD LOMBRI",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 291,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 683280.00 PRBAR ANDA RESERVA PONDO",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 292,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL Greenfields 29.10.25 2300019401",
+      "Amount": 691030,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 293,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 911040.00 cafe madrid NURHAYATI FADHIA",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 294,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL fresh milk - 2300015201",
+      "Amount": 2049840,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 295,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL INV 08/11 ASBA OTS 2300017887",
+      "Amount": 388320,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 296,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 447600.00 1137357 SCARLETT BOGA UNIV",
+      "Amount": 447600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 297,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 447600.00 1137186 DONAT BOGA INDONES",
+      "Amount": 447600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 298,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 1210603741/GF ENRG DHARMA ESCAPE BOGA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 299,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 455520.00 1210604025/GF BPS DHARMA ESCAPE BOGA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 300,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 447600.00 1137185 DONAT BOGA INDONES",
+      "Amount": 447600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 301,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 7783810.00 MRD KE GREENFIELDS MORADI PT",
+      "Amount": 7783810,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 302,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 5694000.00 greenfields KSO APS GLOBAL",
+      "Amount": 5694000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 303,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL GF Milk 09/10 - 2300018443",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 304,
+      "TransactionDate": "11/11/2025",
+      "Description": "BI-FAST CR TRANSFER DR 501 ELSHA FARA",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 305,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ACSCY/0000100 25111100643905 DM-01-F53-05475 RTFLB-03-02228 HATSONSURYA ELECTR",
+      "Amount": 2000000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 306,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95011 01660/PT GREENFIEL 23 bakery 9444466 2300012893",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 307,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL - - 2300017812",
+      "Amount": 1594320,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 308,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 288000.00 5210565326 BOGAJAYA INTERNASI",
+      "Amount": 288000,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 309,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 9110400.00 greenfields KSO APS GLOBAL",
+      "Amount": 9110400,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 310,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 523850.00 Sisa CA Medan 31 O k to 1 Nov 25 MIKE CHRISTIA SURY",
+      "Amount": 523850,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 311,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL - - 2300016177",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 312,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 invoive N9444812 ANG KIM NIO ROSJE",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 313,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 683280.00 N9444702 GREENFIELD 11NOV BOGA BERKAT HARAPA",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 314,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 902394.00 SRENGSENG PADEL BE",
+      "Amount": 902394,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 315,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1822080.00 5210567586 5210562399 BASUKI LIMA SELARA",
+      "Amount": 1822080,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 316,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1594320.00 5210562450, 521056 9593, 5210565474 BASUKI LIMA SELARA",
+      "Amount": 1594320,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 317,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL - - 2300017824",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 318,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 1402143.00 1210607770 2 ctn Moza LINDA LIANA",
+      "Amount": 1402143,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 319,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95011 455520.00 2crtn freshmilk 1210607736 LINDA LIANA",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 320,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 2277600.00 susu freshmilk THIO BAMBANG SETIY",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 321,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95271 01660/PT GREENFIEL - - 2000166000",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 322,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 4555200.00 CAFE RSPI SARI PUSPITA PT",
+      "Amount": 4555200,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 323,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ATSCY/WS95051 REF:25111100770138 TB/TF/1025/7270 JT-03/11/25 TOTALITAS TANPA BA",
+      "Amount": 586889,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 324,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/ATSCY/WS95051 REF:25111100770138 TB/TF/1025/7142 JT-03/11/25 TOTALITAS TANPA BA",
+      "Amount": 2806602,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 325,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95031 6832800.00 RAHIM BUDIMAN",
+      "Amount": 6832800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 326,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL MENTENG 22 OKTOBER MENTENG 22 OKTOBER 2300017530",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 327,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL INV 16 OKTOBER WM AMPERA 2300017530",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 328,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL INV 17 OKT WM MATRAMAN 2300017530",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 329,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 2277600.00 1125-03087-KS-AGD. Greenfield 30 Okt AGREYA BERKAH INDO",
+      "Amount": 2277600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 330,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 455520.00 NADYA RACHMAWATI G",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 331,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95271 873600.00 order tgl 6&13 WHIA HOLLY",
+      "Amount": 873600,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 332,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95231 01660/PT GREENFIEL 20251111I836764746 - 2300009296",
+      "Amount": 1138800,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 333,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210580595 - 2300015431",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 334,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210584190 - 2300015431",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 335,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210588128 - 2300015431",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 336,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210594772 - 2300015431",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 337,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210598514 - 2300015431",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 338,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210600742 - 2300015431",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 339,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210590017 - 2300018734",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 340,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210586155 - 2300018734",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 341,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210583153 - 2300018734",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 342,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95051 01660/PT GREENFIEL 1210579612 - 2300018734",
+      "Amount": 455520,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 343,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL bayar 05 november 2025 2300017809",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 344,
+      "TransactionDate": "11/11/2025",
+      "Description": "KR OTOMATIS 1111/FTFVA/WS95031 01660/PT GREENFIEL tagihan 06 novembe r 2025 2300017809",
+      "Amount": 1366560,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 345,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 683280.00 1125-1352-KCP-AGM. Greenfield 25 Okt AGREYA BERKAH INDO",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 346,
+      "TransactionDate": "11/11/2025",
+      "Description": "TRSF E-BANKING CR 1111/FTSCY/WS95051 1594320.00 1125-0768-KCP-AGC. Greenfield Inv 28 AGREYA BERKAH INDO",
+      "Amount": 1594320,
+      "TransactionType": "CR"
+    }
+  ]
