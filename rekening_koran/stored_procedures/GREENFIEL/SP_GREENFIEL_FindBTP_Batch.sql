@@ -4,7 +4,7 @@
 -- Purpose: Find BTP dari multiple deskripsi GREENFIEL (Batch via JSON)
 -- Pattern: Array[4] = 'GREENFIEL' (exact match)
 -- Logic: 
---   1. Extract BTP dari array terakhir yang dimulai "23..."
+--   1. Extract BTP dari array terakhir yang dimulai "23..." atau "20..."
 --   2. Cari di master dengan BTP tersebut
 --   3. Jika ketemu, gunakan customer_name dari master untuk matching
 -- Input: JSON array of descriptions
@@ -162,12 +162,12 @@ BEGIN
         END
         
         -- =====================================================
-        -- Step 2: Extract BTP (array terakhir yang dimulai "23...")
+        -- Step 2: Extract BTP (array terakhir yang dimulai "23..." atau "20...")
         -- =====================================================
         
         SELECT TOP 1 @ExtractedBTP = Word
         FROM @Words
-        WHERE Word LIKE '23%'
+        WHERE (Word LIKE '23%' OR Word LIKE '20%')
            AND LEN(Word) >= 10  -- BTP biasanya minimal 10 digit
         ORDER BY WordIndex DESC;
         
@@ -419,7 +419,7 @@ BEGIN
         Status,
         CASE 
             WHEN Status = 'NO_PATTERN' THEN 'GREENFIEL pattern not found (Array[4] must be "GREENFIEL")'
-            WHEN Status = 'NO_BTP' THEN 'BTP not found in description (expected array ending with "23...")'
+            WHEN Status = 'NO_BTP' THEN 'BTP not found in description (expected array ending with "23..." or "20...")'
             WHEN Status = 'NO_MATCH' THEN 'BTP "' + ISNULL(@ExtractedBTP, '') + '" not found in master data or customer has no BTP'
             WHEN TotalBTPOptions > 1 AND OptionNumber = 1 THEN 'Found ' + CAST(TotalBTPOptions AS VARCHAR) + ' BTP options. This is BEST (Option ' + CAST(OptionNumber AS VARCHAR) + ' of ' + CAST(TotalBTPOptions AS VARCHAR) + ')' + 
                 CASE WHEN DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END
