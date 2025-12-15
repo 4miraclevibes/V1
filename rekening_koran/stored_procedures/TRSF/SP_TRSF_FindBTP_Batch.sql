@@ -136,6 +136,7 @@ BEGIN
                 ('SEP'),('SEPT'),('SEPTEMBER'),('OCT'),('OKT'),('OKTOBER'),
                 ('NOV'),('NOVEMBER'),('DEC'),('DES'),('DESEMBER');
             
+            -- Extract ALL CAPS words after last number
             SELECT @TempName = @TempName + 
                 CASE 
                     WHEN LEN(@TempName) > 0 THEN ' ' + Word 
@@ -160,22 +161,37 @@ BEGIN
         
         IF @CustomerName IS NOT NULL AND LEN(@CustomerName) >= 3
         BEGIN
-            -- Count total options (with partial matching support)
-            -- Try exact match first, then partial match if no exact match found
+            -- Count total options (with smart partial matching support)
+            -- Try exact match first, then word-by-word matching, then substring matching
             SELECT @TotalOptions = COUNT(DISTINCT btp)
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
             WHERE (m.category = 'TRSF' OR m.category = 'NEW')
                 AND (
-                    -- Exact match (priority 1)
+                    -- Priority 1: Exact match
                     UPPER(m.customer_name) = UPPER(@CustomerName)
                     OR
-                    -- Partial match: master name contained in extracted name (priority 2)
-                    -- Example: master "BSD FRANKI SEPTINUS" matches extracted "domu BSD FRANKI SEPTINUS"
+                    -- Priority 2: Master name contained in extracted name (most common case)
+                    -- Example: master "FRANKI SEPTINUS" matches extracted "BSD FRANKI SEPTINUS" or "Domu BSD FRANKI SEPTINUS"
                     UPPER(@CustomerName) LIKE '%' + UPPER(m.customer_name) + '%'
                     OR
-                    -- Partial match: extracted name contained in master name (priority 3)
+                    -- Priority 3: Extracted name contained in master name
                     -- Example: master "PT BSD FRANKI SEPTINUS" matches extracted "BSD FRANKI SEPTINUS"
                     UPPER(m.customer_name) LIKE '%' + UPPER(@CustomerName) + '%'
+                    OR
+                    -- Priority 4: Word-by-word matching (at least 2 words match)
+                    -- Example: master "FRANKI SEPTINUS" matches extracted "BSD FRANKI SEPTINUS" (2 words match)
+                    (
+                        -- Count matching words
+                        (
+                            SELECT COUNT(*)
+                            FROM (
+                                SELECT value AS word
+                                FROM STRING_SPLIT(UPPER(m.customer_name), ' ')
+                                WHERE LEN(value) >= 3
+                            ) AS master_words
+                            WHERE UPPER(@CustomerName) LIKE '%' + master_words.word + '%'
+                        ) >= 2
+                    )
                 );
             
             -- Insert ALL BTP options (multiple rows for same customer)
@@ -201,12 +217,21 @@ BEGIN
                     m.last_line_number,
                     ROW_NUMBER() OVER (
                         ORDER BY 
-                            -- Priority: exact match first, then partial matches
+                            -- Priority: exact match first, then partial matches, then word-by-word
                             CASE 
                                 WHEN UPPER(m.customer_name) = UPPER(@CustomerName) THEN 1
                                 WHEN UPPER(@CustomerName) LIKE '%' + UPPER(m.customer_name) + '%' THEN 2
                                 WHEN UPPER(m.customer_name) LIKE '%' + UPPER(@CustomerName) + '%' THEN 3
-                                ELSE 4
+                                WHEN (
+                                    SELECT COUNT(*)
+                                    FROM (
+                                        SELECT value AS word
+                                        FROM STRING_SPLIT(UPPER(m.customer_name), ' ')
+                                        WHERE LEN(value) >= 3
+                                    ) AS master_words
+                                    WHERE UPPER(@CustomerName) LIKE '%' + master_words.word + '%'
+                                ) >= 2 THEN 4
+                                ELSE 5
                             END,
                             CASE WHEN m.category = 'TRSF' THEN 1 ELSE 2 END,
                             m.match_percentage DESC,
@@ -216,14 +241,25 @@ BEGIN
                 FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
                 WHERE (m.category = 'TRSF' OR m.category = 'NEW')
                     AND (
-                        -- Exact match
+                        -- Priority 1: Exact match
                         UPPER(m.customer_name) = UPPER(@CustomerName)
                         OR
-                        -- Partial match: master name contained in extracted name
+                        -- Priority 2: Master name contained in extracted name
                         UPPER(@CustomerName) LIKE '%' + UPPER(m.customer_name) + '%'
                         OR
-                        -- Partial match: extracted name contained in master name
+                        -- Priority 3: Extracted name contained in master name
                         UPPER(m.customer_name) LIKE '%' + UPPER(@CustomerName) + '%'
+                        OR
+                        -- Priority 4: Word-by-word matching (at least 2 words match)
+                        (
+                            SELECT COUNT(*)
+                            FROM (
+                                SELECT value AS word
+                                FROM STRING_SPLIT(UPPER(m.customer_name), ' ')
+                                WHERE LEN(value) >= 3
+                            ) AS master_words
+                            WHERE UPPER(@CustomerName) LIKE '%' + master_words.word + '%'
+                        ) >= 2
                     );
                 
                 -- Find LATEST (highest line number)
