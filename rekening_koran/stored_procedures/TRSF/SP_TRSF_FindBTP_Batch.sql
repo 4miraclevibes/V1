@@ -160,11 +160,23 @@ BEGIN
         
         IF @CustomerName IS NOT NULL AND LEN(@CustomerName) >= 3
         BEGIN
-            -- Count total options
+            -- Count total options (with partial matching support)
+            -- Try exact match first, then partial match if no exact match found
             SELECT @TotalOptions = COUNT(DISTINCT btp)
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
             WHERE (m.category = 'TRSF' OR m.category = 'NEW')
-                AND UPPER(m.customer_name) = UPPER(@CustomerName);
+                AND (
+                    -- Exact match (priority 1)
+                    UPPER(m.customer_name) = UPPER(@CustomerName)
+                    OR
+                    -- Partial match: master name contained in extracted name (priority 2)
+                    -- Example: master "BSD FRANKI SEPTINUS" matches extracted "domu BSD FRANKI SEPTINUS"
+                    UPPER(@CustomerName) LIKE '%' + UPPER(m.customer_name) + '%'
+                    OR
+                    -- Partial match: extracted name contained in master name (priority 3)
+                    -- Example: master "PT BSD FRANKI SEPTINUS" matches extracted "BSD FRANKI SEPTINUS"
+                    UPPER(m.customer_name) LIKE '%' + UPPER(@CustomerName) + '%'
+                );
             
             -- Insert ALL BTP options (multiple rows for same customer)
             IF @TotalOptions > 0
@@ -179,7 +191,7 @@ BEGIN
                     OptionNumber INT
                 );
                 
-                -- Get all options dengan ranking
+                -- Get all options dengan ranking (prioritize exact match, then partial matches)
                 INSERT INTO @TempOptions
                 SELECT 
                     m.btp,
@@ -189,6 +201,13 @@ BEGIN
                     m.last_line_number,
                     ROW_NUMBER() OVER (
                         ORDER BY 
+                            -- Priority: exact match first, then partial matches
+                            CASE 
+                                WHEN UPPER(m.customer_name) = UPPER(@CustomerName) THEN 1
+                                WHEN UPPER(@CustomerName) LIKE '%' + UPPER(m.customer_name) + '%' THEN 2
+                                WHEN UPPER(m.customer_name) LIKE '%' + UPPER(@CustomerName) + '%' THEN 3
+                                ELSE 4
+                            END,
                             CASE WHEN m.category = 'TRSF' THEN 1 ELSE 2 END,
                             m.match_percentage DESC,
                             m.total_transactions DESC,
@@ -196,7 +215,16 @@ BEGIN
                     ) AS OptionNumber
                 FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
                 WHERE (m.category = 'TRSF' OR m.category = 'NEW')
-                    AND UPPER(m.customer_name) = UPPER(@CustomerName);
+                    AND (
+                        -- Exact match
+                        UPPER(m.customer_name) = UPPER(@CustomerName)
+                        OR
+                        -- Partial match: master name contained in extracted name
+                        UPPER(@CustomerName) LIKE '%' + UPPER(m.customer_name) + '%'
+                        OR
+                        -- Partial match: extracted name contained in master name
+                        UPPER(m.customer_name) LIKE '%' + UPPER(@CustomerName) + '%'
+                    );
                 
                 -- Find LATEST (highest line number)
                 DECLARE @LatestBTP NVARCHAR(50);

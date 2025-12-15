@@ -1,0 +1,114 @@
+[
+    {
+      "TransactionID": 313,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9239026 22Sep25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 314,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 911040.00 N9255646 26Sep25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 315,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9264423 29Sep25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 316,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 227760.00 N9287760 04Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 227760,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 317,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9292334 06Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 318,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9303839 08Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 319,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 911040.00 N9329242 14Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 911040,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 320,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9342266 17Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 321,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9352288 20Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 322,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9367692 23Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 323,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9377037 25Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 324,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9382495 27Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 326,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9402275 31Oct25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 328,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9424907 06Nov25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 329,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9434842 08Nov25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    },
+    {
+      "TransactionID": 330,
+      "TransactionDate": "13/11/2025",
+      "Description": "TRSF E-BANKING CR 1311/FTSCY/WS95011 683280.00 N9439882 10Nov25 Domu BSD FRANKI SEPTINUS",
+      "Amount": 683280,
+      "TransactionType": "CR"
+    }
+  ]
