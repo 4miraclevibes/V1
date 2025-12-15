@@ -1,0 +1,86 @@
+[
+    {
+        "TransactionID": 211,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL KHI",
+        "Amount": 9003601,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 212,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL KHI",
+        "Amount": 12117160,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 215,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GLBSD",
+        "Amount": 44631785,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 216,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL GLC",
+        "Amount": 29743651,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 217,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GLBSD",
+        "Amount": 82874944,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 218,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PURI",
+        "Amount": 22507584,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 219,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL MOI",
+        "Amount": 31593568,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 220,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL MOI",
+        "Amount": 38874824,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 221,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PURI",
+        "Amount": 34140916,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 223,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL GLC",
+        "Amount": 26145328,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 224,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PIK",
+        "Amount": 86229040,
+        "TransactionType": "CR"
+      },
+      {
+        "TransactionID": 225,
+        "TransactionDate": "13/11/2025",
+        "Description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PIK",
+        "Amount": 53487953,
+        "TransactionType": "CR"
+      }
+  ]
