@@ -111,8 +111,9 @@ BEGIN
             SET @Pos = @NextPos + 1;
         END
         
-        -- Extract Array[3] + Array[4] (with smart PT/CV)
+        -- Extract Array[3] + Array[4] + Array[5] (with smart PT/CV)
         -- C array[3] = SQL WordIndex 4 (SQL starts from 1, C starts from 0)
+        -- Always try to extract 3 words if available (better matching accuracy)
         IF @WordCount >= 5
         BEGIN
             DECLARE @Word3 NVARCHAR(100);
@@ -123,8 +124,14 @@ BEGIN
             SELECT @Word3 = Word FROM @Words WHERE WordIndex = 4;
             SELECT @Word4 = Word FROM @Words WHERE WordIndex = 5;
             
-            -- Smart PT/CV extraction
+            -- Smart PT/CV extraction: Always extract 3 words if PT/CV
             IF @Word3 IN ('PT', 'CV') AND @WordCount >= 6
+            BEGIN
+                SELECT @Word5 = Word FROM @Words WHERE WordIndex = 6;
+                SET @CustomerName = @Word3 + ' ' + @Word4 + ' ' + @Word5;
+            END
+            -- Always try to extract 3 words if available (for better matching)
+            ELSE IF @WordCount >= 6
             BEGIN
                 SELECT @Word5 = Word FROM @Words WHERE WordIndex = 6;
                 SET @CustomerName = @Word3 + ' ' + @Word4 + ' ' + @Word5;
@@ -142,6 +149,7 @@ BEGIN
         SET @TotalOptions = 0;
         
         -- Normalize customer name (remove extra spaces)
+        DECLARE @ExtractedWordCount INT = 0;
         IF @CustomerName IS NOT NULL
         BEGIN
             SET @CustomerName = LTRIM(RTRIM(@CustomerName));
@@ -149,6 +157,20 @@ BEGIN
             WHILE CHARINDEX('  ', @CustomerName) > 0
             BEGIN
                 SET @CustomerName = REPLACE(@CustomerName, '  ', ' ');
+            END
+            -- Count words in extracted name (for word count similarity matching)
+            SELECT @ExtractedWordCount = COUNT(*)
+            FROM STRING_SPLIT(@CustomerName, ' ')
+            WHERE LEN(LTRIM(RTRIM(value))) >= 2;
+            
+            IF @Debug = 1
+            BEGIN
+                PRINT '═══════════════════════════════════════════════════════════════════════';
+                PRINT 'TransactionID: ' + CAST(@CurrentTransactionID AS VARCHAR);
+                PRINT 'Description: ' + @CurrentDescription;
+                PRINT 'Extracted Customer Name: ' + ISNULL(@CustomerName, 'NULL');
+                PRINT 'Extracted Word Count: ' + CAST(@ExtractedWordCount AS VARCHAR);
+                PRINT '';
             END
         END
         
@@ -197,7 +219,7 @@ BEGIN
                     OptionNumber INT
                 );
                 
-                -- Get all options dengan ranking (prioritize exact match, then partial matches)
+                -- Get all options dengan ranking (prioritize word count similarity, then exact match, then partial matches)
                 INSERT INTO @TempOptions
                 SELECT 
                     m.btp,
@@ -207,11 +229,22 @@ BEGIN
                     m.last_line_number,
                     ROW_NUMBER() OVER (
                         ORDER BY 
-                            -- Priority: exact match first, then partial matches, then word-by-word
+                            -- Priority 1: Exact match (highest priority)
                             CASE 
                                 WHEN UPPER(LTRIM(RTRIM(m.customer_name))) = UPPER(LTRIM(RTRIM(@CustomerName))) THEN 1
-                                WHEN UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + UPPER(LTRIM(RTRIM(m.customer_name))) + '%' THEN 2
-                                WHEN UPPER(LTRIM(RTRIM(m.customer_name))) LIKE '%' + UPPER(LTRIM(RTRIM(@CustomerName))) + '%' THEN 3
+                                ELSE 2
+                            END,
+                            -- Priority 2: Word count similarity (prioritize same word count, then closest)
+                            -- Calculate word count difference: ABS(extracted_word_count - master_word_count)
+                            ABS(@ExtractedWordCount - (
+                                SELECT COUNT(*)
+                                FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                                WHERE LEN(LTRIM(RTRIM(value))) >= 2
+                            )),
+                            -- Priority 3: Match type (exact > contained > word-by-word)
+                            CASE 
+                                WHEN UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + UPPER(LTRIM(RTRIM(m.customer_name))) + '%' THEN 1
+                                WHEN UPPER(LTRIM(RTRIM(m.customer_name))) LIKE '%' + UPPER(LTRIM(RTRIM(@CustomerName))) + '%' THEN 2
                                 WHEN (
                                     SELECT COUNT(*)
                                     FROM (
@@ -220,10 +253,12 @@ BEGIN
                                         WHERE LEN(LTRIM(RTRIM(value))) >= 3
                                     ) AS master_words
                                     WHERE UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + LTRIM(RTRIM(master_words.word)) + '%'
-                                ) >= 2 THEN 4
-                                ELSE 5
+                                ) >= 2 THEN 3
+                                ELSE 4
                             END,
+                            -- Priority 4: Category (MANDIRI > NEW)
                             CASE WHEN m.category = 'MANDIRI' THEN 1 ELSE 2 END,
+                            -- Priority 5: Match percentage, transactions, line number
                             m.match_percentage DESC,
                             m.total_transactions DESC,
                             m.last_line_number DESC
@@ -251,6 +286,47 @@ BEGIN
                             WHERE UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + LTRIM(RTRIM(master_words.word)) + '%'
                         ) >= 2
                     );
+                
+                IF @Debug = 1
+                BEGIN
+                    PRINT 'Matching Results (with Word Count Comparison):';
+                    PRINT 'Total Options Found: ' + CAST(@TotalOptions AS VARCHAR);
+                    PRINT '';
+                    SELECT 
+                        t.OptionNumber,
+                        t.BTP,
+                        m.customer_name AS MasterCustomerName,
+                        (
+                            SELECT COUNT(*)
+                            FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                            WHERE LEN(LTRIM(RTRIM(value))) >= 2
+                        ) AS MasterWordCount,
+                        @ExtractedWordCount AS ExtractedWordCount,
+                        ABS(@ExtractedWordCount - (
+                            SELECT COUNT(*)
+                            FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                            WHERE LEN(LTRIM(RTRIM(value))) >= 2
+                        )) AS WordCountDiff,
+                        CASE 
+                            WHEN ABS(@ExtractedWordCount - (
+                                SELECT COUNT(*)
+                                FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                                WHERE LEN(LTRIM(RTRIM(value))) >= 2
+                            )) = 0 THEN 'SAME WORD COUNT ✓'
+                            ELSE 'DIFFERENT WORD COUNT'
+                        END AS WordCountStatus,
+                        t.MatchPercentage,
+                        CASE 
+                            WHEN UPPER(LTRIM(RTRIM(m.customer_name))) = UPPER(LTRIM(RTRIM(@CustomerName))) THEN 'EXACT'
+                            WHEN UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + UPPER(LTRIM(RTRIM(m.customer_name))) + '%' THEN 'EXTRACTED CONTAINS MASTER'
+                            WHEN UPPER(LTRIM(RTRIM(m.customer_name))) LIKE '%' + UPPER(LTRIM(RTRIM(@CustomerName))) + '%' THEN 'MASTER CONTAINS EXTRACTED'
+                            ELSE 'WORD-BY-WORD'
+                        END AS MatchType
+                    FROM @TempOptions t
+                    INNER JOIN [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m ON t.BTP = m.btp
+                    ORDER BY t.OptionNumber;
+                    PRINT '';
+                END
                 
                 -- Find LATEST (highest line number)
                 DECLARE @LatestBTP NVARCHAR(50);
