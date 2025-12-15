@@ -141,13 +141,48 @@ BEGIN
         
         SET @TotalOptions = 0;
         
+        -- Normalize customer name (remove extra spaces)
+        IF @CustomerName IS NOT NULL
+        BEGIN
+            SET @CustomerName = LTRIM(RTRIM(@CustomerName));
+            -- Replace multiple spaces with single space
+            WHILE CHARINDEX('  ', @CustomerName) > 0
+            BEGIN
+                SET @CustomerName = REPLACE(@CustomerName, '  ', ' ');
+            END
+        END
+        
         IF @CustomerName IS NOT NULL AND LEN(@CustomerName) >= 3
         BEGIN
-            -- Count total options
+            -- Count total options (with smart partial matching support)
+            -- Try exact match first, then substring matching, then word-by-word matching
             SELECT @TotalOptions = COUNT(DISTINCT btp)
             FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
             WHERE (m.category = 'MANDIRI' OR m.category = 'NEW')
-                AND UPPER(m.customer_name) = UPPER(@CustomerName);
+                AND (
+                    -- Priority 1: Exact match
+                    UPPER(LTRIM(RTRIM(m.customer_name))) = UPPER(LTRIM(RTRIM(@CustomerName)))
+                    OR
+                    -- Priority 2: Master name contained in extracted name (most common case)
+                    -- Example: master "MITRA BELANJA ANDA" matches extracted "MITRA BELANJA ANDA GL PIK"
+                    UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + UPPER(LTRIM(RTRIM(m.customer_name))) + '%'
+                    OR
+                    -- Priority 3: Extracted name contained in master name
+                    -- Example: master "PT MITRA BELANJA ANDA" matches extracted "MITRA BELANJA ANDA"
+                    UPPER(LTRIM(RTRIM(m.customer_name))) LIKE '%' + UPPER(LTRIM(RTRIM(@CustomerName))) + '%'
+                    OR
+                    -- Priority 4: Word-by-word matching (at least 2 words match, minimum 3 chars per word)
+                    -- Example: master "MITRA BELANJA ANDA" matches extracted "MITRA BELANJA ANDA GL PIK" (3 words match)
+                    (
+                        SELECT COUNT(*)
+                        FROM (
+                            SELECT value AS word
+                            FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                            WHERE LEN(LTRIM(RTRIM(value))) >= 3
+                        ) AS master_words
+                        WHERE UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + LTRIM(RTRIM(master_words.word)) + '%'
+                    ) >= 2
+                );
             
             -- Insert ALL BTP options (multiple rows for same customer)
             IF @TotalOptions > 0
@@ -162,7 +197,7 @@ BEGIN
                     OptionNumber INT
                 );
                 
-                -- Get all options dengan ranking
+                -- Get all options dengan ranking (prioritize exact match, then partial matches)
                 INSERT INTO @TempOptions
                 SELECT 
                     m.btp,
@@ -172,6 +207,22 @@ BEGIN
                     m.last_line_number,
                     ROW_NUMBER() OVER (
                         ORDER BY 
+                            -- Priority: exact match first, then partial matches, then word-by-word
+                            CASE 
+                                WHEN UPPER(LTRIM(RTRIM(m.customer_name))) = UPPER(LTRIM(RTRIM(@CustomerName))) THEN 1
+                                WHEN UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + UPPER(LTRIM(RTRIM(m.customer_name))) + '%' THEN 2
+                                WHEN UPPER(LTRIM(RTRIM(m.customer_name))) LIKE '%' + UPPER(LTRIM(RTRIM(@CustomerName))) + '%' THEN 3
+                                WHEN (
+                                    SELECT COUNT(*)
+                                    FROM (
+                                        SELECT value AS word
+                                        FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                                        WHERE LEN(LTRIM(RTRIM(value))) >= 3
+                                    ) AS master_words
+                                    WHERE UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + LTRIM(RTRIM(master_words.word)) + '%'
+                                ) >= 2 THEN 4
+                                ELSE 5
+                            END,
                             CASE WHEN m.category = 'MANDIRI' THEN 1 ELSE 2 END,
                             m.match_percentage DESC,
                             m.total_transactions DESC,
@@ -179,7 +230,27 @@ BEGIN
                     ) AS OptionNumber
                 FROM [dbo].[MASTER_CUSTOMER_BTP_PATTERN] m
                 WHERE (m.category = 'MANDIRI' OR m.category = 'NEW')
-                    AND UPPER(m.customer_name) = UPPER(@CustomerName);
+                    AND (
+                        -- Priority 1: Exact match
+                        UPPER(LTRIM(RTRIM(m.customer_name))) = UPPER(LTRIM(RTRIM(@CustomerName)))
+                        OR
+                        -- Priority 2: Master name contained in extracted name
+                        UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + UPPER(LTRIM(RTRIM(m.customer_name))) + '%'
+                        OR
+                        -- Priority 3: Extracted name contained in master name
+                        UPPER(LTRIM(RTRIM(m.customer_name))) LIKE '%' + UPPER(LTRIM(RTRIM(@CustomerName))) + '%'
+                        OR
+                        -- Priority 4: Word-by-word matching (at least 2 words match, minimum 3 chars per word)
+                        (
+                            SELECT COUNT(*)
+                            FROM (
+                                SELECT value AS word
+                                FROM STRING_SPLIT(UPPER(LTRIM(RTRIM(m.customer_name))), ' ')
+                                WHERE LEN(LTRIM(RTRIM(value))) >= 3
+                            ) AS master_words
+                            WHERE UPPER(LTRIM(RTRIM(@CustomerName))) LIKE '%' + LTRIM(RTRIM(master_words.word)) + '%'
+                        ) >= 2
+                    );
                 
                 -- Find LATEST (highest line number)
                 DECLARE @LatestBTP NVARCHAR(50);
