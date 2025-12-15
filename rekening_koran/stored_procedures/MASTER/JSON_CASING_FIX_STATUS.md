@@ -73,16 +73,26 @@ FROM @Transactions WHERE BankType = 'BANK_NAME' FOR JSON PATH
 - **Fixed Date**: 2025-01-XX
 - **Notes**: Fixed setelah issue dengan GREENFIEL tidak processing dengan benar
 
+### 4. **BIFAST** ✅
+- **Status**: Fixed
+- **File**: `MASTER/SP_MASTER_FindBTP_SaveToReview.sql`
+- **Line**: ~354-358
+- **Implementation**:
+  ```sql
+  SELECT @BIFAST_JSON = (
+      SELECT 
+          TransactionID AS transaction_id,
+          TransactionDate AS transaction_date,
+          Description AS description
+      FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
+  );
+  ```
+- **Fixed Date**: 2025-01-XX
+- **Notes**: SP_BIFAST_FindBTP_Batch mengharapkan lowercase (dari codebase_search)
+
 ---
 
 ## ⏳ Banks Belum Diperbaiki
-
-### Group 1: Special Logic
-- **BIFAST** ❌
-  - **Current**: PascalCase (`TransactionID`, `TransactionDate`, `Description`)
-  - **Expected**: lowercase (`transaction_id`, `transaction_date`, `description`)
-  - **Line**: ~354-356
-  - **Notes**: SP_BIFAST_FindBTP_Batch mengharapkan lowercase (dari codebase_search)
 
 ### Group 2: Standard LLG Pattern
 - **BNI** ❌
@@ -212,13 +222,13 @@ SELECT @BANK_JSON = (
 
 | Status | Count | Banks |
 |--------|-------|-------|
-| ✅ Fixed | 3 | TRSF, MANDIRI, GREENFIEL |
-| ❌ Pending | 19 | BIFAST, BNI, BTPN, BRI, MEGA, PERMATA, DANAMON, CITIBANK, SINARMAS, CIMB, MAYBANK, HSBC, UOB, MUAMALAT, OCBC, DBS, CAPITAL, WOORI |
+| ✅ Fixed | 4 | TRSF, MANDIRI, GREENFIEL, BIFAST |
+| ❌ Pending | 18 | BNI, BTPN, BRI, MEGA, PERMATA, DANAMON, CITIBANK, SINARMAS, CIMB, MAYBANK, HSBC, UOB, MUAMALAT, OCBC, DBS, CAPITAL, WOORI |
 | ✅ N/A | 1 | VA (RPT) - format berbeda |
 
 **Total Banks**: 23 (20 banks + 1 RPT + 2 special logic)
-**Fixed**: 3/22 (13.6%)
-**Pending**: 19/22 (86.4%)
+**Fixed**: 4/22 (18.2%)
+**Pending**: 18/22 (81.8%)
 
 ---
 
@@ -228,6 +238,7 @@ SELECT @BANK_JSON = (
 - **2025-01-XX**: Fixed TRSF JSON casing
 - **2025-01-XX**: Fixed GREENFIEL JSON casing
 - **2025-01-XX**: Fixed MANDIRI JSON casing
+- **2025-01-XX**: Fixed BIFAST JSON casing
 
 ---
 

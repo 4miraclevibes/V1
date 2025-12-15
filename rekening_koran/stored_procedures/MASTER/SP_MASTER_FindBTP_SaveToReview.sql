@@ -351,7 +351,10 @@ BEGIN
         
         DECLARE @BIFAST_JSON NVARCHAR(MAX);
         SELECT @BIFAST_JSON = (
-            SELECT TransactionID, TransactionDate, Description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
         
