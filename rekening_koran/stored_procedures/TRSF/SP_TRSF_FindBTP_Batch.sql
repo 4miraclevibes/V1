@@ -136,7 +136,8 @@ BEGIN
                 ('SEP'),('SEPT'),('SEPTEMBER'),('OCT'),('OKT'),('OKTOBER'),
                 ('NOV'),('NOVEMBER'),('DEC'),('DES'),('DESEMBER');
             
-            -- Extract ALL CAPS words after last number
+            -- Extract ONLY ALL CAPS words after last number (skip mixed case like "Domu")
+            -- This ensures only pure uppercase words are extracted (e.g., "BSD FRANKI SEPTINUS")
             SELECT @TempName = @TempName + 
                 CASE 
                     WHEN LEN(@TempName) > 0 THEN ' ' + Word 
@@ -144,9 +145,11 @@ BEGIN
                 END
             FROM @Words w
             WHERE WordIndex > @LastNumberIndex
-                AND Word = UPPER(Word)
+                -- Must be ALL CAPS (no lowercase letters at all)
                 AND Word COLLATE Latin1_General_BIN NOT LIKE '%[a-z]%'
+                -- Must have at least 2 characters
                 AND LEN(Word) >= 2
+                -- Skip month names
                 AND NOT EXISTS (SELECT 1 FROM @SkipMonths WHERE Month = Word)
             ORDER BY WordIndex;
             
