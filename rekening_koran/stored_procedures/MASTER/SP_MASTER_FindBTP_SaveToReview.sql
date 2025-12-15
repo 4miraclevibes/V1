@@ -393,9 +393,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #BIFAST_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #BIFAST_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BIFAST'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BIFAST_Temp;
@@ -454,9 +459,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #MANDIRI_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #MANDIRI_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MANDIRI'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MANDIRI_Temp;
@@ -639,9 +649,14 @@ BEGIN
             + CASE WHEN COALESCE(temp.Amount, t.Amount) IS NOT NULL THEN ' / Amount: ' + FORMAT(COALESCE(temp.Amount, t.Amount), 'N2') ELSE '' END
             + CASE WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN ' [Data source: MP_CUSTOMER_NEW]' ELSE '' END,
             GETDATE()
-        FROM #VA_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #VA_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'VA'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
 
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #VA_Temp;
@@ -766,9 +781,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #BTPN_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #BTPN_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BTPN'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BTPN_Temp;
@@ -827,9 +847,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #BRI_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #BRI_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'BRI'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #BRI_Temp;
@@ -886,9 +911,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #MEGA_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #MEGA_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MEGA'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MEGA_Temp;
@@ -945,9 +975,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #PERMATA_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #PERMATA_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'PERMATA'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #PERMATA_Temp;
@@ -1004,9 +1039,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #DANAMON_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #DANAMON_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DANAMON'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DANAMON_Temp;
@@ -1063,9 +1103,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #CITIBANK_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #CITIBANK_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CITIBANK'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CITIBANK_Temp;
@@ -1122,9 +1167,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #SINARMAS_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #SINARMAS_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'SINARMAS'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #SINARMAS_Temp;
@@ -1185,9 +1235,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #CIMB_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #CIMB_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CIMB'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CIMB_Temp;
@@ -1244,9 +1299,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #MAYBANK_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #MAYBANK_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MAYBANK'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MAYBANK_Temp;
@@ -1303,9 +1363,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #HSBC_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #HSBC_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'HSBC'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #HSBC_Temp;
@@ -1362,9 +1427,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #UOB_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #UOB_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'UOB'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #UOB_Temp;
@@ -1421,9 +1491,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #MUAMALAT_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #MUAMALAT_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'MUAMALAT'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #MUAMALAT_Temp;
@@ -1480,9 +1555,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #OCBC_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #OCBC_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'OCBC'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #OCBC_Temp;
@@ -1539,9 +1619,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #DBS_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #DBS_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'DBS'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #DBS_Temp;
@@ -1598,9 +1683,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #CAPITAL_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #CAPITAL_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'CAPITAL'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #CAPITAL_Temp;
@@ -1657,9 +1747,14 @@ BEGIN
                 ELSE NULL
             END,
             GETDATE()
-        FROM #WOORI_Temp AS temp
+        FROM (
+            SELECT *,
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+            FROM #WOORI_Temp
+            WHERE (OptionNumber IS NULL OR OptionNumber = 1)
+        ) AS temp
         INNER JOIN @Transactions AS t ON t.TransactionID = temp.TransactionID AND t.BankType = 'WOORI'
-        WHERE (temp.OptionNumber IS NULL OR temp.OptionNumber = 1);
+        WHERE temp.rn = 1;
         
         SET @ProcessedCount = @ProcessedCount + @@ROWCOUNT;
         DROP TABLE #WOORI_Temp;
