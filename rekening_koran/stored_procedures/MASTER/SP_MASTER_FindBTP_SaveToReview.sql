@@ -279,7 +279,10 @@ BEGIN
         
         DECLARE @TRSF_JSON NVARCHAR(MAX);
         SELECT @TRSF_JSON = (
-            SELECT TransactionID, TransactionDate, Description
+            SELECT 
+                TransactionID AS transaction_id,
+                TransactionDate AS transaction_date,
+                Description AS description
             FROM @Transactions WHERE BankType = 'TRSF' FOR JSON PATH
         );
         
