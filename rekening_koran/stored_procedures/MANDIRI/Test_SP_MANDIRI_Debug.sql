@@ -8,27 +8,67 @@
 USE POWERAPPS;
 GO
 
--- Test dengan sample data untuk MANDIRI
+-- Test dengan sample data dari MANDIRI_SAMPLE.json
 DECLARE @TestJSON NVARCHAR(MAX) = N'[
     {
-        "transaction_id": 1,
+        "transaction_id": 211,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL KHI"
+    },
+    {
+        "transaction_id": 212,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL KHI"
+    },
+    {
+        "transaction_id": 215,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GLBSD"
+    },
+    {
+        "transaction_id": 216,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL GLC"
+    },
+    {
+        "transaction_id": 217,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GLBSD"
+    },
+    {
+        "transaction_id": 218,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PURI"
+    },
+    {
+        "transaction_id": 219,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL MOI"
+    },
+    {
+        "transaction_id": 220,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL MOI"
+    },
+    {
+        "transaction_id": 221,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PURI"
+    },
+    {
+        "transaction_id": 223,
+        "transaction_date": "13/11/2025",
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL GLC"
+    },
+    {
+        "transaction_id": 224,
         "transaction_date": "13/11/2025",
         "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PIK"
     },
     {
-        "transaction_id": 2,
+        "transaction_id": 225,
         "transaction_date": "13/11/2025",
-        "description": "KR OTOMATIS LLG-MANDIRI PT MITRA SELERA GREENFIELDS"
-    },
-    {
-        "transaction_id": 3,
-        "transaction_date": "13/11/2025",
-        "description": "KR OTOMATIS LLG-MANDIRI CV KARYA MANDIRI INDO"
-    },
-    {
-        "transaction_id": 4,
-        "transaction_date": "13/11/2025",
-        "description": "KR OTOMATIS LLG-MANDIRI KOPERASI KARYAWAN GREENFIELDS INDONESIA"
+        "description": "KR OTOMATIS LLG-MANDIRI MITRA BELANJA ANDA GL PIK"
     }
 ]';
 
@@ -251,11 +291,12 @@ PRINT '════════════════════════�
 PRINT 'DEBUG TEST COMPLETE';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 PRINT '';
-PRINT 'Test Cases:';
-PRINT '1. "MITRA BELANJA ANDA GL PIK" → Should match "MITRA BELANJA ANDA" (Partial Match)';
-PRINT '2. "PT MITRA SELERA GREENFIELDS" → Should match "PT MITRA SELERA" (Exact or Partial)';
-PRINT '3. "CV KARYA MANDIRI INDO" → Should match "CV KARYA MANDIRI" (Exact or Partial)';
-PRINT '4. "KOPERASI KARYAWAN GREENFIELDS INDONESIA" → Should match "KOPERASI KARYAWAN" (Partial Match)';
+PRINT 'Test Cases (from MANDIRI_SAMPLE.json):';
+PRINT 'All transactions extract: "MITRA BELANJA ANDA" (Array[3] + Array[4])';
+PRINT 'Expected: Should match master data "MITRA BELANJA ANDA" via Partial Match';
+PRINT '  - Extracted: "MITRA BELANJA ANDA GL KHI" → Match "MITRA BELANJA ANDA" ✓';
+PRINT '  - Extracted: "MITRA BELANJA ANDA GLBSD" → Match "MITRA BELANJA ANDA" ✓';
+PRINT '  - Extracted: "MITRA BELANJA ANDA GL PIK" → Match "MITRA BELANJA ANDA" ✓';
 PRINT '';
 GO
 
