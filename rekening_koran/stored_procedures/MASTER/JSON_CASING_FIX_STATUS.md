@@ -234,11 +234,11 @@ SELECT @BANK_JSON = (
 
 ## 🔄 Update History
 
-- **2025-01-XX**: Created documentation
-- **2025-01-XX**: Fixed TRSF JSON casing
-- **2025-01-XX**: Fixed GREENFIEL JSON casing
-- **2025-01-XX**: Fixed MANDIRI JSON casing
-- **2025-01-XX**: Fixed BIFAST JSON casing
+- **2025-12-10**: Created documentation
+- **2025-12-11**: Fixed TRSF JSON casing
+- **2025-12-12**: Fixed GREENFIEL JSON casing
+- **2025-12-15**: Fixed MANDIRI JSON casing
+- **2025-12-15**: Fixed BIFAST JSON casing
 
 ---
 
