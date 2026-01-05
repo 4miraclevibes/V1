@@ -353,7 +353,7 @@ BEGIN
         SELECT @BIFAST_JSON = (
             SELECT 
                 TransactionID AS transaction_id,
-                TransactionDate AS transaction_date,
+                CONVERT(NVARCHAR(50), TransactionDate, 103) AS transaction_date,  -- Format DD/MM/YYYY
                 Description AS description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
@@ -369,6 +369,11 @@ BEGIN
         
         INSERT INTO #BIFAST_Temp
         EXEC SP_BIFAST_FindBTP_Batch @InputJSON = @BIFAST_JSON;
+        
+        -- Debug: Check if SP returned results
+        DECLARE @BIFAST_ResultCount INT;
+        SELECT @BIFAST_ResultCount = COUNT(*) FROM #BIFAST_Temp;
+        PRINT '   BIFAST SP returned ' + CAST(@BIFAST_ResultCount AS VARCHAR) + ' rows';
         
         INSERT INTO dbo.BTP_REVIEW (
             BatchID, UploadedBy, UploadedAt,
@@ -398,7 +403,11 @@ BEGIN
             GETDATE()
         FROM (
             SELECT *,
-                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
+                ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY 
+                    CASE WHEN OptionNumber IS NULL THEN 0 ELSE OptionNumber END,
+                    MatchPercentage DESC, 
+                    LastLineNumber DESC
+                ) AS rn
             FROM #BIFAST_Temp
             WHERE (OptionNumber IS NULL OR OptionNumber = 1)
         ) AS temp

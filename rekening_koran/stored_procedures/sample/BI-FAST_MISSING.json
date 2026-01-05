@@ -1,0 +1,142 @@
+[
+  {
+    "TransactionID": 32,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 028 RIVA LAURITZ",
+    "Amount": 1366560,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 37,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 213 EVIELINA HERMAWATY",
+    "Amount": 455520,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 45,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 472 GENTA RAMA SUFIS",
+    "Amount": 911040,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 70,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 013 FELICIA APRILIANY",
+    "Amount": 455520,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 73,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 002 NUNUNG SOBIATY",
+    "Amount": 1138800,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 109,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB TRANSFER KE 011 EINGANG HARAPAN IN KBB",
+    "Amount": 1414485,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 110,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB BIAYA TXN KE 011 EINGANG HARAPAN IN KBB",
+    "Amount": 2500,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 113,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB TRANSFER KE 050 PT BIROTIKA SEMEST KBB",
+    "Amount": 971676,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 114,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB BIAYA TXN KE 050 PT BIROTIKA SEMEST KBB",
+    "Amount": 2500,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 115,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB TRANSFER KE 031 PT BIROTIKA SEMEST KBB",
+    "Amount": 379761,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 116,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB BIAYA TXN KE 031 PT BIROTIKA SEMEST KBB",
+    "Amount": 2500,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 132,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 008 PASKAHITA DEVIE IN",
+    "Amount": 455520,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 147,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB TRANSFER KE 213 INDOMOBIL PRIMA EN KBB",
+    "Amount": 106799760,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 148,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST DB BIAYA TXN KE 213 INDOMOBIL PRIMA EN KBB",
+    "Amount": 2500,
+    "TransactionType": "DB"
+  },
+  {
+    "TransactionID": 244,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 028 MAXIM JAYADI ABADI",
+    "Amount": 1585680,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 245,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 028 MAXIM JAYADI ABADI",
+    "Amount": 1567053,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 262,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 002 GEDUNG PINANG SELA",
+    "Amount": 455520,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 277,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 009 RFA KHARISMA INTER",
+    "Amount": 455520,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 279,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 008 GEETEE ROSEN TANUW",
+    "Amount": 1822080,
+    "TransactionType": "CR"
+  },
+  {
+    "TransactionID": 304,
+    "TransactionDate": "11/11/2025",
+    "Description": "BI-FAST CR TRANSFER DR 501 ELSHA FARA",
+    "Amount": 683280,
+    "TransactionType": "CR"
+  }
+]
