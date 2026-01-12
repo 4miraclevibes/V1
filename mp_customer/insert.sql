@@ -16,14 +16,14 @@ INSERT INTO [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] (
     [credit_limit],
     [GFcode]
 ) VALUES (
-    'Test', -- code
-    'Test', -- name
-    'Test', -- city
-    '8/13/2025', -- createdate
-    '1', -- distributor_id
-    '1', -- account_id
-    'TEST', -- account_trading_term
-    '1', -- regency_id
+    '15A00190', -- code
+    'Askara Coffee Roastery', -- name
+    'SURABAYA', -- city
+    '10/22/2025', -- createdate
+    '18', -- distributor_id
+    '59', -- account_id
+    'OTHER-CAFE', -- account_trading_term
+    '297', -- regency_id
     GETDATE(), -- created_at
     GETDATE(), -- updated_at
     'active', -- status
