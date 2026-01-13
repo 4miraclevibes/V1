@@ -1,36 +1,36 @@
 // =====================================================
 // Tombol Submit Search - OnSelect Property
 // =====================================================
-// Function: FN_BTP_REVIEW_FilterText
-// Tujuan: Memanggil Function dengan parameter dari text fields
+// SP: SP_BTP_REVIEW_FilterText
+// Tujuan: Memanggil Stored Procedure dengan parameter dari text fields
 //         dan menyimpan hasil ke variabel untuk digunakan di Gallery
 // =====================================================
 
-// Set variabel dengan hasil filter dari Function
+// Set variabel dengan hasil filter dari Stored Procedure
 Set(
     varFilteredData,
-    FN_BTP_REVIEW_FilterText(
-        // Parameter 1: SearchCustomer
-        If(IsBlank(searchCustomerRv.Text), Blank(), searchCustomerRv.Text),
+    SP_BTP_REVIEW_FilterText.Run({
+        // Parameter: SearchCustomer
+        SearchCustomer: If(IsBlank(searchCustomerRv.Text), Blank(), searchCustomerRv.Text),
         
-        // Parameter 2: SearchBatch
-        If(IsBlank(searchBatchRv.Text), Blank(), searchBatchRv.Text),
+        // Parameter: SearchBatch
+        SearchBatch: If(IsBlank(searchBatchRv.Text), Blank(), searchBatchRv.Text),
         
-        // Parameter 3: SearchDescription
-        If(IsBlank(searchDescRv.Text), Blank(), searchDescRv.Text),
+        // Parameter: SearchDescription
+        SearchDescription: If(IsBlank(searchDescRv.Text), Blank(), searchDescRv.Text),
         
-        // Parameter 4: SearchBankType
-        If(IsBlank(searchBtRv.Text), Blank(), searchBtRv.Text),
+        // Parameter: SearchBankType
+        SearchBankType: If(IsBlank(searchBtRv.Text), Blank(), searchBtRv.Text),
         
-        // Parameter 5: SearchBTP
-        If(IsBlank(searchBtpRv.Text), Blank(), searchBtpRv.Text),
+        // Parameter: SearchBTP
+        SearchBTP: If(IsBlank(searchBtpRv.Text), Blank(), searchBtpRv.Text),
         
-        // Parameter 6: UploadedAt
-        UaDpRvRk.SelectedDate,
+        // Parameter: UploadedAt
+        UploadedAt: UaDpRvRk.SelectedDate,
         
-        // Parameter 7: TransactionDate
-        TrxDpRvRk.SelectedDate
-    )
+        // Parameter: TransactionDate
+        TransactionDate: TrxDpRvRk.SelectedDate
+    })
 );
 
 // Refresh Gallery (optional, jika menggunakan variabel)
