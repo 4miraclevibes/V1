@@ -1,0 +1,33 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Cache-Control": "no-store, no-cache",
+        "Pragma": "no-cache",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-request-id": "fe376453-c0af-4613-a911-3e56be39d64c",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "x-ms-connection-gateway-object-id": "196cffa4-91ff-41bd-83bf-84a1c5e523eb",
+        "x-ms-environment-id": "default-923dec90-ea9d-48cd-8edb-885042c1d973",
+        "x-ms-tenant-id": "923dec90-ea9d-48cd-8edb-885042c1d973",
+        "x-ms-subscription-id": "Default-923dec90-ea9d-48cd-8edb-885042c1d973",
+        "x-ms-dlp-re": "-|-",
+        "x-ms-dlp-gu": "-|-",
+        "x-ms-dlp-ef": "-|-/-|-|-",
+        "x-ms-mip-sl": "-|-|-|-",
+        "x-ms-au-creator-id": "a4802b8b-a203-46b2-b3cf-7aa067070adc",
+        "Timing-Allow-Origin": "*",
+        "x-ms-apihub-cached-response": "true",
+        "x-ms-apihub-obo": "false",
+        "Date": "Tue, 13 Jan 2026 07:32:02 GMT",
+        "Content-Type": "application/json; charset=utf-8; odata.metadata=minimal",
+        "Expires": "-1",
+        "Content-Length": "39"
+    },
+    "body": {
+        "ResultSets": {},
+        "OutputParameters": {}
+    }
+}

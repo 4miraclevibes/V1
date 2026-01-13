@@ -43,7 +43,9 @@ CREATE OR ALTER PROCEDURE [dbo].[SP_BTP_REVIEW_FilterComplete]
     
 AS
 BEGIN
-    SET NOCOUNT ON;
+    -- SET NOCOUNT ON dihapus untuk kompatibilitas dengan Power Automate
+    -- Power Automate memerlukan result set yang bisa diakses melalui ResultSets
+    -- SET NOCOUNT ON; -- DISABLED untuk Power Automate
     
     SELECT 
         [ID],

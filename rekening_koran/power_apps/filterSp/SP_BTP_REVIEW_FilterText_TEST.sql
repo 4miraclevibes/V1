@@ -45,11 +45,11 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
--- TEST 3: Filter CustomerName
+-- TEST 3: Filter BatchID
 -- =====================================================
 PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 3: Filter CustomerName';
-PRINT 'Expected: Return data dengan CustomerName mengandung "PT"';
+PRINT '📋 TEST 3: Filter BatchID';
+PRINT 'Expected: Return data dengan BatchID mengandung "BATCH"';
 PRINT '';
 
 EXEC [dbo].[SP_BTP_REVIEW_FilterText]
@@ -60,11 +60,11 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
--- TEST 4: Filter BatchID
+-- TEST 4: Filter Description
 -- =====================================================
 PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 4: Filter BatchID';
-PRINT 'Expected: Return data dengan BatchID mengandung "BATCH"';
+PRINT '📋 TEST 4: Filter Description';
+PRINT 'Expected: Return data dengan Description mengandung "TRANSFER"';
 PRINT '';
 
 EXEC [dbo].[SP_BTP_REVIEW_FilterText]
@@ -75,11 +75,11 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
--- TEST 5: Filter Description
+-- TEST 5: Filter BankType
 -- =====================================================
 PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 5: Filter Description';
-PRINT 'Expected: Return data dengan Description mengandung "TRANSFER"';
+PRINT '📋 TEST 5: Filter BankType';
+PRINT 'Expected: Return data dengan BankType mengandung "BCA"';
 PRINT '';
 
 EXEC [dbo].[SP_BTP_REVIEW_FilterText]
@@ -90,11 +90,11 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
--- TEST 6: Filter BankType
+-- TEST 6: Filter BTP
 -- =====================================================
 PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 6: Filter BankType';
-PRINT 'Expected: Return data dengan BankType = "BCA"';
+PRINT '📋 TEST 6: Filter BTP';
+PRINT 'Expected: Return data dengan BTP mengandung "BTP"';
 PRINT '';
 
 EXEC [dbo].[SP_BTP_REVIEW_FilterText]
@@ -105,11 +105,11 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
--- TEST 7: Filter BTP
+-- TEST 7: Filter UploadedAt (Date)
 -- =====================================================
 PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 7: Filter BTP';
-PRINT 'Expected: Return data dengan BTP mengandung "BTP"';
+PRINT '📋 TEST 7: Filter UploadedAt (Date)';
+PRINT 'Expected: Return data dengan UploadedAt = tanggal hari ini';
 PRINT '';
 
 EXEC [dbo].[SP_BTP_REVIEW_FilterText]
@@ -120,29 +120,14 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
--- TEST 8: Filter UploadedAt (Date)
+-- TEST 8: Filter TransactionDate (Date)
 -- =====================================================
 PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 8: Filter UploadedAt (Date)';
-PRINT 'Expected: Return data dengan UploadedAt = tanggal hari ini';
-PRINT '';
-
-EXEC [dbo].[SP_BTP_REVIEW_FilterText]
-    @TransactionDate = '2025-01-13';
-
-PRINT '';
-PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
-PRINT '';
-
--- =====================================================
--- TEST 9: Filter TransactionDate (Date)
--- =====================================================
-PRINT '═══════════════════════════════════════════════════════════════════════';
-PRINT '📋 TEST 9: Filter TransactionDate (Date)';
+PRINT '📋 TEST 8: Filter TransactionDate (Date)';
 PRINT 'Expected: Return data dengan TransactionDate = tanggal tertentu';
 PRINT '';
 
-EXEC [dbo].[SP_BTP_REVIEW_FilterComplete]
+EXEC [dbo].[SP_BTP_REVIEW_FilterText]
     @TransactionDate = '2025-01-13';
 
 PRINT '';
@@ -197,6 +182,73 @@ PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
 PRINT '';
 
 -- =====================================================
+-- TEST 12: Filter dengan NULL Explicit
+-- =====================================================
+PRINT '═══════════════════════════════════════════════════════════════════════';
+PRINT '📋 TEST 12: Filter dengan NULL Explicit';
+PRINT 'Expected: NULL diabaikan, return semua data';
+PRINT '';
+
+EXEC [dbo].[SP_BTP_REVIEW_FilterText]
+    @SearchCustomer = NULL,
+    @SearchBatch = NULL,
+    @SearchDescription = NULL,
+    @SearchBankType = NULL,
+    @SearchBTP = NULL,
+    @UploadedAt = NULL,
+    @TransactionDate = NULL;
+
+PRINT '';
+PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
+PRINT '';
+
+-- =====================================================
+-- TEST 13: Filter dengan Partial Match
+-- =====================================================
+PRINT '═══════════════════════════════════════════════════════════════════════';
+PRINT '📋 TEST 13: Filter dengan Partial Match';
+PRINT 'Expected: LIKE menggunakan %value%, jadi partial match harus bekerja';
+PRINT '';
+
+EXEC [dbo].[SP_BTP_REVIEW_FilterText]
+    @SearchCustomer = 'ABC';
+
+PRINT '';
+PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
+PRINT 'Note: Harus return data yang CustomerName mengandung "ABC" di tengah atau akhir';
+PRINT '';
+
+-- =====================================================
+-- TEST 14: Filter dengan Date Range (UploadedAt)
+-- =====================================================
+PRINT '═══════════════════════════════════════════════════════════════════════';
+PRINT '📋 TEST 14: Filter dengan Date Range (UploadedAt)';
+PRINT 'Expected: Return data dengan UploadedAt = tanggal tertentu';
+PRINT '';
+
+EXEC [dbo].[SP_BTP_REVIEW_FilterText]
+    @UploadedAt = '2025-01-01';
+
+PRINT '';
+PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
+PRINT '';
+
+-- =====================================================
+-- TEST 15: Filter dengan Date Range (TransactionDate)
+-- =====================================================
+PRINT '═══════════════════════════════════════════════════════════════════════';
+PRINT '📋 TEST 15: Filter dengan Date Range (TransactionDate)';
+PRINT 'Expected: Return data dengan TransactionDate = tanggal tertentu';
+PRINT '';
+
+EXEC [dbo].[SP_BTP_REVIEW_FilterText]
+    @TransactionDate = '2025-01-01';
+
+PRINT '';
+PRINT 'Rows returned: ' + CAST(@@ROWCOUNT AS VARCHAR);
+PRINT '';
+
+-- =====================================================
 -- TEST SUMMARY
 -- =====================================================
 PRINT '';
@@ -204,13 +256,13 @@ PRINT '════════════════════════�
 PRINT '✅ TESTING COMPLETED';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 PRINT '';
-PRINT 'Total Tests: 11';
+PRINT 'Total Tests: 15';
+PRINT 'Check results above for each test case.';
 PRINT '';
 PRINT '⚠️ Reminder:';
 PRINT '   - SP ini hanya filter text fields';
 PRINT '   - Filter Status dan TransactionType dilakukan di Power Apps';
 PRINT '   - Sorting default: MatchPercentage ASC, CreatedAt DESC';
-PRINT 'Check results above for each test case.';
 PRINT '';
 
 -- =====================================================
