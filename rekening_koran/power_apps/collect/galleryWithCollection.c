@@ -1,12 +1,12 @@
-    // Filter untuk user non-FSS (tampilkan semua)
-    // Delegation-safe: Gunakan Status column untuk filter
+    // Gallery Items - Pakai Collection (colBtpReview)
+    // Data dari OnStart, tidak hit database lagi
     FirstN(
         Sort(
             If(
                 rkToggleRv.Checked,
                 // Filter transaksi yang perlu review (NO_MATCH, NO_PATTERN, UNKNOWN_BANK, LOW)
                 Filter(
-                    BTP_REVIEW,
+                    colBtpReview,
                     (
                         Status = "NO_MATCH" ||
                         Status = "UNKNOWN_BANK" ||
@@ -26,7 +26,7 @@
                     (rkToggleRvCd.Checked && TransactionType = "DB" || !rkToggleRvCd.Checked && TransactionType = "CR")
                 ),
                 Filter(
-                    BTP_REVIEW,
+                    colBtpReview,
                     (Status = "FAIR" ||
                     Status = "GOOD" ||
                     Status = "LOW" ||
