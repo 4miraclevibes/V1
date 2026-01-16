@@ -1,0 +1,18 @@
+{
+  "statusCode": "200",
+  "success": true,
+  "rowCount": 655,
+  "dataCount": 655,
+  "sampleData": {
+    "ID": 422,
+    "BatchID": "BATCH_20260108_104209",
+    "CustomerName": "JERINDO JAYA ABADI KBB",
+    "Status": "NO_MATCH",
+    "MatchPercentage": null,
+    "BTP": null,
+    "TransactionDate": "2025-12-23T00:00:00",
+    "BankType": "BIFAST",
+    "TransactionType": "DB",
+    "IsApproved": false
+  }
+}

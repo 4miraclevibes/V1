@@ -1,0 +1,35 @@
+{
+  "statusCode": 200,
+  "summary": {
+    "success": true,
+    "rowCount": 0,
+    "dataCount": 0,
+    "note": "Response dari Respond to Power Apps action"
+  },
+  "structure": {
+    "body": {
+      "success": "boolean - Status sukses/gagal",
+      "data": "array - Array data hasil dari Parse JSON",
+      "rowcount": "number - Jumlah rows yang di-return"
+    }
+  },
+  "sampleData": {
+    "note": "Jika ada data, akan muncul di sini",
+    "format": {
+      "ID": "integer atau null",
+      "BatchID": "string atau null",
+      "CustomerName": "string atau null",
+      "Status": "string atau null",
+      "MatchPercentage": "number atau null",
+      "BTP": "string atau null",
+      "TransactionDate": "string atau null",
+      "Description": "string atau null",
+      "...": "dan kolom lainnya"
+    }
+  },
+  "usageInPowerApps": {
+    "note": "Di Power Apps, akses data dengan:",
+    "code": "Flow_FilterBTPReviewText.Run({...}).data",
+    "explanation": "Field 'data' (lowercase) berisi array hasil filter"
+  }
+}
