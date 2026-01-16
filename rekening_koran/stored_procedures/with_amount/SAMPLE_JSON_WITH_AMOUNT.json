@@ -1,0 +1,44 @@
+[
+    {
+        "TransactionID": 1,
+        "TransactionDate": "08/10/24",
+        "Description": "TRSF E-BANKING CR 0809/FTSCY/WS95051 50104163963 PT MEGASARI MAKMUR",
+        "Amount": 1500000.00,
+        "TransactionType": "CR"
+    },
+    {
+        "TransactionID": 2,
+        "TransactionDate": "08/10/24",
+        "Description": "BI-FAST CR 081019010110220 ARIFAH SEPTYANA",
+        "Amount": 2500000.50,
+        "TransactionType": "CR"
+    },
+    {
+        "TransactionID": 3,
+        "TransactionDate": "09/10/24",
+        "Description": "KR OTOMATIS LLG-BNI 12345678901234 CV SUKSES SELALU",
+        "Amount": 5000000.00,
+        "TransactionType": "CR"
+    },
+    {
+        "TransactionID": 4,
+        "TransactionDate": "09/10/24",
+        "Description": "KR OTOMATIS LLG-MANDIRI 9876543210 PT ABADI JAYA",
+        "Amount": 3750000.00,
+        "TransactionType": "CR"
+    },
+    {
+        "TransactionID": 5,
+        "TransactionDate": "10/10/24",
+        "Description": "DB OTOMATIS BIAYA ADM",
+        "Amount": 15000.00,
+        "TransactionType": "DB"
+    },
+    {
+        "TransactionID": 6,
+        "TransactionDate": "10/10/24",
+        "Description": "KR OTOMATIS RTGS-PT BANK CIMB NIAGA TBK 0012345678 UD MAKMUR SENTOSA",
+        "Amount": 25000000.00,
+        "TransactionType": "CR"
+    }
+]

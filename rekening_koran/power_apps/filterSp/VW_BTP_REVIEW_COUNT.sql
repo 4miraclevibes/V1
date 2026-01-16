@@ -12,7 +12,8 @@ SELECT
     COUNT(*) AS TotalRows,
     SUM(CASE WHEN TransactionType = 'CR' THEN 1 ELSE 0 END) AS TotalCR,
     SUM(CASE WHEN TransactionType = 'DB' THEN 1 ELSE 0 END) AS TotalDB
-FROM [POWERAPPS].[dbo].[BTP_REVIEW];
+FROM [POWERAPPS].[dbo].[BTP_REVIEW]
+WHERE IsApproved = 0;
 GO
 
 -- =====================================================
