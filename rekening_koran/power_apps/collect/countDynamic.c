@@ -16,9 +16,9 @@ With(
             (IsBlank(searchBtpRv.Text) || searchBtpRv.Text in BTP)
         )
     },
-    "Total: " & CountRows(filtered) &
+    "Total: " & CountRows(filtered) & " | " & Text(Sum(filtered, Amount), "#,##0") &
     Char(10) &
-    "CR: " & CountIf(filtered, TransactionType = "CR") &
+    "CR: " & CountIf(filtered, TransactionType = "CR") & " | " & Text(Sum(Filter(filtered, TransactionType = "CR"), Amount), "#,##0") &
     Char(10) &
-    "DB: " & CountIf(filtered, TransactionType = "DB")
+    "DB: " & CountIf(filtered, TransactionType = "DB") & " | " & Text(Sum(Filter(filtered, TransactionType = "DB"), Amount), "#,##0")
 )
