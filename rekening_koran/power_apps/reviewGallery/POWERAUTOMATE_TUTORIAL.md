@@ -214,43 +214,51 @@ Copy-paste schema berikut ke field Schema:
     "items": {
         "type": "object",
         "properties": {
-            "ID": {"type": "integer"},
-            "BatchID": {"type": "string"},
-            "UploadedBy": {"type": "string"},
-            "UploadedAt": {"type": "string"},
-            "TransactionID": {"type": "integer"},
-            "TransactionDate": {"type": "string"},
-            "Description": {"type": "string"},
-            "CustomerName": {"type": "string"},
-            "BTP": {"type": "string"},
-            "MatchPercentage": {"type": "number"},
-            "MatchCount": {"type": "integer"},
-            "TotalTransactions": {"type": "integer"},
-            "LastLineNumber": {"type": "integer"},
-            "TotalBTPOptions": {"type": "integer"},
-            "OptionNumber": {"type": "integer"},
-            "BestFlag": {"type": "string"},
-            "LatestFlag": {"type": "string"},
-            "Label": {"type": "string"},
-            "Status": {"type": "string"},
-            "Message": {"type": "string"},
-            "BankType": {"type": "string"},
-            "ProcessedAt": {"type": "string"},
-            "IsApproved": {"type": "boolean"},
-            "ApprovedBy": {"type": "string"},
-            "ApprovedAt": {"type": "string"},
-            "Notes": {"type": "string"},
-            "CreatedAt": {"type": "string"},
-            "ModifiedAt": {"type": "string"},
-            "Amount": {"type": "number"},
-            "TransactionType": {"type": "string"}
+            "ID": {"type": ["integer", "null"]},
+            "BatchID": {"type": ["string", "null"]},
+            "UploadedBy": {"type": ["string", "null"]},
+            "UploadedAt": {"type": ["string", "null"]},
+            "TransactionID": {"type": ["integer", "null"]},
+            "TransactionDate": {"type": ["string", "null"]},
+            "Description": {"type": ["string", "null"]},
+            "CustomerName": {"type": ["string", "null"]},
+            "BTP": {"type": ["string", "null"]},
+            "MatchPercentage": {"type": ["number", "null"]},
+            "MatchCount": {"type": ["integer", "null"]},
+            "TotalTransactions": {"type": ["integer", "null"]},
+            "LastLineNumber": {"type": ["integer", "null"]},
+            "TotalBTPOptions": {"type": ["integer", "null"]},
+            "OptionNumber": {"type": ["integer", "null"]},
+            "BestFlag": {"type": ["string", "null"]},
+            "LatestFlag": {"type": ["string", "null"]},
+            "Label": {"type": ["string", "null"]},
+            "Status": {"type": ["string", "null"]},
+            "Message": {"type": ["string", "null"]},
+            "BankType": {"type": ["string", "null"]},
+            "ProcessedAt": {"type": ["string", "null"]},
+            "IsApproved": {"type": ["boolean", "null"]},
+            "ApprovedBy": {"type": ["string", "null"]},
+            "ApprovedAt": {"type": ["string", "null"]},
+            "Notes": {"type": ["string", "null"]},
+            "CreatedAt": {"type": ["string", "null"]},
+            "ModifiedAt": {"type": ["string", "null"]},
+            "Amount": {"type": ["number", "null"]},
+            "TransactionType": {"type": ["string", "null"]}
         },
         "required": []
     }
 }
 ```
 
-**⚠️ Catatan:** Schema wajib diisi! Jika tidak, akan muncul error "Schema is required".
+**⚠️ Catatan Penting:**
+- Schema di atas menggunakan `{"type": ["string", "null"]}` untuk allow NULL values
+- Ini diperlukan karena beberapa kolom di database bisa NULL
+- Jika masih error, coba generate schema dari sample yang sebenarnya (recommended)
+
+**⚠️ Catatan:** 
+- Schema wajib diisi! Jika tidak, akan muncul error "Schema is required"
+- **RECOMMENDED:** Gunakan "Generate from sample" karena otomatis handle NULL values
+- Jika pakai schema manual di atas, pastikan sudah allow NULL dengan format `{"type": ["string", "null"]}`
 
 ---
 
@@ -415,7 +423,7 @@ Set(
         SearchBTP: If(IsBlank(searchBtpRv.Text), "", searchBtpRv.Text),
         TransactionDate: If(IsBlank(TrxDpRvRk.SelectedDate), "", Text(TrxDpRvRk.SelectedDate)),
         UploadedAt: If(IsBlank(UaDpRvRk.SelectedDate), "", Text(UaDpRvRk.SelectedDate))
-    }).Data
+    }).data
 );
 
 // Hide loading
@@ -493,8 +501,22 @@ FirstN(
 
 **Solusi:**
 - Pastikan field Schema sudah diisi
-- Copy-paste schema manual di atas
-- Atau gunakan "Generate from sample" jika sudah ada sample data
+- Copy-paste schema manual di atas (yang sudah handle NULL)
+- Atau gunakan "Generate from sample" jika sudah ada sample data (RECOMMENDED!)
+
+### **Error: "Expected String but got Null" atau "Expected Number but got Null"**
+
+**Solusi:**
+- **Masalah:** Schema tidak allow NULL values, tapi data ada yang NULL
+- **Solusi 1 (Recommended):** Generate schema dari sample yang sebenarnya
+  - Klik "Use sample payload to generate schema"
+  - Ambil sample dari ResultSets.Table1 yang ada datanya
+  - Power Automate akan otomatis generate schema yang handle NULL ✅
+- **Solusi 2:** Update schema manual untuk allow NULL:
+  - Ganti `{"type": "string"}` menjadi `{"type": ["string", "null"]}`
+  - Ganti `{"type": "number"}` menjadi `{"type": ["number", "null"]}`
+  - Ganti `{"type": "integer"}` menjadi `{"type": ["integer", "null"]}`
+  - Ganti `{"type": "boolean"}` menjadi `{"type": ["boolean", "null"]}`
 
 ### **Error: "Expected Array but got Object" di Parse JSON**
 
@@ -611,5 +633,9 @@ FirstN(
 
 **Power Apps Formula:**
 ```powerappsfx
-Flow_FilterBTPReviewText.Run({...}).Data
+Flow_FilterBTPReviewText.Run({...}).data
 ```
+
+**⚠️ Catatan:** 
+- Response menggunakan **lowercase**: `.data` (bukan `.Data`)
+- Field lainnya juga lowercase: `.success`, `.rowcount`
