@@ -353,7 +353,7 @@ BEGIN
         SELECT @BIFAST_JSON = (
             SELECT 
                 TransactionID AS transaction_id,
-                CONVERT(NVARCHAR(50), TransactionDate, 103) AS transaction_date,  -- Format DD/MM/YYYY
+                TransactionDate AS transaction_date,
                 Description AS description
             FROM @Transactions WHERE BankType = 'BIFAST' FOR JSON PATH
         );
