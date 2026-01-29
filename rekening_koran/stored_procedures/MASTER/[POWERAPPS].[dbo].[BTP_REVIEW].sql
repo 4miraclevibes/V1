@@ -1,3 +1,8 @@
+-- ═══════════════════════════════════════════════════════════════════════════
+-- BTP_REVIEW Table Structure
+-- Last Updated: January 2026
+-- ═══════════════════════════════════════════════════════════════════════════
+
 SELECT [ID]
       ,[BatchID]
       ,[UploadedBy]
@@ -26,6 +31,8 @@ SELECT [ID]
       ,[Notes]
       ,[CreatedAt]
       ,[ModifiedAt]
-      ,[Amount]
-      ,[TransactionType]
+      ,[Amount]              -- DECIMAL(18,2) - Nominal transaksi
+      ,[TransactionType]     -- NVARCHAR(2) - CR atau DB
+      ,[AccountNumber]       -- NVARCHAR(50) - No. Rekening (dari converter)
+      ,[AccountName]         -- NVARCHAR(200) - Nama Pemilik Rekening (dari converter)
   FROM [POWERAPPS].[dbo].[BTP_REVIEW]

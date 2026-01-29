@@ -10,19 +10,23 @@
 --   @TransactionsJSON - JSON array of transactions
 --   @BatchID - Optional batch identifier (auto-generated if null)
 --   @UploadedBy - Optional user identifier
+--   @AccountNumber - Optional account number (dari converter.html accountInfo.accountNumber)
+--   @AccountName - Optional account name (dari converter.html accountInfo.accountName)
 --
 -- Returns:
 --   Result set dari BTP_REVIEW (yang baru di-insert)
 --
 -- Example:
 --   DECLARE @JSON NVARCHAR(MAX) = N'[
---     {"TransactionID": 1, "TransactionDate": "08/10/2024", "Description": "TRSF E-BANKING..."},
---     {"TransactionID": 2, "TransactionDate": "09/10/2024", "Description": "BI-FAST..."}
+--     {"TransactionID": 1, "TransactionDate": "08/10/2024", "Description": "TRSF E-BANKING...", "Amount": 1500000, "TransactionType": "CR"},
+--     {"TransactionID": 2, "TransactionDate": "09/10/2024", "Description": "BI-FAST...", "Amount": 2500000, "TransactionType": "CR"}
 --   ]';
 --   
 --   EXEC SP_MASTER_FindBTP_SaveToReview 
 --       @TransactionsJSON = @JSON,
---       @UploadedBy = 'finance@company.com';
+--       @UploadedBy = 'finance@company.com',
+--       @AccountNumber = '0053061777',
+--       @AccountName = 'GREENFIELDS DAIRY I PT';
 --
 -- ═══════════════════════════════════════════════════════════════════════════
 
@@ -32,7 +36,9 @@ GO
 CREATE OR ALTER PROCEDURE [dbo].[SP_MASTER_FindBTP_SaveToReview]
     @TransactionsJSON NVARCHAR(MAX),
     @BatchID NVARCHAR(100) = NULL,
-    @UploadedBy NVARCHAR(255) = NULL
+    @UploadedBy NVARCHAR(255) = NULL,
+    @AccountNumber NVARCHAR(50) = NULL,
+    @AccountName NVARCHAR(200) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -308,7 +314,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -326,7 +333,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -382,7 +391,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -400,7 +410,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY 
@@ -455,7 +467,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -473,7 +486,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -525,7 +540,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -546,7 +562,9 @@ BEGIN
                 WHEN temp.DataSource = 'MP_CUSTOMER_NEW' THEN 'CustomerName ditemukan dari MP_CUSTOMER_NEW (BTN) - BTP tidak ada di MASTER_CUSTOMER_BTP_PATTERN'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -630,7 +648,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -713,7 +732,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -731,7 +751,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -777,7 +799,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -795,7 +818,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -841,7 +866,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -861,7 +887,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -907,7 +935,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -925,7 +954,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -971,7 +1002,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -989,7 +1021,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1035,7 +1069,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1053,7 +1088,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1099,7 +1136,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1117,7 +1155,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1163,7 +1203,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1181,7 +1222,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1231,7 +1274,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1249,7 +1293,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1295,7 +1341,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1313,7 +1360,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1359,7 +1408,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1377,7 +1427,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1423,7 +1475,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1441,7 +1494,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1487,7 +1542,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1505,7 +1561,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1551,7 +1609,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1569,7 +1628,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1615,7 +1676,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1633,7 +1695,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1679,7 +1743,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1697,7 +1762,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1743,7 +1810,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID, @UploadedBy, @UploadTime,
@@ -1761,7 +1829,9 @@ BEGIN
                 WHEN temp.TotalBTPOptions > 1 THEN 'Ditemukan ' + CAST(temp.TotalBTPOptions AS VARCHAR) + ' opsi BTP - pilih yang paling sesuai'
                 ELSE NULL
             END,
-            GETDATE()
+            GETDATE(),
+            @AccountNumber,
+            @AccountName
         FROM (
             SELECT *,
                 ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY OptionNumber, MatchPercentage DESC, LastLineNumber DESC) AS rn
@@ -1795,7 +1865,8 @@ BEGIN
             LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
             Label, Status, Message, BankType, ProcessedAt,
             Amount, TransactionType,
-            IsApproved, Notes, CreatedAt
+            IsApproved, Notes, CreatedAt,
+            AccountNumber, AccountName
         )
         SELECT
             @BatchID,
@@ -1830,7 +1901,9 @@ BEGIN
                 WHEN Description LIKE 'KR OTOMATIS%' THEN 'Transaksi KR OTOMATIS tanpa keyword bank spesifik - cek description untuk identifikasi bank'
                 ELSE 'Format transaksi tidak dikenali - perlu review manual untuk identifikasi bank atau kategori'
             END AS Notes,
-            GETDATE() AS CreatedAt
+            GETDATE() AS CreatedAt,
+            @AccountNumber,
+            @AccountName
         FROM @Transactions
         WHERE BankType = 'UNKNOWN';
         
@@ -1852,7 +1925,8 @@ BEGIN
         LastLineNumber, TotalBTPOptions, OptionNumber, BestFlag, LatestFlag,
         Label, Status, Message, BankType, ProcessedAt,
         Amount, TransactionType,
-        IsApproved, Notes, CreatedAt
+        IsApproved, Notes, CreatedAt,
+        AccountNumber, AccountName
     )
     SELECT
         @BatchID,
@@ -1880,7 +1954,9 @@ BEGIN
         CASE WHEN t.TransactionType IN ('CR', 'DB') THEN t.TransactionType ELSE NULL END,
         0 AS IsApproved,
         'Transaksi dengan BankType "' + t.BankType + '" tidak masuk ke BTP_REVIEW - kemungkinan SP tidak mengembalikan hasil atau ada error dalam proses' AS Notes,
-        GETDATE() AS CreatedAt
+        GETDATE() AS CreatedAt,
+        @AccountNumber,
+        @AccountName
     FROM @Transactions AS t
     WHERE NOT EXISTS (
         SELECT 1 FROM dbo.BTP_REVIEW AS br

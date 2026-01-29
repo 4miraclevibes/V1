@@ -59,7 +59,9 @@ BEGIN
             [desc],
             [Amount],
             [TransactionType],
-            [BankType]
+            [BankType],
+            [AccountNumber],
+            [AccountName]
         )
         SELECT
             -- TransactionDate sudah bertipe DATE di BTP_REVIEW, langsung pakai atau default ke current date jika NULL
@@ -77,10 +79,14 @@ BEGIN
             -- Description (truncate to 255 chars if needed)
             LEFT(ISNULL(Description, ''), 255) AS [desc],
 
-            -- New columns
+            -- Amount & TransactionType
             Amount,
             ISNULL(TransactionType, 'CR') AS [TransactionType],
-            ISNULL(BankType, 'UNKNOWN') AS [BankType]
+            ISNULL(BankType, 'UNKNOWN') AS [BankType],
+            
+            -- Account Info (from converter)
+            AccountNumber,
+            AccountName
             
         FROM [POWERAPPS].[dbo].[BTP_REVIEW]
         WHERE 
