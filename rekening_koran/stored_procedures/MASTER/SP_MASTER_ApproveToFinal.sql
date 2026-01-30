@@ -61,7 +61,8 @@ BEGIN
             [TransactionType],
             [BankType],
             [AccountNumber],
-            [AccountName]
+            [AccountName],
+            [BatchID]
         )
         SELECT
             -- TransactionDate sudah bertipe DATE di BTP_REVIEW, langsung pakai atau default ke current date jika NULL
@@ -86,7 +87,10 @@ BEGIN
             
             -- Account Info (from converter)
             AccountNumber,
-            AccountName
+            AccountName,
+            
+            -- BatchID dari BTP_REVIEW
+            BatchID
             
         FROM [POWERAPPS].[dbo].[BTP_REVIEW]
         WHERE 
