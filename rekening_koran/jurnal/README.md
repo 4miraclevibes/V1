@@ -20,6 +20,7 @@ Folder ini berisi **tabel jurnal** dan **stored procedure** untuk membuat jurnal
 | `flow.txt` | Spesifikasi bisnis & mapping kolom (baris 1 vs baris 2) |
 | `[POWERAPPS].[dbo].[MP_JURNAL].sql` | Script **create table** MP_JURNAL |
 | `SP_JURNAL_CreateFromRekeningKoran.sql` | **Stored procedure** yang baca RK → insert 2 baris jurnal + update isJurnal |
+| `UTILITY_ExecCreateJurnal.sql` | Utility: **EXEC** SP_JURNAL_CreateFromRekeningKoran (jalankan proses jurnal) |
 | `UTILITY_ResetJurnalForTesting.sql` | Utility: set `isJurnal = 0` di RK + **TRUNCATE** MP_JURNAL (untuk testing ulang) |
 | `README.md` | Dokumen ini |
 
@@ -52,13 +53,17 @@ Jalankan:
 
 ### 4. Jalankan proses jurnal
 
+Jalankan di SSMS:
+
 ```sql
+-- Atau buka dan jalankan file: UTILITY_ExecCreateJurnal.sql
 EXEC [dbo].[SP_JURNAL_CreateFromRekeningKoran];
 ```
 
-- Hanya baris RK dengan **isJurnal = 0** atau **NULL** yang diproses.
-- Tiap baris RK → 2 baris di MP_JURNAL (baris 1: posting_key 40, baris 2: posting_key 15).
-- Setelah itu, baris RK yang diproses di-update **isJurnal = 1**.
+- Hanya baris RK yang **memenuhi semua syarat** yang diproses; yang tidak memenuhi syarat **tidak** di-update isJurnal.
+- Syarat: **isJurnal = 0/NULL**, **trx_date** tidak NULL, **Amount** tidak NULL, **btp** tidak NULL dan tidak kosong.
+- Tiap baris RK yang lolos → 2 baris di MP_JURNAL (baris 1: posting_key 40, baris 2: posting_key 15).
+- Setelah insert, baris RK yang diproses di-update **isJurnal = 1** (hanya yang benar-benar masuk jurnal).
 
 ### 5. Testing berulang (reset)
 

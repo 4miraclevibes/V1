@@ -3,9 +3,15 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 --
 -- Bisnis proses:
---   Setiap 1 row di MP_REKENING_KORAN (yang isJurnal = 0/NULL) → create 2 row di MP_JURNAL.
---   Kedua baris punya no_urut yang sama (per trx_date + AccountName).
---   Setelah insert, MP_REKENING_KORAN.isJurnal di-update jadi 1.
+--   Setiap 1 row di MP_REKENING_KORAN (yang isJurnal = 0/NULL dan semua kondisi terpenuhi)
+--   → create 2 row di MP_JURNAL. Hanya row yang lolos syarat yang di-update isJurnal = 1.
+--
+-- Syarat row diproses (semua harus terpenuhi, tidak ada NULL/kurang):
+--   - isJurnal = 0 atau NULL (belum di-jurnal)
+--   - trx_date IS NOT NULL (untuk document_date, posting_date, value_date, reference)
+--   - Amount IS NOT NULL (nominal jurnal)
+--   - btp IS NOT NULL dan btp <> '' (untuk baris 2: customer, customer2)
+-- Row yang tidak memenuhi syarat tidak diproses dan isJurnal tetap tidak di-update (tetap 0/NULL).
 --
 -- no_urut: per (trx_date, AccountName) mulai 0001, 0002, ...
 -- reference: {ddmmyyyy}-{no_urut} contoh 26012026-0001
@@ -45,6 +51,10 @@ BEGIN
                 RIGHT('0000' + CAST(ROW_NUMBER() OVER (PARTITION BY trx_date, ISNULL(AccountName, '') ORDER BY id) AS VARCHAR(4)), 4) AS no_urut
             FROM [dbo].[MP_REKENING_KORAN]
             WHERE (isJurnal = 0 OR isJurnal IS NULL)
+              AND trx_date IS NOT NULL
+              AND Amount IS NOT NULL
+              AND btp IS NOT NULL
+              AND LTRIM(RTRIM(ISNULL(btp, ''))) <> ''
         ),
         -- Helper: document_header_text = btn max 25 char, potong di space terakhir
         rk_with_headers AS (
@@ -90,7 +100,7 @@ BEGIN
 
         IF @RowsProcessed = 0
         BEGIN
-            PRINT 'Tidak ada row MP_REKENING_KORAN yang belum di-jurnal (isJurnal = 0/NULL).';
+            PRINT 'Tidak ada row MP_REKENING_KORAN yang memenuhi syarat (isJurnal=0/NULL, trx_date/Amount/btp tidak NULL dan btp tidak kosong).';
             RETURN;
         END;
 
