@@ -1,0 +1,94 @@
+--bisnis proses--
+
+jadiii di table jurnal ini ntar semuanya akan di ambil dari value table MP_REKENING_KORAN , setiap 1 row di rekening koran akan di create 2 row dengan id yg 
+ber beda tapi nomor urut sama untuk trx_date dan CustomerName yang sama, no_urut di mulai dari 0001 dan seterus nya untuk trx_date dan CustomerName yang sama 
+setiap udah di create di jurnal, MP_REKENING_KORAN akan di update column isJurnal nya jadi true atau 1 karna type data nya bit, yang perlu kamu bikin store procedure 
+untuk melakukan ini dan create table nya, untuk row pertama dan kedua apa isi nya, itu udah saya bikin double double untuk column2 nya, 
+yang di atas nya adalah row pertama dan di bawah nya adalah row kedua
+
+--sql srcipts--
+
+saya juga perlu script untuk update column isJurnal di MP_REKENING_KORAN menjadi 0 lagi untuk testing2 ber kali kali dan script truncate data  MP_JURNAL
+ini kan semua cerita saya, kamu juga perlu bikin readme yang lebih proper dan gampang di mengerti
+
+--utility data--
+
+no_urut -> 1 row di MP_REKENING_KORAN akan di generate 2 id tpi 1 no urut, misal id 1 no urut nya 0001 dan id 2 no urut nya 0001 juga,
+                     anggap baris pertama dan baris ke dua aja ya biar bahasa nya mudah
+
+-- DOKUMEN DATA--
+
+document_date -> trx_date
+document_date -> trx_date
+
+document_type ->DEFAULT 'DZ'
+document_type ->DEFAULT 'DZ'
+
+company_code -> if AccountNumber '0053061777' value nya 'id93' else 'id92'
+company_code -> if AccountNumber '0053061777' value nya 'id93' else 'id92'
+
+posting_date -> trx_date
+posting_date -> trx_date
+
+currency -> DEFAULT 'IDR'
+currency -> DEFAULT 'IDR'
+
+country_grouping -> DEFAULT NULL
+country_grouping -> DEFAULT NULL
+
+reference -> {ddmmyyyy}-{4 digit no rurut} itu di concate ya, 4 digit no urut itu di ambil 'trx_date' dan 'AccountName' jadiii
+                         per tgl 'trx_date' itu dan 'AccountName' nya sama itu akan di mulai dari '0001' dan seterus nya, AccountName 
+                         dan trx_date nya harus sama ya, misal pada tangga 01-01-2026 itu ada 80 row dengan AccountName yang sama,
+                         berarti itu 0001 - 0080 dan di tgl yg sama dgn AccountName berbeda itu akan di mulai lagi 0001 sampai berapa row pada saat itu
+                         dan pada tanggal selanjut nya akan di lakukan juga demikian sampai ber ulang
+
+material -> DEFAULT NULL
+material -> DEFAULT NULL
+
+document_header_text -> btn max 25 char , cut aja di space terakhir paling dekat dengan 25 char, jadi biar ga ada yang kepotong
+document_header_text -> btn max 25 char , cut aja di space terakhir paling dekat dengan 25 char, jadi biar ga ada yang kepotong
+
+posting_key -> DEFAULT '40'
+posting_key -> DEFAULT '15'
+
+customer -> DEFAULT 'NULL'
+customer -> btp
+
+account -> if AccountNumber '0053061777' value nya '1113030303' else '1113030300'
+account -> DEFAULT NULL
+
+special -> DEFAULT NULL
+special -> DEFAULT NULL
+
+amount -> Amount
+amount -> Amount
+
+value_date ->trx_date
+value_date ->trx_date
+
+assignment -> DEFAULT '3000'
+assignment -> DEFAULT '3000'
+
+text -> desc 50 char dari belakang, space terakhir terdekat potong aja biar ga ada yang kepotong
+text -> desc 50 char dari belakang, space terakhir terdekat potong aja biar ga ada yang kepotong
+
+profit_center -> if AccountNumber '0053061777' value nya '9300DDJT0A' else '9201DQDQ01'
+profit_center -> if AccountNumber '0053061777' value nya '9300DDJT0A' else '9201DQDQ01'
+
+cost_center -> DEFAULT NULL
+cost_center -> DEFAULT NULL
+
+order -> DEFAULT NULL
+order -> DEFAULT NULL
+
+tax_code -> DEFAULT NULL
+tax_code -> DEFAULT NULL
+
+customer2 -> DEFAULT 'NULL'
+customer2 -> btp
+
+sales_organization -> DEFAULT NULL
+sales_organization -> DEFAULT NULL
+
+reason_code -> DEFAULT NULL
+reason_code -> DEFAULT NULL

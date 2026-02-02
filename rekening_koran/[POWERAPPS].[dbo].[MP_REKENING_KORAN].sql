@@ -16,6 +16,10 @@ CREATE TABLE [dbo].[MP_REKENING_KORAN](
 	[credit] [varchar](255) NULL,
 	[btp] [varchar](255) NULL,
 	[desc] [varchar](255) NULL,
+	[AccountNumber] [varchar](255) NULL,
+    [AccountName] [varchar](255) NULL,
+    [BatchID] [varchar](255) NULL,
+    [isJurnal] [bit] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
