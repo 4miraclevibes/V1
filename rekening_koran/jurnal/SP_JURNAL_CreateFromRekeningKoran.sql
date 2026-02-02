@@ -19,6 +19,8 @@
 -- Baris 1: posting_key '40', customer NULL, account 1113030303/1113030300, customer2 NULL
 -- Baris 2: posting_key '15', customer = btp, account NULL, customer2 = btp
 --
+-- document_header_text: btn max 25 char, logika sama dengan kolom 'text' (desc): trim dulu, lalu potong di space terakhir.
+--
 -- Prasyarat: MP_REKENING_KORAN punya kolom btn, Amount (jalankan ALTER script bila belum).
 -- ═══════════════════════════════════════════════════════════════════════════
 
@@ -44,6 +46,7 @@ BEGIN
                 ISNULL(AccountNumber, '') AS AccountNumber,
                 ISNULL(AccountName, '') AS AccountName,
                 ISNULL(btn, '') AS btn,
+                LTRIM(RTRIM(ISNULL(btn, ''))) AS btn_trimmed,
                 ISNULL(btp, '') AS btp,
                 ISNULL([desc], '') AS [desc],
                 ISNULL(Amount, 0) AS Amount,
@@ -56,15 +59,16 @@ BEGIN
               AND btp IS NOT NULL
               AND LTRIM(RTRIM(ISNULL(btp, ''))) <> ''
         ),
-        -- Helper: document_header_text = btn max 25 char, potong di space terakhir
+        -- document_header_text = btn max 25 char, logika sama persis dengan 'text' (window → potong di space terakhir)
         rk_with_headers AS (
             SELECT
                 *,
                 CASE
-                    WHEN LEN(LEFT(btn, 25)) < 25 THEN LTRIM(RTRIM(LEFT(btn, 25)))
-                    WHEN CHARINDEX(' ', REVERSE(LEFT(btn, 25))) > 0
-                        THEN LTRIM(RTRIM(LEFT(btn, 25 - CHARINDEX(' ', REVERSE(LEFT(btn, 25))))))
-                    ELSE LTRIM(RTRIM(LEFT(btn, 25)))
+                    WHEN LEN(btn_trimmed) = 0 THEN ''
+                    WHEN LEN(LEFT(btn_trimmed, 25)) < 25 THEN LTRIM(RTRIM(LEFT(btn_trimmed, 25)))
+                    WHEN CHARINDEX(' ', REVERSE(LEFT(btn_trimmed, 25))) > 0
+                        THEN LTRIM(RTRIM(LEFT(btn_trimmed, 25 - CHARINDEX(' ', REVERSE(LEFT(btn_trimmed, 25))))))
+                    ELSE LTRIM(RTRIM(LEFT(btn_trimmed, 25)))
                 END AS document_header_text,
                 -- text = desc 50 char dari belakang, potong di space terakhir
                 CASE
