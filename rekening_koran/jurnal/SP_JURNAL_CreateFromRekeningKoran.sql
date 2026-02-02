@@ -45,8 +45,16 @@ BEGIN
                 trx_date,
                 ISNULL(AccountNumber, '') AS AccountNumber,
                 ISNULL(AccountName, '') AS AccountName,
-                ISNULL(btn, '') AS btn,
-                LTRIM(RTRIM(ISNULL(btn, ''))) AS btn_trimmed,
+                ISNULL([btn], '') AS btn,
+                LTRIM(RTRIM(ISNULL([btn], ''))) AS btn_trimmed,
+                -- Sumber document_header_text: btn dulu, kalau kosong fallback btp → desc → AccountName (row diproses pasti btp ada)
+                COALESCE(
+                    NULLIF(LTRIM(RTRIM(ISNULL([btn], ''))), ''),
+                    NULLIF(LTRIM(RTRIM(ISNULL(btp, ''))), ''),
+                    NULLIF(LTRIM(RTRIM(ISNULL([desc], ''))), ''),
+                    NULLIF(LTRIM(RTRIM(ISNULL(AccountName, ''))), ''),
+                    ''
+                ) AS header_source,
                 ISNULL(btp, '') AS btp,
                 ISNULL([desc], '') AS [desc],
                 ISNULL(Amount, 0) AS Amount,
@@ -59,16 +67,16 @@ BEGIN
               AND btp IS NOT NULL
               AND LTRIM(RTRIM(ISNULL(btp, ''))) <> ''
         ),
-        -- document_header_text = btn max 25 char, logika sama persis dengan 'text' (window → potong di space terakhir)
+        -- document_header_text = header_source (btn → btp → desc → AccountName) max 25 char, logika sama dengan 'text'
         rk_with_headers AS (
             SELECT
                 *,
                 CASE
-                    WHEN LEN(btn_trimmed) = 0 THEN ''
-                    WHEN LEN(LEFT(btn_trimmed, 25)) < 25 THEN LTRIM(RTRIM(LEFT(btn_trimmed, 25)))
-                    WHEN CHARINDEX(' ', REVERSE(LEFT(btn_trimmed, 25))) > 0
-                        THEN LTRIM(RTRIM(LEFT(btn_trimmed, 25 - CHARINDEX(' ', REVERSE(LEFT(btn_trimmed, 25))))))
-                    ELSE LTRIM(RTRIM(LEFT(btn_trimmed, 25)))
+                    WHEN LEN(header_source) = 0 THEN ''
+                    WHEN LEN(LEFT(header_source, 25)) < 25 THEN LTRIM(RTRIM(LEFT(header_source, 25)))
+                    WHEN CHARINDEX(' ', REVERSE(LEFT(header_source, 25))) > 0
+                        THEN LTRIM(RTRIM(LEFT(header_source, 25 - CHARINDEX(' ', REVERSE(LEFT(header_source, 25))))))
+                    ELSE LTRIM(RTRIM(LEFT(header_source, 25)))
                 END AS document_header_text,
                 -- text = desc 50 char dari belakang, potong di space terakhir
                 CASE
