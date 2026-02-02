@@ -11,6 +11,7 @@
 --   - trx_date IS NOT NULL (untuk document_date, posting_date, value_date, reference)
 --   - Amount IS NOT NULL (nominal jurnal)
 --   - btp IS NOT NULL dan btp <> '' (untuk baris 2: customer, customer2)
+--   - btn IS NOT NULL dan btn <> '' (supaya document_header_text konsisten dari btn)
 -- Row yang tidak memenuhi syarat tidak diproses dan isJurnal tetap tidak di-update (tetap 0/NULL).
 --
 -- no_urut: per (trx_date, AccountName) mulai 0001, 0002, ...
@@ -66,6 +67,8 @@ BEGIN
               AND Amount IS NOT NULL
               AND btp IS NOT NULL
               AND LTRIM(RTRIM(ISNULL(btp, ''))) <> ''
+              AND [btn] IS NOT NULL
+              AND LTRIM(RTRIM(ISNULL([btn], ''))) <> ''
         ),
         -- document_header_text = header_source (btn → btp → desc → AccountName) max 25 char, logika sama dengan 'text'
         rk_with_headers AS (
@@ -97,7 +100,11 @@ BEGIN
             [desc],
             Amount,
             no_urut,
-            document_header_text,
+            -- Jaminan: document_header_text tidak pernah kosong (row diproses pasti btp ada)
+            CASE
+                WHEN ISNULL(RTRIM(document_header_text), '') = '' THEN LTRIM(RTRIM(LEFT(ISNULL(btp, ''), 25)))
+                ELSE document_header_text
+            END AS document_header_text,
             text_50,
             -- reference = ddmmyyyy-no_urut
             FORMAT(trx_date, 'ddMMyyyy') + '-' + no_urut AS reference,
@@ -112,7 +119,7 @@ BEGIN
 
         IF @RowsProcessed = 0
         BEGIN
-            PRINT 'Tidak ada row MP_REKENING_KORAN yang memenuhi syarat (isJurnal=0/NULL, trx_date/Amount/btp tidak NULL dan btp tidak kosong).';
+            PRINT 'Tidak ada row MP_REKENING_KORAN yang memenuhi syarat (isJurnal=0/NULL, trx_date/Amount/btp/btn tidak NULL dan tidak kosong).';
             RETURN;
         END;
 

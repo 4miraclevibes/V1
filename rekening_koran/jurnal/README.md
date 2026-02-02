@@ -61,7 +61,7 @@ EXEC [dbo].[SP_JURNAL_CreateFromRekeningKoran];
 ```
 
 - Hanya baris RK yang **memenuhi semua syarat** yang diproses; yang tidak memenuhi syarat **tidak** di-update isJurnal.
-- Syarat: **isJurnal = 0/NULL**, **trx_date** tidak NULL, **Amount** tidak NULL, **btp** tidak NULL dan tidak kosong.
+- Syarat: **isJurnal = 0/NULL**, **trx_date** tidak NULL, **Amount** tidak NULL, **btp** dan **btn** tidak NULL dan tidak kosong.
 - Tiap baris RK yang lolos → 2 baris di MP_JURNAL (baris 1: posting_key 40, baris 2: posting_key 15).
 - Setelah insert, baris RK yang diproses di-update **isJurnal = 1** (hanya yang benar-benar masuk jurnal).
 
