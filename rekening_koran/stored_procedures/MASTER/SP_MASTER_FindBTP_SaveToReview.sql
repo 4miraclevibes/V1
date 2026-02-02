@@ -75,7 +75,9 @@ BEGIN
         Amount DECIMAL(18,2),
         Location NVARCHAR(100),
         Keterangan1 NVARCHAR(200),
-        Keterangan2 NVARCHAR(200)
+        Keterangan2 NVARCHAR(200),
+        AccountNumber NVARCHAR(50),
+        AccountName NVARCHAR(200)
     );
     
     -- Parse JSON dan deteksi bank type (dengan dukungan VA/RPT)
@@ -91,7 +93,9 @@ BEGIN
         Amount,
         Location,
         Keterangan1,
-        Keterangan2
+        Keterangan2,
+        AccountNumber,
+        AccountName
     )
     SELECT 
         COALESCE(TransactionID, TransactionIDLower) AS TransactionID,
@@ -179,7 +183,9 @@ BEGIN
         COALESCE(AmountValue, AmountValueLower) AS Amount,
         COALESCE(LocationInput, LocationLower) AS Location,
         COALESCE(Keterangan1Input, Keterangan1Lower) AS Keterangan1,
-        COALESCE(Keterangan2Input, Keterangan2Lower) AS Keterangan2
+        COALESCE(Keterangan2Input, Keterangan2Lower) AS Keterangan2,
+        COALESCE(AccountNumberInput, AccountNumberLower) AS AccountNumber,
+        COALESCE(AccountNameInput, AccountNameLower) AS AccountName
     FROM OPENJSON(@TransactionsJSON)
     WITH (
         TransactionID INT '$.TransactionID',
@@ -205,7 +211,11 @@ BEGIN
         Keterangan2Input NVARCHAR(200) '$.Keterangan2',
         Keterangan2Lower NVARCHAR(200) '$.keterangan2',
         BankTypeInput NVARCHAR(50) '$.BankType',
-        BankTypeInputLower NVARCHAR(50) '$.bank_type'
+        BankTypeInputLower NVARCHAR(50) '$.bank_type',
+        AccountNumberInput NVARCHAR(50) '$.accountNumber',
+        AccountNumberLower NVARCHAR(50) '$.AccountNumber',
+        AccountNameInput NVARCHAR(200) '$.accountName',
+        AccountNameLower NVARCHAR(200) '$.AccountName'
     );
 
     -- Fallback parsing untuk format camelCase/lowercase (contoh hasil converter TXT)
@@ -223,6 +233,8 @@ BEGIN
         t.Location = ISNULL(t.Location, j.location),
         t.Keterangan1 = ISNULL(t.Keterangan1, j.keterangan1),
         t.Keterangan2 = ISNULL(t.Keterangan2, j.keterangan2),
+        t.AccountNumber = ISNULL(t.AccountNumber, j.accountNumber),
+        t.AccountName = ISNULL(t.AccountName, j.accountName),
         -- BankType hanya diubah jika masih UNKNOWN dan ada bank_type dari JSON
         -- JANGAN ubah BankType jika sudah ditentukan sebelumnya!
         t.BankType = CASE
@@ -242,7 +254,9 @@ BEGIN
         location NVARCHAR(100) '$.location',
         keterangan1 NVARCHAR(200) '$.keterangan1',
         keterangan2 NVARCHAR(200) '$.keterangan2',
-        bank_type NVARCHAR(50) '$.bank_type'
+        bank_type NVARCHAR(50) '$.bank_type',
+        accountNumber NVARCHAR(50) '$.accountNumber',
+        accountName NVARCHAR(200) '$.accountName'
     ) j
     WHERE t.TransactionID = j.TransactionID;
 
@@ -254,6 +268,18 @@ BEGIN
             WHEN Amount > 0 THEN 'CR'
             ELSE NULL
         END;
+
+    -- Set @AccountNumber & @AccountName dari transaksi pertama yang punya nilai (dari JSON)
+    IF @AccountNumber IS NULL OR @AccountNumber = ''
+    BEGIN
+        SELECT TOP 1 @AccountNumber = NULLIF(LTRIM(RTRIM(AccountNumber)), '')
+        FROM @Transactions WHERE AccountNumber IS NOT NULL AND LTRIM(RTRIM(AccountNumber)) <> '';
+    END;
+    IF @AccountName IS NULL OR @AccountName = ''
+    BEGIN
+        SELECT TOP 1 @AccountName = NULLIF(LTRIM(RTRIM(AccountName)), '')
+        FROM @Transactions WHERE AccountName IS NOT NULL AND LTRIM(RTRIM(AccountName)) <> '';
+    END;
 
     -- Bentuk description default untuk data VA (RPT) HANYA jika benar-benar kosong
     -- JANGAN ubah Description jika sudah ada dari input JSON!

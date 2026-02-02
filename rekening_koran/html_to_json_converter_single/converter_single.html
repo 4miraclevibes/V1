@@ -786,20 +786,25 @@ class BCAStatementParser {
 
     /**
      * Get transactions in format for SQL Stored Procedure
-     * Returns JSON string compatible with OPENJSON in SQL Server
+     * accountNumber & accountName dimasukkan ke tiap node transactions (format konsisten)
      */
     getTransactionsForStoredProcedure() {
+        const accountNumber = this.result.accountInfo.accountNumber || null;
+        const accountName = this.result.accountInfo.accountName || null;
         return this.result.transactions.map(t => ({
             TransactionID: t.TransactionID,
             TransactionDate: t.TransactionDate,
             Description: t.Description,
             Amount: typeof t.Amount === 'number' ? t.Amount : null,
-            TransactionType: t.TransactionType === 'CR' || t.TransactionType === 'DB' ? t.TransactionType : null
+            TransactionType: t.TransactionType === 'CR' || t.TransactionType === 'DB' ? t.TransactionType : null,
+            accountNumber: accountNumber,
+            accountName: accountName
         }));
     }
 
     /**
      * Export to SQL Server compatible JSON format
+     * Format: array of transactions, tiap node punya accountNumber & accountName
      */
     toSQLFormat() {
         return JSON.stringify(this.getTransactionsForStoredProcedure(), null, 2);
