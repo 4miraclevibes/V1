@@ -8,11 +8,15 @@ Folder ini berisi scripts untuk update stored procedures dan table structures.
 - Amount (DECIMAL 18,2)
 - TransactionType (CR/DB)
 
-### 2. Account Info Support (BARU!)
+### 2. Account Info Support
 - AccountNumber (NVARCHAR 50) - No. Rekening dari converter
 - AccountName (NVARCHAR 200) - Nama Pemilik Rekening dari converter
 
-### 3. BIFAST Date Fix
+### 3. btn & approved_by di MP_REKENING_KORAN
+- **btn** (NVARCHAR 255) - Diisi dari **BTP_REVIEW.CustomerName** (tidak ada kolom baru di BTP_REVIEW)
+- **approved_by** (NVARCHAR 255) - Diisi dari **BTP_REVIEW.UploadedBy** (user yang upload/approve)
+
+### 4. BIFAST Date Fix
 - Fix tanggal yang kebalik untuk BankType BIFAST
 
 ## File dalam Folder ini
@@ -20,8 +24,10 @@ Folder ini berisi scripts untuk update stored procedures dan table structures.
 | File | Keterangan |
 |------|------------|
 | `ALTER_BTP_REVIEW_AddAmount.sql` | Script ALTER table untuk Amount & TransactionType |
-| `ALTER_ADD_ACCOUNT_INFO.sql` | **BARU!** Script ALTER table untuk AccountNumber & AccountName |
-| `FIX_BIFAST_DATE.sql` | **BARU!** Dokumentasi fix BIFAST date issue |
+| `ALTER_ADD_ACCOUNT_INFO.sql` | Script ALTER table untuk AccountNumber & AccountName |
+| `ALTER_ADD_BATCH_ISJURNAL.sql` | Script ALTER MP_REKENING_KORAN untuk BatchID & isJurnal |
+| `ALTER_ADD_BTN_APPROVED_BY.sql` | Script ALTER MP_REKENING_KORAN untuk btn (dari CustomerName) & approved_by (dari UploadedBy) |
+| `FIX_BIFAST_DATE.sql` | Dokumentasi fix BIFAST date issue |
 | `SP_MASTER_FindBTP_SaveToReview_v2.sql` | Updated master SP dengan Amount handling |
 | `VERIFY_AMOUNT.sql` | Script untuk verifikasi Amount tersimpan dengan benar |
 | `TEST_AMOUNT.sql` | Test script dengan berbagai format JSON |
@@ -32,15 +38,17 @@ Folder ini berisi scripts untuk update stored procedures dan table structures.
 
 ### Step 1: Update Table Structures
 ```sql
--- Jalankan di SSMS:
-EXEC ALTER_BTP_REVIEW_AddAmount.sql
-EXEC ALTER_ADD_ACCOUNT_INFO.sql
+-- Jalankan di SSMS (urutan bebas):
+-- ALTER_BTP_REVIEW_AddAmount.sql
+-- ALTER_ADD_ACCOUNT_INFO.sql
+-- ALTER_ADD_BATCH_ISJURNAL.sql
+-- ALTER_ADD_BTN_APPROVED_BY.sql
 ```
 
 ### Step 2: Update SPs (sudah dilakukan di MASTER folder)
 SP yang sudah di-update:
 - `SP_MASTER_FindBTP_SaveToReview.sql` - Parameter baru: @AccountNumber, @AccountName
-- `SP_MASTER_ApproveToFinal.sql` - Include AccountNumber & AccountName ke MP_REKENING_KORAN
+- `SP_MASTER_ApproveToFinal.sql` - Include AccountNumber, AccountName, BatchID, **btn** (dari CustomerName), **approved_by** (dari UploadedBy) ke MP_REKENING_KORAN
 
 ## JSON Format dari Converter
 

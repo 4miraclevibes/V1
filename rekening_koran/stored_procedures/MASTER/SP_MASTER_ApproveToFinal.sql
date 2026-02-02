@@ -62,7 +62,9 @@ BEGIN
             [BankType],
             [AccountNumber],
             [AccountName],
-            [BatchID]
+            [BatchID],
+            [btn],
+            [approved_by]
         )
         SELECT
             -- TransactionDate sudah bertipe DATE di BTP_REVIEW, langsung pakai atau default ke current date jika NULL
@@ -90,7 +92,11 @@ BEGIN
             AccountName,
             
             -- BatchID dari BTP_REVIEW
-            BatchID
+            BatchID,
+            
+            -- btn = CustomerName dari BTP_REVIEW, approved_by = UploadedBy
+            CustomerName AS [btn],
+            UploadedBy AS [approved_by]
             
         FROM [POWERAPPS].[dbo].[BTP_REVIEW]
         WHERE 
