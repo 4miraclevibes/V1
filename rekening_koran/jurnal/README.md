@@ -125,3 +125,7 @@ SP_JURNAL_CreateFromRekeningKoran
 ```
 
 Untuk testing ulang: jalankan **UTILITY_ResetJurnalForTesting.sql** (isJurnal = 0 + TRUNCATE MP_JURNAL), lalu jalankan lagi SP.
+
+
+
+
