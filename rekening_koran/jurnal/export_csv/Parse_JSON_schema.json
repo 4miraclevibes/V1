@@ -1,0 +1,81 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "DocumentDate": {
+                "type": "string"
+            },
+            "DocumentType": {
+                "type": "string"
+            },
+            "CompanyCode": {
+                "type": "string"
+            },
+            "PostingDate": {
+                "type": "string"
+            },
+            "Currency": {
+                "type": "string"
+            },
+            "CountryGrouping": {
+                "type": "string"
+            },
+            "Reference": {
+                "type": "string"
+            },
+            "Material": {
+                "type": "string"
+            },
+            "DocumentHeaderText": {
+                "type": "string"
+            },
+            "PostingKey": {
+                "type": "string"
+            },
+            "Customer": {
+                "type": "string"
+            },
+            "Account": {
+                "type": "string"
+            },
+            "Special": {
+                "type": "string"
+            },
+            "Amount": {
+                "type": "number"
+            },
+            "ValueDate": {
+                "type": "string"
+            },
+            "Assignment": {
+                "type": "string"
+            },
+            "Text": {
+                "type": "string"
+            },
+            "ProfitCenter": {
+                "type": "string"
+            },
+            "CostCenter": {
+                "type": "string"
+            },
+            "Order": {
+                "type": "string"
+            },
+            "TaxCode": {
+                "type": "string"
+            },
+            "Customer2": {
+                "type": "string"
+            },
+            "SalesOrganization": {
+                "type": "string"
+            },
+            "ReasonCode": {
+                "type": "string"
+            }
+        },
+        "required": []
+    }
+}

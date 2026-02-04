@@ -6,6 +6,29 @@ Convert data dari database ke **Excel file (.xlsx)** yang benar-benar bisa dibuk
 
 ---
 
+## ✅ Urutan flow yang benar (CSV + SharePoint)
+
+Urutan action di Power Automate **harus persis seperti ini** (trigger → SP → CSV → SharePoint → respond):
+
+| # | Action | Keterangan |
+|---|--------|------------|
+| 1 | **When Power Apps calls a flow (V2)** | Trigger; input opsional: StartDate, EndDate, BTP |
+| 2 | **Execute stored procedure (V2)** | Panggil `SP_EXPORT_REKENING_KORAN` |
+| 3 | **Parse JSON** | Parse `ResultSets/Table1` dari output SP |
+| 4 | **Create CSV table** | Convert ke CSV (UTF-8, comma) |
+| 5 | **Compose** | Base64: `base64(body('Create_CSV_table'))` |
+| 6 | **Initialize variable** | `varFileName` = RekeningKoran_Export_yyyyMMdd_HHmmss.csv |
+| 7 | **Create file** (SharePoint) | Simpan CSV; File Content = `base64ToBinary(body('Compose'))` |
+| 8 | **Compose DownloadLink** | Input = `body('Create_file')?['Path']` |
+| 9 | **Respond to a Power App or flow** | Output: fileName, sharePointLink, rowCount, status |
+
+**Dokumentasi lengkap flow Rekening Koran (CSV + link):**  
+`../../power_automate/SETUP_LENGKAP_DARI_AWAL.md` dan `FLOW_STEPS_SHAREPOINT.md`
+
+Flow **Excel** (jika pakai convert CSV→Excel) dibangun di atas urutan ini; step "Create CSV table" bisa dipakai lalu ditambah konversi ke Excel sebelum "Create file".
+
+---
+
 ## 📋 Dua Approach
 
 ### **APPROACH 1: CSV → Excel Conversion**
