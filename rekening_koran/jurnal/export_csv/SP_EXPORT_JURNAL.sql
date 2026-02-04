@@ -11,9 +11,7 @@ GO
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_EXPORT_JURNAL]
     @StartDate NVARCHAR(50) = NULL,
-    @EndDate   NVARCHAR(50) = NULL,
-    @CompanyCode NVARCHAR(20) = NULL,
-    @Reference  NVARCHAR(30) = NULL
+    @EndDate   NVARCHAR(50) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -62,8 +60,6 @@ BEGIN
     WHERE
         (@StartDateOnly IS NULL OR [document_date] >= @StartDateOnly)
         AND (@EndDateOnly   IS NULL OR [document_date] <= @EndDateOnly)
-        AND (@CompanyCode   IS NULL OR LEN(LTRIM(RTRIM(@CompanyCode))) = 0 OR [company_code] = @CompanyCode)
-        AND (@Reference     IS NULL OR LEN(LTRIM(RTRIM(@Reference))) = 0     OR [reference]     = @Reference)
     ORDER BY [document_date], [reference], [row_line], [id];
 
 END
@@ -74,6 +70,4 @@ PRINT '';
 PRINT 'Usage:';
 PRINT '  EXEC SP_EXPORT_JURNAL;  -- Export semua data jurnal';
 PRINT '  EXEC SP_EXPORT_JURNAL @StartDate = ''2025-01-01'', @EndDate = ''2025-01-31'';';
-PRINT '  EXEC SP_EXPORT_JURNAL @CompanyCode = ''id93'';';
-PRINT '  EXEC SP_EXPORT_JURNAL @Reference = ''26012026-0001'';';
 GO
