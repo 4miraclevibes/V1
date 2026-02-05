@@ -241,7 +241,7 @@ Bisa dikosongkan jika mau export semua tanggal.
 ```
 (Ganti nama action jika beda, mis. `Execute_stored_procedure_(V2)`)
 
-**Schema:** Gunakan **Generate from sample** dan paste output dari run STEP 2, atau definisikan sesuai kolom document data (DocumentDate, DocumentType, CompanyCode, dll.).
+**Schema:** Paste isi file **`Parse_JSON_schema.json`** (di folder ini). Schema sudah benar: tiap property mengizinkan `string` dan `null`, Amount mengizinkan `string`, `number`, dan `null`, serta `additionalProperties: true`.
 
 ---
 
@@ -374,3 +374,10 @@ base64(body('Create_CSV_table'))
 - **Gateway:** Untuk SQL on-premises, wajib pakai **Execute stored procedure (V2)**; "Execute SQL query" tidak didukung.
 - **Encoding:** CSV pakai UTF-8 agar karakter khusus benar.
 - **Parameter:** Hanya StartDate dan EndDate; kosongkan untuk export semua tanggal.
+
+---
+
+## ⚠️ Troubleshooting: Parse JSON "The schema validation failed"
+
+- Pakai schema dari **`Parse_JSON_schema.json`** (sudah benar: string/null, Amount string/number/null, additionalProperties: true).
+- Jika masih gagal: di Parse JSON pilih **Generate from sample** → paste output **ResultSets → Table1** dari action Execute stored procedure.

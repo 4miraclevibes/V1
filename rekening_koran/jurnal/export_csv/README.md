@@ -31,6 +31,7 @@ Urutan action di Power Automate **harus persis seperti ini**:
 | `SP_EXPORT_JURNAL.sql` | Stored procedure untuk query data jurnal (hanya kolom document data). Filter: StartDate, EndDate. |
 | `Parse_JSON_schema.json` | Schema untuk action **Parse JSON** di Power Automate (paste ke "Schema" atau generate from sample). |
 | `SETUP_LENGKAP_DARI_AWAL.md` | Panduan step-by-step setup flow + Flow Steps (urutan 9 action di atas). |
+| `SETUP_CSV_PIPE_SEPARATOR.md` | Opsi export dengan separator **pipe `|`** (bukan koma); dokumentasi terpisah. |
 | `README.md` | Dokumen ini. |
 
 ## Cara pakai

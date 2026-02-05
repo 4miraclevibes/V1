@@ -4,78 +4,151 @@
         "type": "object",
         "properties": {
             "DocumentDate": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "DocumentType": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "CompanyCode": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "PostingDate": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Currency": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "CountryGrouping": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Reference": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Material": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "DocumentHeaderText": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "PostingKey": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Customer": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Account": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Special": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Amount": {
-                "type": "number"
+                "type": [
+                    "string",
+                    "number",
+                    "null"
+                ]
             },
             "ValueDate": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Assignment": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Text": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "ProfitCenter": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "CostCenter": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Order": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "TaxCode": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "Customer2": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "SalesOrganization": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             },
             "ReasonCode": {
-                "type": "string"
+                "type": [
+                    "string",
+                    "null"
+                ]
             }
         },
-        "required": []
+        "additionalProperties": true
     }
 }
