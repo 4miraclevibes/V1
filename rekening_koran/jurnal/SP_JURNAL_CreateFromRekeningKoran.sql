@@ -12,6 +12,7 @@
 --   - Amount IS NOT NULL (nominal jurnal)
 --   - btp IS NOT NULL dan btp <> '' (untuk baris 2: customer, customer2)
 --   - btn IS NOT NULL dan btn <> '' (supaya document_header_text konsisten dari btn)
+--   - approved_by = 'digicare@greenfieldsdairy.com'
 -- Row yang tidak memenuhi syarat tidak diproses dan isJurnal tetap tidak di-update (tetap 0/NULL).
 --
 -- no_urut: per (trx_date, AccountName) mulai 0001, 0002, ...
@@ -69,6 +70,7 @@ BEGIN
               AND LTRIM(RTRIM(ISNULL(btp, ''))) <> ''
               AND [btn] IS NOT NULL
               AND LTRIM(RTRIM(ISNULL([btn], ''))) <> ''
+              AND approved_by = 'digicare@greenfieldsdairy.com'
         ),
         -- document_header_text = header_source (btn → btp → desc → AccountName) max 25 char, logika sama dengan 'text'
         rk_with_headers AS (

@@ -49,15 +49,15 @@ BEGIN
                 ISNULL(CONVERT(NVARCHAR(10), [value_date], 104), ''),
                 REPLACE(ISNULL([assignment], ''), '|', ' '),
                 REPLACE(ISNULL([text], ''), '|', ' '),
-                UPPER(REPLACE(ISNULL([profit_center], ''), '|', ' ')),
-                REPLACE(ISNULL([cost_center], ''), '|', ' '),
-                REPLACE(ISNULL([order_no], ''), '|', ' '),
-                REPLACE(ISNULL([tax_code], ''), '|', ' '),
-                REPLACE(ISNULL([customer2], ''), '|', ' '),
-                REPLACE(ISNULL([sales_organization], ''), '|', ' '),
-                REPLACE(ISNULL([reason_code], ''), '|', ' '),
-                '',
-                ''
+                UPPER(REPLACE(ISNULL([profit_center], ''), '|', ' '))
+                -- REPLACE(ISNULL([cost_center], ''), '|', ' '),
+                -- REPLACE(ISNULL([order_no], ''), '|', ' '),
+                -- REPLACE(ISNULL([tax_code], ''), '|', ' '),
+                -- '',
+                -- '',
+                -- REPLACE(ISNULL([customer2], ''), '|', ' '),
+                -- REPLACE(ISNULL([sales_organization], ''), '|', ' '),
+                -- REPLACE(ISNULL([reason_code], ''), '|', ' ')
             ) + CHAR(13) + CHAR(10)
         FROM [dbo].[MP_JURNAL]
         WHERE (@StartDateOnly IS NULL OR [document_date] >= @StartDateOnly)

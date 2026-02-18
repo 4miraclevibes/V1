@@ -5,10 +5,11 @@
 -- Description:
 --   Move approved transactions dari BTP_REVIEW ke MP_REKENING_KORAN
 --   Hanya yang Status = 'FAIR', 'GOOD', atau 'EXCELLENT'
+--   Copy Amount, TransactionType (CR/DB), btn (dari CustomerName), AccountNumber, AccountName, BatchID dari BTP_REVIEW
 --   Auto-update IsApproved, ApprovedBy, ApprovedAt di BTP_REVIEW
 --
 -- Parameters:
---   @ApprovedBy - User yang approve (optional, default SYSTEM_USER)
+--   @ApprovedBy - User yang approve (dari Power Apps: User().Email), default SYSTEM_USER jika kosong
 --
 -- Returns:
 --   @RowsInserted - Jumlah rows yang di-insert
@@ -56,13 +57,16 @@ BEGIN
             [updated_at],
             [credit],
             [btp],
+            [btn],
             [desc],
             [Amount],
             [TransactionType],
             [BankType],
             [AccountNumber],
             [AccountName],
-            [BatchID]
+            [BatchID],
+            [isJurnal],
+            [approved_by]
         )
         SELECT
             -- TransactionDate sudah bertipe DATE di BTP_REVIEW, langsung pakai atau default ke current date jika NULL
@@ -77,6 +81,9 @@ BEGIN
             -- BTP
             ISNULL(BTP, '') AS [btp],
             
+            -- btn dari BTP_REVIEW.CustomerName (untuk document_header_text di jurnal)
+            LEFT(ISNULL(CustomerName, ''), 255) AS [btn],
+            
             -- Description (truncate to 255 chars if needed)
             LEFT(ISNULL(Description, ''), 255) AS [desc],
 
@@ -90,7 +97,13 @@ BEGIN
             AccountName,
             
             -- BatchID dari BTP_REVIEW
-            BatchID
+            BatchID,
+            
+            -- isJurnal = 0 (belum di-jurnal, akan di-update oleh SP_JURNAL_CreateFromRekeningKoran)
+            CAST(0 AS BIT) AS [isJurnal],
+            
+            -- approved_by dari parameter @ApprovedBy (Power Apps: User().Email)
+            @ApprovedBy AS [approved_by]
             
         FROM [POWERAPPS].[dbo].[BTP_REVIEW]
         WHERE 
@@ -210,8 +223,11 @@ PRINT '  EXEC SP_MASTER_ApproveToFinal @ApprovedBy = ''user@email.com'';';
 PRINT '';
 PRINT 'What it does:';
 PRINT '  1. Insert approved transactions (FAIR/GOOD/EXCELLENT) to MP_REKENING_KORAN';
-PRINT '  2. Update IsApproved = 1 in BTP_REVIEW';
-PRINT '  3. Set ApprovedBy, ApprovedAt, ModifiedAt';
+PRINT '  2. Copy Amount, TransactionType (CR/DB), btn (CustomerName), AccountInfo, BatchID dari BTP_REVIEW';
+PRINT '  2b. Set approved_by = @ApprovedBy (dari Power Apps: User().Email)';
+PRINT '  3. Set isJurnal = 0 (baru, belum di-jurnal)';
+PRINT '  4. Update IsApproved = 1 di BTP_REVIEW';
+PRINT '  5. Set ApprovedBy, ApprovedAt, ModifiedAt';
 PRINT '';
 PRINT '═══════════════════════════════════════════════════════════════════════';
 PRINT '';
