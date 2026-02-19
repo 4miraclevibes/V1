@@ -1,0 +1,358 @@
+{
+  "info": {
+    "_postman_id": "alfamart-b2b-auto-download",
+    "name": "Alfamart B2B - Auto Download API",
+    "description": "API Auto Download B2B Alfamart. Checksum dihitung otomatis di pre-request script.\n\nCredential:\n- Alfamart Fresh (GI): Key = YJWWACKN2HRMOUZR\n- Alfamart UHT: Key = MRXVD6IAGTCQQ36N",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://b2b-ap.alfamart.co.id"
+    },
+    {
+      "key": "day",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Alfamart Fresh (GI)",
+      "item": [
+        {
+          "name": "PO - Purchase Order",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'YJWWACKN2HRMOUZR';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'PO';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        },
+        {
+          "name": "POBKL - PO BKL",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'YJWWACKN2HRMOUZR';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'POBKL';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        },
+        {
+          "name": "LPB - Laporan Penerimaan Barang",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'YJWWACKN2HRMOUZR';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'LPB';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        },
+        {
+          "name": "LPBBKL - LPB BKL",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'YJWWACKN2HRMOUZR';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'LPBBKL';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alfamart UHT",
+      "item": [
+        {
+          "name": "PO - Purchase Order",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'MRXVD6IAGTCQQ36N';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'PO';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        },
+        {
+          "name": "POBKL - PO BKL",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'MRXVD6IAGTCQQ36N';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'POBKL';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        },
+        {
+          "name": "LPB - Laporan Penerimaan Barang",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'MRXVD6IAGTCQQ36N';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'LPB';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        },
+        {
+          "name": "LPBBKL - LPB BKL",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const method = 'B2B-AUTO-DOWNLOAD';",
+                  "const key = 'MRXVD6IAGTCQQ36N';",
+                  "const opt = 'JSON';",
+                  "const day_val = pm.collectionVariables.get('day') || '1';",
+                  "const jenis_data = 'LPBBKL';",
+                  "const now = new Date();",
+                  "const pad = (n) => String(n).padStart(2, '0');",
+                  "const datetime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;",
+                  "const input = `${method}#${key}#${opt}#${day_val}#${jenis_data}#${datetime}`;",
+                  "const checksum = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);",
+                  "pm.variables.set('key', key);",
+                  "pm.variables.set('jenis_data', jenis_data);",
+                  "pm.variables.set('datetime', datetime);",
+                  "pm.variables.set('checksum', checksum);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"{{key}}\",\n  \"opt\": \"JSON\",\n  \"day\": \"{{day}}\",\n  \"jenis_data\": \"{{jenis_data}}\",\n  \"datetime\": \"{{datetime}}\",\n  \"checksum\": \"{{checksum}}\"\n}"
+            },
+            "url": "{{base_url}}/auto-download"
+          }
+        }
+      ]
+    }
+  ]
+}
