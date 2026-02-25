@@ -16,14 +16,14 @@ INSERT INTO [POWERAPPS].[dbo].[MP_CUSTOMER_NEW] (
     [credit_limit],
     [GFcode]
 ) VALUES (
-    'PKUD-0774', -- code
-    'DBESTO', -- name
-    'PEKANBARU', -- city
-    '03/02/2026', -- createdate
-    '138', -- distributor_id
-    '63', -- account_id
+    'BMPG2/340', -- code
+    'LAPAN KOPI', -- name
+    'PALEMBANG', -- city
+    '23/02/2026', -- createdate
+    '32', -- distributor_id
+    '59', -- account_id
     'ATT-KOSONG', -- account_trading_term
-    '612', -- regency_id
+    '857', -- regency_id
     GETDATE(), -- created_at
     GETDATE(), -- updated_at
     'active', -- status
