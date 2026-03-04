@@ -1,0 +1,5 @@
+BERIKUT ADALAH STEP STEP UNTUK CREATE JURNAL KE SAP
+
+1. exec sp SP_JURNAL_CreateFromRekeningKoran.sql
+2. exec sp SP_EXPORT_JURNAL_CSV_PIPE.sql
+3. truncate table MP_JURNAL
