@@ -13,7 +13,8 @@ GO
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_EXPORT_JURNAL_CSV_FILE]
     @StartDate NVARCHAR(50) = NULL,
-    @EndDate   NVARCHAR(50) = NULL
+    @EndDate   NVARCHAR(50) = NULL,
+    @Id        BIGINT       = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -61,7 +62,8 @@ BEGIN
                 UPPER(REPLACE(ISNULL([profit_center], ''), '|', ' '))
             ) + CHAR(13) + CHAR(10)
         FROM [dbo].[MP_JURNAL]
-        WHERE (@StartDateOnly IS NULL OR [document_date] >= @StartDateOnly)
+        WHERE (@Id IS NULL OR [source_rk_id] = @Id)
+          AND (@StartDateOnly IS NULL OR [document_date] >= @StartDateOnly)
           AND (@EndDateOnly IS NULL OR [document_date] <= @EndDateOnly)
         ORDER BY [posting_date] ASC, [no_urut] ASC, [company_code] ASC, [row_line], [id]
         FOR XML PATH(''), TYPE
@@ -88,10 +90,14 @@ BEGIN
     -- Copy ke network (rekeningkoran dulu, HRIS terakhir - file terbaru dari SQL ada di REKENINGKORAN)
     EXEC master..xp_cmdshell 'C:\REKENINGKORAN\copy-rekeningkoran.bat';
     EXEC master..xp_cmdshell 'C:\REKENINGKORAN\copy-jurnal-terbaru-ke-hris.bat';
+    -- Copy ke PRD
+    EXEC master..xp_cmdshell 'C:\REKENINGKORAN\copy-rekeningkoran-prd.bat';
+    EXEC master..xp_cmdshell 'C:\REKENINGKORAN\copy-jurnal-terbaru-ke-hris-prd.bat';
 END
 GO
 
 PRINT 'SP_EXPORT_JURNAL_CSV_FILE created.';
 PRINT 'Usage: EXEC SP_EXPORT_JURNAL_CSV_FILE @StartDate = ''2025-01-01'', @EndDate = ''2025-01-31'';';
+PRINT '       EXEC SP_EXPORT_JURNAL_CSV_FILE @Id = 12345;  -- export per 1 baris RK (source_rk_id)';
 PRINT 'Output: C:\REKENINGKORAN\jurnal_{timestamp}.csv';
 GO

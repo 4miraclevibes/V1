@@ -17,8 +17,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- 1. Create jurnal dari rekening koran
-    EXEC [dbo].[SP_JURNAL_CreateFromRekeningKoran];
+    -- 1. Create jurnal dari rekening koran (filter trx_date)
+    EXEC [dbo].[SP_JURNAL_CreateFromRekeningKoran] @StartDate = @StartDate, @EndDate = @EndDate;
 
     -- 2. Export ke CSV (pipe) - result set dikembalikan ke client
     EXEC [dbo].[SP_EXPORT_JURNAL_CSV_PIPE] @StartDate = @StartDate, @EndDate = @EndDate;

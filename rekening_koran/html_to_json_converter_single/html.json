@@ -1,0 +1,20 @@
+[
+    {
+      "TransactionID": 1,
+      "TransactionDate": "01/02/2026",
+      "Description": "TRSF E-BANKING CR 0102/FTSCY/WS95031 710604.00 DESKYAN WAHID",
+      "Amount": 710604,
+      "TransactionType": "CR",
+      "accountNumber": "0053061777",
+      "accountName": "GREENFIELDS DAIRY I PT"
+    },
+    {
+      "TransactionID": 2,
+      "TransactionDate": "01/02/2026",
+      "Description": "TRSF E-BANKING CR 0102/FTSCY/WS95031 455520.00 bnr gf po190126 ULPIANDA RISZKIAN",
+      "Amount": 455520,
+      "TransactionType": "CR",
+      "accountNumber": "0053061777",
+      "accountName": "GREENFIELDS DAIRY I PT"
+    }
+  ]

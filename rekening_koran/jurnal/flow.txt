@@ -54,7 +54,7 @@ posting_key -> DEFAULT '15'
 customer -> DEFAULT 'NULL'
 customer -> btp
 
-account -> if AccountNumber '0053061777' value nya '1113030303' else '1113030300'
+account -> if AccountNumber = '0053061777'  && bank_type = 'VA' value nya '1113030304' else if AccountNumber '0053061777' && bank_type != 'VA' value nya '1113030303' else value nya '1113030300'
 account -> DEFAULT NULL
 
 special -> DEFAULT NULL

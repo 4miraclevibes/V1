@@ -30,9 +30,19 @@ USE POWERAPPS;
 GO
 
 CREATE OR ALTER PROCEDURE [dbo].[SP_JURNAL_CreateFromRekeningKoran]
+    @StartDate NVARCHAR(50) = NULL,
+    @EndDate   NVARCHAR(50) = NULL,
+    @Id        BIGINT       = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    DECLARE @StartDateOnly DATE = NULL;
+    DECLARE @EndDateOnly   DATE = NULL;
+    IF @StartDate IS NOT NULL AND LEN(LTRIM(RTRIM(@StartDate))) > 0
+        SET @StartDateOnly = TRY_CAST(LTRIM(RTRIM(@StartDate)) AS DATE);
+    IF @EndDate IS NOT NULL AND LEN(LTRIM(RTRIM(@EndDate))) > 0
+        SET @EndDateOnly = TRY_CAST(LTRIM(RTRIM(@EndDate)) AS DATE);
 
     DECLARE @RowsProcessed INT = 0;
     DECLARE @RowsInserted INT = 0;
@@ -45,6 +55,7 @@ BEGIN
             SELECT
                 id,
                 trx_date,
+                created_at,
                 ISNULL(AccountNumber, '') AS AccountNumber,
                 ISNULL(AccountName, '') AS AccountName,
                 ISNULL([btn], '') AS btn,
@@ -60,17 +71,21 @@ BEGIN
                 ISNULL(btp, '') AS btp,
                 ISNULL([desc], '') AS [desc],
                 ISNULL(Amount, 0) AS Amount,
+                ISNULL(BankType, '') AS BankType,
                 -- no_urut per (trx_date, AccountName), 4 digit
                 RIGHT('0000' + CAST(ROW_NUMBER() OVER (PARTITION BY trx_date, ISNULL(AccountName, '') ORDER BY id) AS VARCHAR(4)), 4) AS no_urut
             FROM [dbo].[MP_REKENING_KORAN]
             WHERE (isJurnal = 0 OR isJurnal IS NULL)
+              AND (@Id IS NULL OR id = @Id)
               AND trx_date IS NOT NULL
+              AND (@StartDateOnly IS NULL OR trx_date >= @StartDateOnly)
+              AND (@EndDateOnly IS NULL OR trx_date <= @EndDateOnly)
               AND Amount IS NOT NULL
               AND btp IS NOT NULL
               AND LTRIM(RTRIM(ISNULL(btp, ''))) <> ''
               AND [btn] IS NOT NULL
               AND LTRIM(RTRIM(ISNULL([btn], ''))) <> ''
-              AND approved_by = 'digicare@greenfieldsdairy.com'
+              AND approved_by = 'bi_jabodetabek@greenfieldsdairy.com'
         ),
         -- document_header_text = header_source (btn → btp → desc → AccountName) max 25 char, logika sama dengan 'text'
         rk_with_headers AS (
@@ -108,11 +123,15 @@ BEGIN
                 ELSE document_header_text
             END AS document_header_text,
             text_50,
-            -- reference = ddmmyyyy-no_urut
-            FORMAT(trx_date, 'ddMMyyyy') + '-' + no_urut AS reference,
-            -- company_code, account, profit_center by AccountNumber
+            -- reference = ddmmyyyy-HHmmss (jam menit detik tanpa pemisah)
+            FORMAT(trx_date, 'ddMMyyyy') + '-' + FORMAT(ISNULL(created_at, GETDATE()), 'HHmmss') AS reference,
+            -- company_code, account, profit_center by AccountNumber & BankType (sesuai flow)
             CASE WHEN AccountNumber = '0053061777' THEN 'id93' ELSE 'id92' END AS company_code,
-            CASE WHEN AccountNumber = '0053061777' THEN '1113030303' ELSE '1113030300' END AS account,
+            CASE
+                WHEN AccountNumber = '0053061777' AND UPPER(LTRIM(RTRIM(ISNULL(BankType,'')))) = 'VA' THEN '1113030304'
+                WHEN AccountNumber = '0053061777' THEN '1113030303'
+                ELSE '1113030300'
+            END AS account,
             CASE WHEN AccountNumber = '0053061777' THEN '9300DDJT0A' ELSE '9201DQDQ01' END AS profit_center
         INTO #rk_jurnal
         FROM rk_with_headers;
@@ -184,4 +203,7 @@ END;
 GO
 
 PRINT 'SP_JURNAL_CreateFromRekeningKoran created.';
+PRINT 'Usage: EXEC SP_JURNAL_CreateFromRekeningKoran;';
+PRINT '       EXEC SP_JURNAL_CreateFromRekeningKoran @StartDate = ''2026-03-01'', @EndDate = ''2026-03-31'';';
+PRINT '       EXEC SP_JURNAL_CreateFromRekeningKoran @Id = 12345;  -- create per 1 baris';
 GO

@@ -540,6 +540,14 @@
                 <div class="info-card fade-in">
                     <h3>🏭 Ringkasan Laporan RPT</h3>
                     <div class="info-row">
+                        <span class="info-label">No. Rekening:</span>
+                        <span class="info-value"><input type="text" id="rptAccountNumber" placeholder="contoh: 0053064300" style="width:180px;padding:5px;border:1px solid #ccc;border-radius:5px;"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nama Rekening:</span>
+                        <span class="info-value"><input type="text" id="rptAccountName" placeholder="contoh: GREENFIELDS DAIRY I PT" style="width:280px;padding:5px;border:1px solid #ccc;border-radius:5px;"></span>
+                    </div>
+                    <div class="info-row">
                         <span class="info-label">Nama Perusahaan:</span>
                         <span class="info-value" id="rptCompanyName">-</span>
                     </div>
@@ -850,7 +858,22 @@ class RPTStatementParser {
 
             const namaPerusahaanMatch = line.match(/NAMA PERUSAHAAN\s*:\s*(.+)$/i);
             if (namaPerusahaanMatch) {
-                this.result.headerInfo.companyName = namaPerusahaanMatch[1].trim();
+                const val = namaPerusahaanMatch[1].trim();
+                this.result.headerInfo.companyName = val;
+                // Parse accountNumber & accountName (format: "02194-PT GREENFIELDS DAIRY INDONESI")
+                const dashIdx = val.indexOf('-');
+                if (dashIdx > 0) {
+                    this.result.headerInfo.accountNumber = val.substring(0, dashIdx).trim();
+                    this.result.headerInfo.accountName = val.substring(dashIdx + 1).trim();
+                } else {
+                    this.result.headerInfo.accountNumber = '';
+                    this.result.headerInfo.accountName = val;
+                }
+            }
+
+            const subCompMatch = line.match(/SUB-COMP\s+(\d+)/i);
+            if (subCompMatch && !this.result.headerInfo.accountNumber) {
+                this.result.headerInfo.accountNumber = subCompMatch[1].trim();
             }
 
             const tanggalMatch = line.match(/TANGGAL\s*:\s*([0-9/]+)/i);
@@ -999,7 +1022,12 @@ class RPTStatementParser {
         return parseFloat(sanitized) || 0;
     }
 
-    getTransactionsForStoredProcedure() {
+    getTransactionsForStoredProcedure(overrides = {}) {
+        let accountNumber = overrides.accountNumber !== undefined ? overrides.accountNumber : (this.result.headerInfo.accountNumber || '');
+        const accountName = overrides.accountName !== undefined ? overrides.accountName : (this.result.headerInfo.accountName || this.result.headerInfo.companyName || '');
+        // Mapping RPT account code → nomor rekening bank (hanya untuk RPT)
+        const RPT_ACCOUNT_MAP = { '02194': '0053061777', '01660': '0053008663' };
+        if (RPT_ACCOUNT_MAP[accountNumber]) accountNumber = RPT_ACCOUNT_MAP[accountNumber];
         return this.result.transactions.map(t => ({
             transaction_id: t.transactionId,
             btp: t.btp,
@@ -1012,7 +1040,9 @@ class RPTStatementParser {
             keterangan1: t.keterangan1,
             keterangan2: t.keterangan2,
             description: t.description,
-            bank_type: 'VA'
+            bank_type: 'VA',
+            accountNumber: accountNumber,
+            accountName: accountName
         }));
     }
 
@@ -1226,6 +1256,8 @@ if (typeof require !== 'undefined' && require.main === module) {
             const header = rptParsedData.headerInfo || {};
             const summary = rptParsedData.summary || {};
 
+            document.getElementById('rptAccountNumber').value = header.accountNumber || '';
+            document.getElementById('rptAccountName').value = header.accountName || header.companyName || '';
             document.getElementById('rptCompanyName').textContent = header.companyName || '-';
             document.getElementById('rptReportDate').textContent = header.reportDate || '-';
             document.getElementById('rptReportCode').textContent = header.reportCode || '-';
@@ -1310,12 +1342,22 @@ if (typeof require !== 'undefined' && require.main === module) {
             downloadJSON(rptParsedData, 'rpt_statement_full.json');
         }
 
+        function getRPTAccountOverrides() {
+            const num = document.getElementById('rptAccountNumber');
+            const name = document.getElementById('rptAccountName');
+            const overrides = {};
+            if (num && num.value && num.value.trim()) overrides.accountNumber = num.value.trim();
+            if (name && name.value && name.value.trim()) overrides.accountName = name.value.trim();
+            return overrides;
+        }
+
         function downloadRPTSQLFormat() {
             if (!rptParser) {
                 showAlert('error', '❌ Data RPT belum tersedia');
                 return;
             }
-            const sqlData = rptParser.getTransactionsForStoredProcedure();
+            const overrides = getRPTAccountOverrides();
+            const sqlData = rptParser.getTransactionsForStoredProcedure(overrides);
             downloadJSON(sqlData, 'rpt_statement_for_sp.json');
         }
 
@@ -1324,7 +1366,8 @@ if (typeof require !== 'undefined' && require.main === module) {
                 showAlert('error', '❌ Data RPT belum tersedia');
                 return;
             }
-            const sqlData = rptParser.getTransactionsForStoredProcedure();
+            const overrides = getRPTAccountOverrides();
+            const sqlData = rptParser.getTransactionsForStoredProcedure(overrides);
             const jsonString = JSON.stringify(sqlData, null, 2);
 
             navigator.clipboard.writeText(jsonString).then(() => {
