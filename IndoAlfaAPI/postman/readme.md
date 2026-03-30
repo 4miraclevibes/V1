@@ -18,7 +18,7 @@ Folder ini berisi collection Postman untuk **API Auto Download B2B Alfamart**.
 
 - **Alfamart Fresh (GI)** – Key: `YJWWACKN2HRMOUZR`  
   Request: PO, POBKL, LPB, LPBBKL
-- **Alfamart UHT** – Key: `MRXVD6IAGTCQQ36N`  
+- **Alfamart UHT** – Key: `4924f89cb798223a6a0773475bc87fba`  
   Request: PO, POBKL, LPB, LPBBKL
 
 Checksum dihitung otomatis di Pre-request Script; tidak perlu isi manual. Variabel `day` (default: `1`) dapat diubah di collection variables untuk mengatur periode data.
