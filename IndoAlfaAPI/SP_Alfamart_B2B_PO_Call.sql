@@ -199,6 +199,8 @@ BEGIN
             SET @cntHeader = @@ROWCOUNT;
 
             -- Detail (satu row per line di detail[])
+            -- Cegah duplikasi GLOBAL: kombinasi po_no + plu tidak boleh dobel,
+            -- walaupun datang dari response yang berbeda.
             INSERT INTO [dbo].[Alfamart_PO_Detail] (
                 [header_id], [rec_tag], [desc], [qty_crt], [qty_pcs], [plu], [barcode], [price], [uom], [cnv],
                 [disc_a], [remark], [net], [ppnbm], [total], [plu_b], [qty_b], [price_b], [disc_b]
@@ -208,27 +210,37 @@ BEGIN
                 d.[rec_tag], d.[desc], d.[qty_crt], d.[qty_pcs], d.[plu], d.[barcode], d.[price], d.[uom], d.[cnv],
                 d.[disc_a], d.[remark], d.[net], d.[ppnbm], d.[total], d.[plu_b], d.[qty_b], d.[price_b], d.[disc_b]
             FROM OPENJSON(@responseText, '$.result') AS res
-            INNER JOIN [dbo].[Alfamart_PO_Header] hdr ON hdr.[response_id] = @responseId AND hdr.[result_index] = CAST(res.[key] AS INT)
+            INNER JOIN [dbo].[Alfamart_PO_Header] hdr 
+                ON hdr.[response_id] = @responseId 
+               AND hdr.[result_index] = CAST(res.[key] AS INT)
             CROSS APPLY OPENJSON(res.value, '$.detail') WITH (
                 [rec_tag] VARCHAR(20)       '$.rec_tag',
                 [desc]    NVARCHAR(500)     '$.desc',
-                [qty_crt] INT              '$.qty_crt',
-                [qty_pcs] INT              '$.qty_pcs',
-                [plu]     BIGINT           '$.plu',
-                [barcode] VARCHAR(50)      '$.barcode',
-                [price]   DECIMAL(18,2)    '$.price',
-                [uom]     VARCHAR(20)      '$.uom',
-                [cnv]     VARCHAR(20)      '$.cnv',
-                [disc_a]  VARCHAR(20)      '$.disc_a',
-                [remark]  NVARCHAR(200)    '$.remark',
-                [net]     DECIMAL(18,2)    '$.net',
-                [ppnbm]   DECIMAL(18,2)    '$.ppnbm',
-                [total]   BIGINT           '$.total',
-                [plu_b]   BIGINT           '$.plu_b',
-                [qty_b]   INT              '$.qty_b',
-                [price_b] DECIMAL(18,2)    '$.price_b',
-                [disc_b]  VARCHAR(20)      '$.disc_b'
-            ) AS d;
+                [qty_crt] INT               '$.qty_crt',
+                [qty_pcs] INT               '$.qty_pcs',
+                [plu]     BIGINT            '$.plu',
+                [barcode] VARCHAR(50)       '$.barcode',
+                [price]   DECIMAL(18,2)     '$.price',
+                [uom]     VARCHAR(20)       '$.uom',
+                [cnv]     VARCHAR(20)       '$.cnv',
+                [disc_a]  VARCHAR(20)       '$.disc_a',
+                [remark]  NVARCHAR(200)     '$.remark',
+                [net]     DECIMAL(18,2)     '$.net',
+                [ppnbm]   DECIMAL(18,2)     '$.ppnbm',
+                [total]   BIGINT            '$.total',
+                [plu_b]   BIGINT            '$.plu_b',
+                [qty_b]   INT               '$.qty_b',
+                [price_b] DECIMAL(18,2)     '$.price_b',
+                [disc_b]  VARCHAR(20)       '$.disc_b'
+            ) AS d
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM [dbo].[Alfamart_PO_Header] h2
+                JOIN [dbo].[Alfamart_PO_Detail] ex
+                    ON ex.[header_id] = h2.[id]
+                WHERE h2.[po_no] = hdr.[po_no]
+                  AND ex.[plu]   = d.[plu]
+            );
             SET @cntDetail = @@ROWCOUNT;
 
             PRINT 'Data di-INSERT: Response id=' + CAST(@responseId AS VARCHAR(20))
