@@ -1,0 +1,15 @@
+SELECT TOP (1000) [SOLD_TO_NO]
+
+      ,[SHIP_TO_NO]
+
+      ,[ALFAMART_SOLD_NO]
+
+      ,[DESCRIPTION]
+
+      ,[TEXT]
+
+      ,[STATUS]
+
+  FROM [ERP_INTERNATIONAL_SAP].[dbo].[ALFAMART_CUSTOMER]
+
+ 

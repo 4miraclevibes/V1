@@ -911,6 +911,8 @@ class RPTStatementParser {
             return /^\d+\s+\d{6,}/.test(trimmed);
         });
 
+        const reportDate = this.result.headerInfo.reportDate || '';
+
         transactionLines.forEach(line => {
             const trimmed = line.trim();
             const tokens = trimmed.split(/\s+/);
@@ -936,7 +938,10 @@ class RPTStatementParser {
             const amountRaw = tokens[idrIndex + 1] || '0';
             const amountValue = parseFloat(amountRaw.replace(/,/g, '')) || 0;
 
-            const transactionDate = tokens[idrIndex + 2] || '';
+            const txnDateFromLine = tokens[idrIndex + 2] || '';
+            // Untuk RPT, transaction_date disamakan dengan tanggal header (pojok kanan atas: TANGGAL)
+            // supaya konsisten meskipun kolom TGL. TXN di detail bisa berbeda.
+            const transactionDate = reportDate || txnDateFromLine;
             const transactionTime = tokens[idrIndex + 3] || '';
             const location = tokens[idrIndex + 4] || '';
 

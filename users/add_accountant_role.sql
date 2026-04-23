@@ -11,11 +11,11 @@ GO
 -- Update data yang tidak sesuai (jika ada role selain yang diizinkan)
 UPDATE [dbo].[MP_USER_NEW] 
 SET [role] = 'FSS' 
-WHERE [role] NOT IN ('FINANCE', 'ADMIN', 'IT', 'BA', 'FSS', 'ACCOUNTANT')
+WHERE [role] NOT IN ('FINANCE', 'ADMIN', 'IT', 'BA', 'FSS', 'ACCOUNTANT', 'PO')
 GO
 
 -- Add constraint baru dengan role ACCOUNTANT
-ALTER TABLE [dbo].[MP_USER_NEW]  WITH CHECK ADD  CONSTRAINT [CK_MP_USER_NEW_Role] CHECK  (([role]='FINANCE' OR [role]='ADMIN' OR [role]='IT' OR [role]='BA' OR [role]='FSS' OR [role]='ACCOUNTANT'))
+ALTER TABLE [dbo].[MP_USER_NEW]  WITH CHECK ADD  CONSTRAINT [CK_MP_USER_NEW_Role] CHECK  (([role]='FINANCE' OR [role]='ADMIN' OR [role]='IT' OR [role]='BA' OR [role]='FSS' OR [role]='ACCOUNTANT' OR [role]='PO'))
 GO
 
 ALTER TABLE [dbo].[MP_USER_NEW] CHECK CONSTRAINT [CK_MP_USER_NEW_Role]

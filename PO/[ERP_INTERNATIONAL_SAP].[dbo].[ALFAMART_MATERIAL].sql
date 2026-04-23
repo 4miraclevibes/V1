@@ -1,0 +1,5 @@
+SELECT TOP (1000) [material_no]
+      ,[ALFAMART_no]
+      ,[material_desc]
+      ,[ALFAMART_desc]
+  FROM [ERP_INTERNATIONAL_SAP].[dbo].[ALFAMART_MATERIAL]
