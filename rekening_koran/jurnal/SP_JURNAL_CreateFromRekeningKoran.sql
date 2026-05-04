@@ -15,8 +15,10 @@
 --   - approved_by = 'digicare@greenfieldsdairy.com'
 -- Row yang tidak memenuhi syarat tidak diproses dan isJurnal tetap tidak di-update (tetap 0/NULL).
 --
--- no_urut: per (trx_date, AccountName) mulai 0001, 0002, ...
--- reference: {ddmmyyyy}-{no_urut} contoh 26012026-0001
+-- no_urut / reference: unik per 1 baris MP_REKENING_KORAN (1 RK = 2 baris jurnal = reference sama).
+-- Penomoran per trx_date saja (ORDER BY id), TIDAK reset per AccountName — supaya tidak ada
+-- duplikat reference di satu export (contoh: dua AccountName beda tidak boleh sama-sama 0001).
+-- reference: {ddmmyyyy}-{no_urut} contoh 23042026-0001
 --
 -- Baris 1: posting_key '40', customer NULL, account 1113030303/1113030300, customer2 NULL
 -- Baris 2: posting_key '15', customer = btp, account NULL, customer2 = btp
@@ -72,8 +74,8 @@ BEGIN
                 ISNULL([desc], '') AS [desc],
                 ISNULL(Amount, 0) AS Amount,
                 ISNULL(BankType, '') AS BankType,
-                -- no_urut per (trx_date, AccountName), 4 digit
-                RIGHT('0000' + CAST(ROW_NUMBER() OVER (PARTITION BY trx_date, ISNULL(AccountName, '') ORDER BY id) AS VARCHAR(4)), 4) AS no_urut
+                -- no_urut: per trx_date, urut id (satu nomor per baris RK; 2 baris jurnal memakai nomor yang sama)
+                RIGHT('0000' + CAST(ROW_NUMBER() OVER (PARTITION BY trx_date ORDER BY id) AS VARCHAR(4)), 4) AS no_urut
             FROM [dbo].[MP_REKENING_KORAN]
             WHERE (isJurnal = 0 OR isJurnal IS NULL)
               AND (@Id IS NULL OR id = @Id)
@@ -98,12 +100,29 @@ BEGIN
                         THEN LTRIM(RTRIM(LEFT(header_source, 25 - CHARINDEX(' ', REVERSE(LEFT(header_source, 25))))))
                     ELSE LTRIM(RTRIM(LEFT(header_source, 25)))
                 END AS document_header_text,
-                -- text = desc 50 char dari belakang, potong di space terakhir
+                -- text = 50 char terakhir dari desc.
+                -- Jika awal potongan jatuh di tengah kata, buang kata terpotong tsb (mulai dari spasi pertama).
                 CASE
-                    WHEN LEN(RIGHT([desc], 50)) < 50 THEN LTRIM(RTRIM(RIGHT([desc], 50)))
-                    WHEN CHARINDEX(' ', REVERSE(RIGHT([desc], 50))) > 0
-                        THEN LTRIM(RTRIM(RIGHT([desc], 50 - CHARINDEX(' ', REVERSE(RIGHT([desc], 50))))))
-                    ELSE LTRIM(RTRIM(RIGHT([desc], 50)))
+                    WHEN LEN(LTRIM(RTRIM(ISNULL([desc], '')))) <= 50
+                        THEN LTRIM(RTRIM(ISNULL([desc], '')))
+                    ELSE
+                        CASE
+                            -- Posisi potong tepat di batas kata (char sebelum potongan = spasi) -> pakai langsung.
+                            WHEN SUBSTRING(
+                                    LTRIM(RTRIM(ISNULL([desc], ''))),
+                                    LEN(LTRIM(RTRIM(ISNULL([desc], '')))) - 50,
+                                    1
+                                 ) = ' '
+                                THEN LTRIM(RTRIM(RIGHT(LTRIM(RTRIM(ISNULL([desc], ''))), 50)))
+                            -- Potong di tengah kata -> cari spasi pertama di dalam potongan 50 char.
+                            WHEN CHARINDEX(' ', RIGHT(LTRIM(RTRIM(ISNULL([desc], ''))), 50)) > 0
+                                THEN LTRIM(RTRIM(SUBSTRING(
+                                    RIGHT(LTRIM(RTRIM(ISNULL([desc], ''))), 50),
+                                    CHARINDEX(' ', RIGHT(LTRIM(RTRIM(ISNULL([desc], ''))), 50)) + 1,
+                                    50
+                                )))
+                            ELSE LTRIM(RTRIM(RIGHT(LTRIM(RTRIM(ISNULL([desc], ''))), 50)))
+                        END
                 END AS text_50
             FROM rk
         )
@@ -123,8 +142,8 @@ BEGIN
                 ELSE document_header_text
             END AS document_header_text,
             text_50,
-            -- reference = ddmmyyyy-HHmmss (jam menit detik tanpa pemisah)
-            FORMAT(trx_date, 'ddMMyyyy') + '-' + FORMAT(ISNULL(created_at, GETDATE()), 'HHmmss') AS reference,
+            -- reference = ddmmyyyy-0001 (4 digit no_urut per trx_date + AccountName)
+            FORMAT(trx_date, 'ddMMyyyy') + '-' + no_urut AS reference,
             -- company_code, account, profit_center by AccountNumber & BankType (sesuai flow)
             CASE WHEN AccountNumber = '0053061777' THEN 'id93' ELSE 'id92' END AS company_code,
             CASE

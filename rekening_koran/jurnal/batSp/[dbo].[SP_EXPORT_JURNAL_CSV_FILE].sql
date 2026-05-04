@@ -30,7 +30,7 @@ BEGIN
     DECLARE @shortStamp VARCHAR(20);
     DECLARE @fileName VARCHAR(500);
     SET @shortStamp = RIGHT(CAST(DATEDIFF(SECOND, '1970-01-01', GETUTCDATE()) AS VARCHAR(20)), 10);
-    SET @fileName = 'C:\REKENINGKORAN\jurnal_' + @shortStamp + '.csv';
+    SET @fileName = 'C:\REKENINGKORAN\GDI_MAULANAP_' + @shortStamp + '.csv';
 
     -- Pastikan folder ada
     EXEC master..xp_cmdshell 'if not exist C:\REKENINGKORAN mkdir C:\REKENINGKORAN';
@@ -99,5 +99,5 @@ GO
 PRINT 'SP_EXPORT_JURNAL_CSV_FILE created.';
 PRINT 'Usage: EXEC SP_EXPORT_JURNAL_CSV_FILE @StartDate = ''2025-01-01'', @EndDate = ''2025-01-31'';';
 PRINT '       EXEC SP_EXPORT_JURNAL_CSV_FILE @Id = 12345;  -- export per 1 baris RK (source_rk_id)';
-PRINT 'Output: C:\REKENINGKORAN\jurnal_{timestamp}.csv';
+PRINT 'Output: C:\REKENINGKORAN\GDI_MAULANAP_{timestamp}.csv';
 GO

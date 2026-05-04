@@ -1,7 +1,8 @@
 --bisnis proses--
 
 jadiii di table jurnal ini ntar semuanya akan di ambil dari value table MP_REKENING_KORAN , setiap 1 row di rekening koran akan di create 2 row dengan id yg 
-ber beda tapi nomor urut sama untuk trx_date dan CustomerName yang sama, no_urut di mulai dari 0001 dan seterus nya untuk trx_date dan CustomerName yang sama 
+ber beda tapi nomor urut sama (satu pasang jurnal). no_urut / reference harus unik per baris RK (supaya di SAP/export tidak bentrok): per trx_date diurutkan id,
+0001, 0002, ... (tidak reset per AccountName — kalau reset per AccountName, dua lawan transaksi beda nama di tanggal sama bisa sama-sama 0001).
 setiap udah di create di jurnal, MP_REKENING_KORAN akan di update column isJurnal nya jadi true atau 1 karna type data nya bit, yang perlu kamu bikin store procedure 
 untuk melakukan ini dan create table nya, untuk row pertama dan kedua apa isi nya, itu udah saya bikin double double untuk column2 nya, 
 yang di atas nya adalah row pertama dan di bawah nya adalah row kedua
@@ -36,17 +37,15 @@ currency -> DEFAULT 'IDR'
 country_grouping -> DEFAULT NULL
 country_grouping -> DEFAULT NULL
 
-reference -> {ddmmyyyy}-{4 digit no rurut} itu di concate ya, 4 digit no urut itu di ambil 'trx_date' dan 'AccountName' jadiii
-                         per tgl 'trx_date' itu dan 'AccountName' nya sama itu akan di mulai dari '0001' dan seterus nya, AccountName 
-                         dan trx_date nya harus sama ya, misal pada tangga 01-01-2026 itu ada 80 row dengan AccountName yang sama,
-                         berarti itu 0001 - 0080 dan di tgl yg sama dgn AccountName berbeda itu akan di mulai lagi 0001 sampai berapa row pada saat itu
-                         dan pada tanggal selanjut nya akan di lakukan juga demikian sampai ber ulang
+reference -> {ddmmyyyy}-{4 digit no urut} di-concat. Satu baris RK = satu nomor urut; baris jurnal ke-1 dan ke-2 dari RK yang sama memakai reference yang sama.
+                         Nomor urut: per tanggal trx_date, naik per urutan id (semua row hari itu), 0001, 0002, ... sehingga reference unik per transaksi RK
+                         (hanya 2 baris CSV yang boleh punya reference identik). Tanggal berikutnya penomoran dimulai lagi dari 0001.
 
 material -> DEFAULT NULL
 material -> DEFAULT NULL
 
-document_header_text -> btn max 25 char , cut aja di space terakhir paling dekat dengan 25 char, jadi biar ga ada yang kepotong
-document_header_text -> btn max 25 char , cut aja di space terakhir paling dekat dengan 25 char, jadi biar ga ada yang kepotong
+document_header_text -> sumber dari btn, baca dari kiri ke kanan.
+                        Ambil maksimal 25 char. Kalau char ke-25 bukan spasi, cari spasi terakhir sebelum char ke-25 lalu cut di situ.
 
 posting_key -> DEFAULT '40'
 posting_key -> DEFAULT '15'
@@ -69,8 +68,9 @@ value_date ->trx_date
 assignment -> DEFAULT '3000'
 assignment -> DEFAULT '3000'
 
-text -> desc 50 char dari belakang, space terakhir terdekat potong aja biar ga ada yang kepotong
-text -> desc 50 char dari belakang, space terakhir terdekat potong aja biar ga ada yang kepotong
+text -> ambil 50 char terakhir dari desc.
+        Kalau awal potongan jatuh di tengah kata, buang bagian depan sampai spasi pertama
+        (jadi text dimulai dari kata utuh, tidak boleh mulai dari sisa kata seperti "EH").
 
 profit_center -> if AccountNumber '0053061777' value nya '9300DDJT0A' else '9201DQDQ01'
 profit_center -> if AccountNumber '0053061777' value nya '9300DDJT0A' else '9201DQDQ01'
