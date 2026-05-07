@@ -111,8 +111,10 @@ BEGIN
             Status IN ('FAIR', 'GOOD', 'EXCELLENT')
             -- Hanya yang belum approved
             AND IsApproved = 0
-            -- Pastikan BTP tidak NULL (optional, tergantung requirement)
-            -- AND BTP IS NOT NULL AND BTP <> '';
+            -- Hanya transaksi CR yang diproses
+            AND ISNULL(TransactionType, 'CR') = 'CR'
+            -- BTP wajib ditemukan/terisi (tidak boleh NULL/kosong)
+            AND ISNULL(LTRIM(RTRIM(BTP)), '') <> '';
         
         SET @RowsInserted = @@ROWCOUNT;
         PRINT '✅ Inserted ' + CAST(@RowsInserted AS VARCHAR) + ' rows to MP_REKENING_KORAN';
@@ -134,7 +136,11 @@ BEGIN
                 [ModifiedAt] = GETDATE()
             WHERE 
                 Status IN ('FAIR', 'GOOD', 'EXCELLENT')
-                AND IsApproved = 0;
+                AND IsApproved = 0
+                -- Samakan filter dengan proses INSERT agar DB tidak ikut ter-approve
+                AND ISNULL(TransactionType, 'CR') = 'CR'
+                -- Samakan filter BTP: hanya yang BTP valid/terisi
+                AND ISNULL(LTRIM(RTRIM(BTP)), '') <> '';
             
             SET @RowsUpdated = @@ROWCOUNT;
             PRINT '✅ Updated ' + CAST(@RowsUpdated AS VARCHAR) + ' rows in BTP_REVIEW';
