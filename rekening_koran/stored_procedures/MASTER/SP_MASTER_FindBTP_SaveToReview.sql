@@ -1999,6 +1999,31 @@ BEGIN
         PRINT '⚠️  Missing transactions saved: ' + CAST(@MissingCount AS VARCHAR);
         PRINT '   → These were not processed by bank-specific SPs';
     END
+
+    -- ═══════════════════════════════════════════════════════════════════════
+    -- Status normalization guardrail:
+    -- Jangan izinkan status FAIR/GOOD/EXCELLENT jika BTP atau CustomerName kosong
+    -- ═══════════════════════════════════════════════════════════════════════
+    UPDATE br
+    SET
+        br.Status = CASE
+            WHEN ISNULL(LTRIM(RTRIM(br.BTP)), '') = '' THEN 'NO_BTP'
+            WHEN ISNULL(LTRIM(RTRIM(br.CustomerName)), '') = '' THEN 'NO_PATTERN'
+            ELSE br.Status
+        END,
+        br.Message = CASE
+            WHEN ISNULL(LTRIM(RTRIM(br.BTP)), '') = '' THEN 'BTP tidak ditemukan/kosong - tidak boleh auto approve'
+            WHEN ISNULL(LTRIM(RTRIM(br.CustomerName)), '') = '' THEN 'BTN/CustomerName tidak ditemukan - tidak boleh auto approve'
+            ELSE br.Message
+        END,
+        br.IsApproved = 0
+    FROM dbo.BTP_REVIEW br
+    WHERE br.BatchID = @BatchID
+      AND br.Status IN ('FAIR', 'GOOD', 'EXCELLENT')
+      AND (
+          ISNULL(LTRIM(RTRIM(br.BTP)), '') = ''
+          OR ISNULL(LTRIM(RTRIM(br.CustomerName)), '') = ''
+      );
     
     -- ═══════════════════════════════════════════════════════════════════════
     -- Return results from BTP_REVIEW
