@@ -45,7 +45,7 @@ BEGIN
                 REPLACE(ISNULL([customer], ''), '|', ' '),
                 REPLACE(ISNULL([account], ''), '|', ' '),
                 REPLACE(ISNULL([special], ''), '|', ' '),
-                ISNULL(CAST(CAST([amount] AS INT) AS NVARCHAR(50)), ''),
+                ISNULL(CAST(CAST(ROUND([amount], 0) AS BIGINT) AS NVARCHAR(50)), ''),
                 ISNULL(CONVERT(NVARCHAR(10), [value_date], 104), ''),
                 REPLACE(ISNULL([assignment], ''), '|', ' '),
                 REPLACE(ISNULL([text], ''), '|', ' '),
