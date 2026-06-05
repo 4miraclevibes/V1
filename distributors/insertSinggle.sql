@@ -10,7 +10,6 @@ CREATE TABLE [Distributors] (
 
 );
  
-INSERT INTO [distributors] ([distributor], [sub_region_id]) VALUES
+INSERT INTO [distributors] ([Distributor], SubRegionId) VALUES
 
-('COOLKAS', '1'),
- 
+('PT. DUNKINDO CIPTA RAYA', '6')

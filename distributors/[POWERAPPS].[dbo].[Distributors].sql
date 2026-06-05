@@ -1,0 +1,7 @@
+SELECT TOP (1000) [Id]
+      ,[Distributor]
+      ,[SubRegionId]
+      ,[code]
+      ,[DistributorScm]
+      ,[status]
+  FROM [POWERAPPS].[dbo].[Distributors]

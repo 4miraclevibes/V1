@@ -26,6 +26,10 @@ SELECT [code]
       ,[blok_release]
       ,[btg]
       ,[cutting]
+      ,[accountCap]
+      ,[shop_type]
+      ,[shopper_type]
+      ,[is_va]
   FROM [POWERAPPS].[dbo].[MP_CUSTOMER_NEW]
 
 -- Set credit_limit menjadi NULL terlebih dahulu

@@ -41,6 +41,9 @@ BEGIN
     DECLARE @ApprovedAt DATETIME = GETDATE();
     DECLARE @RowsInserted INT = 0;
     DECLARE @RowsUpdated INT = 0;
+    DECLARE @InsertedReviewIDs TABLE (
+        ID BIGINT PRIMARY KEY
+    );
     
     BEGIN TRY
         BEGIN TRANSACTION;
@@ -51,6 +54,20 @@ BEGIN
         
         PRINT '🔄 Inserting approved transactions to MP_REKENING_KORAN...';
         
+        -- Snapshot ID kandidat agar INSERT dan UPDATE selalu konsisten pada baris yang sama
+        INSERT INTO @InsertedReviewIDs (ID)
+        SELECT review.ID
+        FROM [POWERAPPS].[dbo].[BTP_REVIEW] AS review
+        WHERE 
+            -- Hanya yang status FAIR, GOOD, atau EXCELLENT
+            review.Status IN ('FAIR', 'GOOD', 'EXCELLENT')
+            -- Hanya yang belum approved
+            AND review.IsApproved = 0
+            -- Hanya transaksi CR yang diproses
+            AND ISNULL(review.TransactionType, 'CR') = 'CR'
+            -- BTP wajib ditemukan/terisi (tidak boleh NULL/kosong)
+            AND ISNULL(LTRIM(RTRIM(review.BTP)), '') <> '';
+
         INSERT INTO [POWERAPPS].[dbo].[MP_REKENING_KORAN] (
             [trx_date],
             [created_at],
@@ -105,16 +122,9 @@ BEGIN
             -- approved_by dari parameter @ApprovedBy (Power Apps: User().Email)
             @ApprovedBy AS [approved_by]
             
-        FROM [POWERAPPS].[dbo].[BTP_REVIEW]
-        WHERE 
-            -- Hanya yang status FAIR, GOOD, atau EXCELLENT
-            Status IN ('FAIR', 'GOOD', 'EXCELLENT')
-            -- Hanya yang belum approved
-            AND IsApproved = 0
-            -- Hanya transaksi CR yang diproses
-            AND ISNULL(TransactionType, 'CR') = 'CR'
-            -- BTP wajib ditemukan/terisi (tidak boleh NULL/kosong)
-            AND ISNULL(LTRIM(RTRIM(BTP)), '') <> '';
+        FROM [POWERAPPS].[dbo].[BTP_REVIEW] AS inserted_source
+        INNER JOIN @InsertedReviewIDs AS inserted_ids
+            ON inserted_ids.ID = inserted_source.ID;
         
         SET @RowsInserted = @@ROWCOUNT;
         PRINT '✅ Inserted ' + CAST(@RowsInserted AS VARCHAR) + ' rows to MP_REKENING_KORAN';
@@ -128,19 +138,15 @@ BEGIN
         BEGIN
             PRINT '🔄 Updating approval status in BTP_REVIEW...';
             
-            UPDATE [POWERAPPS].[dbo].[BTP_REVIEW]
+            UPDATE review
             SET 
-                [IsApproved] = 1,
-                [ApprovedBy] = @ApprovedBy,
-                [ApprovedAt] = @ApprovedAt,
-                [ModifiedAt] = GETDATE()
-            WHERE 
-                Status IN ('FAIR', 'GOOD', 'EXCELLENT')
-                AND IsApproved = 0
-                -- Samakan filter dengan proses INSERT agar DB tidak ikut ter-approve
-                AND ISNULL(TransactionType, 'CR') = 'CR'
-                -- Samakan filter BTP: hanya yang BTP valid/terisi
-                AND ISNULL(LTRIM(RTRIM(BTP)), '') <> '';
+                review.[IsApproved] = 1,
+                review.[ApprovedBy] = @ApprovedBy,
+                review.[ApprovedAt] = @ApprovedAt,
+                review.[ModifiedAt] = GETDATE()
+            FROM [POWERAPPS].[dbo].[BTP_REVIEW] AS review
+            INNER JOIN @InsertedReviewIDs AS inserted_ids
+                ON inserted_ids.ID = review.ID;
             
             SET @RowsUpdated = @@ROWCOUNT;
             PRINT '✅ Updated ' + CAST(@RowsUpdated AS VARCHAR) + ' rows in BTP_REVIEW';

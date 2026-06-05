@@ -2,17 +2,17 @@ USE [POWERAPPS];
 GO
 
 /*
-    rollback_isapproved_wira_eka.sql
+    rollback_isapproved_null_btp_one_batch.sql
     Tujuan:
-    - Reset approval di BTP_REVIEW untuk data CustomerName LIKE '%WIRA EKA%'
-    - IsApproved -> 0, ApprovedBy/ApprovedAt -> NULL
+    - Reset approval di BTP_REVIEW untuk 1 batch tertentu
+    - Khusus data dengan BTP NULL/kosong dan IsApproved = 1
 
-    Catatan:
-    - Script ini TIDAK menghapus data MP_REKENING_KORAN.
-    - Ganti @CustomerNameFilter jika perlu scope berbeda.
+    Scope:
+    - BatchID = 'BATCH_20260528_032302'
+    - Tidak menghapus data di MP_REKENING_KORAN
 */
 
-DECLARE @CustomerNameFilter NVARCHAR(255) = '%VINCENTIUS ERICK%';
+DECLARE @BatchID NVARCHAR(100) = 'BATCH_20260528_032302';
 
 BEGIN TRY
     BEGIN TRANSACTION;
@@ -20,25 +20,27 @@ BEGIN TRY
     DECLARE @RowsToReset INT = 0;
     DECLARE @RowsUpdated INT = 0;
 
-  -- Preview data yang akan di-reset
+    -- Preview data yang akan di-reset
     SELECT
         ID,
         BatchID,
-        CustomerName,
-        BTP,
+        TransactionID,
         Status,
         TransactionType,
+        BTP,
         IsApproved,
         ApprovedBy,
         ApprovedAt
     FROM [dbo].[BTP_REVIEW]
-    WHERE CustomerName LIKE @CustomerNameFilter
-      AND IsApproved = 1;
+    WHERE BatchID = @BatchID
+      AND IsApproved = 1
+      AND ISNULL(LTRIM(RTRIM(BTP)), '') = '';
 
     SELECT @RowsToReset = COUNT(*)
     FROM [dbo].[BTP_REVIEW]
-    WHERE CustomerName LIKE @CustomerNameFilter
-      AND IsApproved = 1;
+    WHERE BatchID = @BatchID
+      AND IsApproved = 1
+      AND ISNULL(LTRIM(RTRIM(BTP)), '') = '';
 
     -- Reset approval
     UPDATE [dbo].[BTP_REVIEW]
@@ -47,19 +49,20 @@ BEGIN TRY
         ApprovedBy = NULL,
         ApprovedAt = NULL,
         ModifiedAt = GETDATE()
-    WHERE CustomerName LIKE @CustomerNameFilter
-      AND IsApproved = 1;
+    WHERE BatchID = @BatchID
+      AND IsApproved = 1
+      AND ISNULL(LTRIM(RTRIM(BTP)), '') = '';
 
     SET @RowsUpdated = @@ROWCOUNT;
 
     COMMIT TRANSACTION;
 
     SELECT
-        @CustomerNameFilter AS CustomerNameFilter,
+        @BatchID AS BatchID,
         @RowsToReset AS RowsFoundBeforeReset,
         @RowsUpdated AS RowsUpdated,
         GETDATE() AS ResetAt,
-        'Reset IsApproved VINCENTIUS ERICK berhasil' AS Message;
+        'Rollback IsApproved untuk BTP null/kosong (single batch) berhasil' AS Message;
 END TRY
 BEGIN CATCH
     IF @@TRANCOUNT > 0
@@ -70,7 +73,7 @@ BEGIN CATCH
     DECLARE @ErrorState INT = ERROR_STATE();
 
     SELECT
-        @CustomerNameFilter AS CustomerNameFilter,
+        @BatchID AS BatchID,
         0 AS RowsUpdated,
         NULL AS ResetAt,
         @ErrorMessage AS ErrorMessage;
@@ -78,3 +81,4 @@ BEGIN CATCH
     RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
 END CATCH;
 GO
+
