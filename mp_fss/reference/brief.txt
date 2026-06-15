@@ -1,0 +1,122 @@
+================================================================================
+BRIEF: Replace MP_FSS_KC dari reference (KC + DIRECT + OD)
+================================================================================
+
+TUJUAN
+------
+Replace penuh data [POWERAPPS].[dbo].[MP_FSS_KC] dari tiga tabel reference
+(bukan update parsial).
+
+Setelah replace, MP_FSS_KC berisi gabungan:
+  1. Semua baris valid dari MP_FSS_KC_REFERENCE_09_06_2026
+  2. Semua baris dari MP_FSS_DIRECT_REFERENCE_09_06_2026
+  3. Semua baris valid dari MP_FSS_OD_REFERENCE_09_06_2026
+
+
+SUMBER & TARGET
+---------------
+Sumber 1 : [POWERAPPS].[dbo].[MP_FSS_KC_REFERENCE_09_06_2026]
+           CSV: KC.csv
+
+Sumber 2 : [POWERAPPS].[dbo].[MP_FSS_DIRECT_REFERENCE_09_06_2026]
+
+Sumber 3 : [POWERAPPS].[dbo].[MP_FSS_OD_REFERENCE_09_06_2026]
+
+Target   : [POWERAPPS].[dbo].[MP_FSS_KC]
+
+
+ALUR REPLACE
+------------
+1. DELETE semua baris lama di MP_FSS_KC
+2. INSERT baris dari MP_FSS_KC_REFERENCE_09_06_2026
+3. INSERT baris dari MP_FSS_DIRECT_REFERENCE_09_06_2026
+4. INSERT baris dari MP_FSS_OD_REFERENCE_09_06_2026
+
+
+================================================================================
+MAPPING KOLOM -> MP_FSS_KC
+================================================================================
+
+Kolom target MP_FSS_KC:
+  distributor, market_chanel, customer_code, customer_name, kabupaten_kota,
+  fss_name, fss_code, fss_type, sales_executive, aspm,
+  status, desc, created_at, updated_at, customer_id, master_fss_id
+
+
+--- SUMBER 1: MP_FSS_KC_REFERENCE_09_06_2026 ---
+
+Kolom ada di reference -> langsung mapping:
+  distributor, market_chanel, customer_code, customer_name, kabupaten_kota,
+  fss_name, fss_code, fss_type, sales_executive, aspm
+
+Aturan khusus KC:
+  market_chanel kosong (NULL / '') -> SKIP, baris tidak di-insert
+  sales_executive kosong           -> 'no salesman'
+
+
+--- SUMBER 2: MP_FSS_DIRECT_REFERENCE_09_06_2026 ---
+
+Kolom ada di reference -> langsung mapping:
+  distributor, customer_code, customer_name, kabupaten_kota,
+  fss_name, fss_type, sales_executive, aspm
+
+Kolom TIDAK ada di reference DIRECT -> assign 'UNDEFINE':
+  market_chanel    -> 'UNDEFINE'
+  fss_code         -> 'UNDEFINE'
+
+Aturan khusus DIRECT:
+  sales_executive kosong -> 'no salesman'
+
+
+--- SUMBER 3: MP_FSS_OD_REFERENCE_09_06_2026 ---
+
+Kolom ada di reference -> langsung mapping (sama seperti KC):
+  distributor, market_chanel, customer_code, customer_name, kabupaten_kota,
+  fss_name, fss_code, fss_type, sales_executive, aspm
+
+Aturan khusus OD (sama seperti KC):
+  market_chanel kosong (NULL / '') -> SKIP, baris tidak di-insert
+  sales_executive kosong           -> 'no salesman'
+
+
+--- DEFAULT (semua sumber, kolom tidak ada di reference) ---
+
+  status         = 'active'
+  desc           = NULL
+  created_at     = GETDATE()
+  updated_at     = GETDATE()
+  customer_id    = NULL
+  master_fss_id  = NULL
+
+
+================================================================================
+RINGKASAN PERBEDAAN KC vs DIRECT vs OD
+================================================================================
+
+| Kolom MP_FSS_KC  | KC Reference | DIRECT Reference | OD Reference   |
+|------------------|--------------|------------------|----------------|
+| distributor      | dari ref     | dari ref         | dari ref       |
+| market_chanel    | dari ref     | UNDEFINE         | dari ref       |
+| customer_code    | dari ref     | dari ref         | dari ref       |
+| customer_name    | dari ref     | dari ref         | dari ref       |
+| kabupaten_kota   | dari ref     | dari ref         | dari ref       |
+| fss_name         | dari ref     | dari ref         | dari ref       |
+| fss_code         | dari ref     | UNDEFINE         | dari ref       |
+| fss_type         | dari ref     | dari ref         | dari ref       |
+| sales_executive  | ref/default  | ref/default      | ref/default    |
+| aspm             | dari ref     | dari ref         | dari ref       |
+| status           | active       | active           | active         |
+| desc             | NULL         | NULL             | NULL           |
+| created_at       | GETDATE()    | GETDATE()        | GETDATE()      |
+| updated_at       | GETDATE()    | GETDATE()        | GETDATE()      |
+| customer_id      | NULL         | NULL             | NULL           |
+| master_fss_id    | NULL         | NULL             | NULL           |
+
+Skip market_chanel kosong: KC = ya | DIRECT = tidak (pakai UNDEFINE) | OD = ya
+
+
+SCRIPT SQL
+----------
+REPLACE_MP_FSS_KC_FROM_REFERENCE.sql
+
+================================================================================

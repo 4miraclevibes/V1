@@ -1,12 +1,13 @@
 ================================================================================
-BRIEF: Sync customer dari reference ke MP_CUSTOMER_NEW
+BRIEF: Refresh customer dari reference ke MP_CUSTOMER_NEW
 ================================================================================
 
 TUJUAN
 ------
-Sinkron data dari tabel reference ke MP_CUSTOMER_NEW:
+Data aktif di MP_CUSTOMER_NEW HANYA dari reference:
   - INSERT baris baru yang belum ada
-  - UPDATE createdate untuk data existing yang match reference
+  - UPDATE createdate + account_trading_term untuk data existing yang match reference (kolom lain tetap)
+  - DELETE baris lama yang triple-nya tidak ada di reference
 
 
 SUMBER & TARGET
@@ -21,9 +22,10 @@ ATURAN UTAMA
    - Jika kombinasi customer_code + distributor_name + customer_name belum ada → INSERT full row.
    - Jika ketiga kolom sudah sama persis → tidak insert ulang (kolom lain tidak di-overwrite).
 
-2. UPDATE createdate (semua existing yang match)
+2. UPDATE createdate + account_trading_term (semua existing yang match)
    - Untuk row di MP_CUSTOMER_NEW yang match reference (code + distributor_name + customer_name)
      → UPDATE createdate dari customer_createdate reference.
+     → UPDATE account_trading_term dari reference.
    - updated_at ikut di-set GETDATE().
    - Kolom lain existing TIDAK di-update.
 
@@ -39,7 +41,12 @@ ATURAN UTAMA
    Contoh UPDATE createdate (sudah ada):
    - code A + distributor B + nama X sudah ada → createdate diperbaiki dari reference
 
-4. Duplikat di file reference
+4. DELETE (data di luar reference)
+   - Row di MP_CUSTOMER_NEW yang TIDAK match reference (code + distributor + name)
+     → dihapus.
+   - Row yang match reference → tetap ada (kolom lengkap dari data lama dipertahankan).
+
+5. Duplikat di file reference
    - Duplikat = customer_code + distributor_name + customer_name sama persis.
    - Hanya baris pertama yang dipakai.
    - Salah satu kolom beda → bukan duplikat.
@@ -54,7 +61,8 @@ INSERT (baris baru):
   (is_va tidak ada di reference → tetap NULL di MP_CUSTOMER_NEW)
 
 UPDATE (existing only):
-  customer_createdate → createdate
+  customer_createdate   → createdate
+  account_trading_term    → account_trading_term
 
 
 MAPPING RELASI (lookup, untuk INSERT)
@@ -78,16 +86,17 @@ is_va                   → tidak diisi dari reference (NULL)
 INSERT baru:
   status = 'active', created_at = GETDATE(), updated_at = GETDATE()
 
-UPDATE createdate:
-  hanya createdate + updated_at yang berubah
+UPDATE existing:
+  createdate, account_trading_term, updated_at yang berubah
 
 
 RINGKASAN ALUR
 --------------
 1. Ambil + dedupe reference (customer_code + distributor_name + customer_name)
-2. UPDATE createdate semua existing yang match
+2. UPDATE createdate + account_trading_term semua existing yang match
 3. INSERT baris baru yang belum ada
-4. Log insert + lookup miss
+4. DELETE semua row yang triple-nya tidak ada di reference
+5. Log insert + lookup miss
 
 
 SCRIPT SQL (folder reference)

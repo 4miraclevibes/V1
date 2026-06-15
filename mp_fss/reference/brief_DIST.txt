@@ -1,0 +1,43 @@
+================================================================================
+BRIEF: Replace MP_FSS_DIST dari reference
+================================================================================
+
+TUJUAN
+------
+Replace penuh data [POWERAPPS].[dbo].[MP_FSS_DIST] dari tabel reference
+(terpisah dari MP_FSS_KC).
+
+
+SUMBER & TARGET
+---------------
+Sumber : [POWERAPPS].[dbo].[MP_FSS_DIST_REFERENCE_09_06_2026]
+Target : [POWERAPPS].[dbo].[MP_FSS_DIST]
+
+
+ALUR REPLACE
+------------
+1. DELETE semua baris lama di MP_FSS_DIST
+2. INSERT semua baris dari reference
+
+
+MAPPING KOLOM
+-------------
+Dari reference -> MP_FSS_DIST:
+  distributor, region, fresh_dry, market_chanel (reference) -> market_channel (target)
+  fss_name, fss_code, fss_type, aspm
+
+Default (tidak dari reference):
+  status     = 'active'
+  desc       = NULL
+  created_at = GETDATE()
+  updated_at = GETDATE()
+
+Kolom reference kosong (NULL / '') -> 'UNDEFINE'
+
+
+SCRIPT SQL
+----------
+1. ../CREATE_OR_ALTER_MP_FSS_DIST.sql   (struktur tabel, jalankan sekali jika perlu)
+2. REPLACE_MP_FSS_DIST_FROM_REFERENCE.sql
+
+================================================================================

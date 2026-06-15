@@ -11,7 +11,35 @@ GO
 -- View lengkap untuk MP_CUSTOMER_NEW dengan semua relasi
 -- Dedupe: 1 baris per customer_code -> ambil yang paling baru (updated_at DESC, id DESC)
 -- Kecuali distributor DIRECT dan KACS: semua baris tetap ditampilkan (tanpa dedupe)
+--
+-- Optimasi: filter ID dulu (CTE), baru JOIN relasi -> hindari scan penuh + OR di akhir
 CREATE OR ALTER VIEW [dbo].[VW_MP_CUSTOMER] AS
+WITH [EligibleCustomer] AS (
+    -- DIRECT & KACS: semua baris
+    SELECT mc.[id]
+    FROM [dbo].[MP_CUSTOMER_NEW] mc
+    INNER JOIN [dbo].[Distributors] dist ON dist.[Id] = mc.[distributor_id]
+    WHERE ISNULL(LTRIM(RTRIM(mc.[code])), '') <> ''
+      AND UPPER(LTRIM(RTRIM(dist.[Distributor]))) IN ('DIRECT', 'KACS')
+
+    UNION
+
+    -- Lainnya: dedupe 1 baris per code
+    SELECT [id]
+    FROM (
+        SELECT
+            mc.[id],
+            ROW_NUMBER() OVER (
+                PARTITION BY mc.[code]
+                ORDER BY mc.[updated_at] DESC, mc.[id] DESC
+            ) AS [rn]
+        FROM [dbo].[MP_CUSTOMER_NEW] mc
+        LEFT JOIN [dbo].[Distributors] dist ON dist.[Id] = mc.[distributor_id]
+        WHERE ISNULL(LTRIM(RTRIM(mc.[code])), '') <> ''
+          AND UPPER(LTRIM(RTRIM(ISNULL(dist.[Distributor], '')))) NOT IN ('DIRECT', 'KACS')
+    ) AS [ranked]
+    WHERE [rn] = 1
+)
 SELECT
     -- Data Customer
     c.id AS customer_id,
@@ -90,36 +118,15 @@ SELECT
     m.id AS market_id,
     m.MarketChanel AS market_name
 
-FROM [dbo].[MP_CUSTOMER_NEW] c
-    LEFT JOIN [dbo].[Accounts] a ON c.account_id = a.id
-    LEFT JOIN [dbo].[Distributors] d ON c.distributor_id = d.id
-    LEFT JOIN [dbo].[SubRegions] sr ON d.SubRegionId = sr.id
-    LEFT JOIN [dbo].[Regions] r ON sr.RegionId = r.id
-    LEFT JOIN [dbo].[Regencies] rg ON c.regency_id = rg.id
-    LEFT JOIN [dbo].[Provinces] p ON rg.ProvinceId = p.id
-    LEFT JOIN [dbo].[SubChanels] sc ON a.SubChanelId = sc.id
-    LEFT JOIN [dbo].[Chanels] ch ON sc.ChanelId = ch.id
-    LEFT JOIN [dbo].[Markets] m ON ch.MarketId = m.id
-WHERE (
-    ISNULL(LTRIM(RTRIM(c.[code])), '') <> ''
-    AND UPPER(LTRIM(RTRIM(ISNULL(d.[Distributor], '')))) IN ('DIRECT', 'KACS')
-)
-OR c.id IN (
-    SELECT [id]
-    FROM (
-        SELECT
-            mc.[id],
-            ROW_NUMBER() OVER (
-                PARTITION BY mc.[code]
-                ORDER BY
-                    mc.[updated_at] DESC,
-                    mc.[id] DESC
-            ) AS [rn]
-        FROM [dbo].[MP_CUSTOMER_NEW] mc
-        LEFT JOIN [dbo].[Distributors] dist ON dist.[Id] = mc.[distributor_id]
-        WHERE ISNULL(LTRIM(RTRIM(mc.[code])), '') <> ''
-          AND UPPER(LTRIM(RTRIM(ISNULL(dist.[Distributor], '')))) NOT IN ('DIRECT', 'KACS')
-    ) AS [ranked]
-    WHERE [rn] = 1
-);
+FROM [EligibleCustomer] ec
+INNER JOIN [dbo].[MP_CUSTOMER_NEW] c ON c.[id] = ec.[id]
+LEFT JOIN [dbo].[Accounts] a ON c.account_id = a.id
+LEFT JOIN [dbo].[Distributors] d ON c.distributor_id = d.id
+LEFT JOIN [dbo].[SubRegions] sr ON d.SubRegionId = sr.id
+LEFT JOIN [dbo].[Regions] r ON sr.RegionId = r.id
+LEFT JOIN [dbo].[Regencies] rg ON c.regency_id = rg.id
+LEFT JOIN [dbo].[Provinces] p ON rg.ProvinceId = p.id
+LEFT JOIN [dbo].[SubChanels] sc ON a.SubChanelId = sc.id
+LEFT JOIN [dbo].[Chanels] ch ON sc.ChanelId = ch.id
+LEFT JOIN [dbo].[Markets] m ON ch.MarketId = m.id;
 GO

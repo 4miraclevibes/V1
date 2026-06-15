@@ -1,10 +1,12 @@
 -- =====================================================
 -- SYNC_INSERT_MP_CUSTOMER_FROM_REFERENCE.sql
 -- =====================================================
--- Sync: MP_CUSTOMER_REFERENCE_05_06_2026 -> MP_CUSTOMER_NEW
+-- Refresh: MP_CUSTOMER_REFERENCE_05_06_2026 -> MP_CUSTOMER_NEW
+-- Data aktif HANYA dari reference. Baris di luar reference di-DELETE.
 --
 -- INSERT : baris baru (belum ada pasangan code + distributor_name + customer_name)
--- UPDATE : createdate untuk SEMUA row existing yang match reference
+-- UPDATE : createdate + account_trading_term untuk row existing yang match reference (kolom lain tetap)
+-- DELETE : row di MP_CUSTOMER_NEW yang triple-nya tidak ada di reference
 --
 -- Unik: customer_code + distributor_name + customer_name
 -- Duplikat di reference: ketiga kolom sama persis -> ambil 1 baris
@@ -67,6 +69,7 @@ SET XACT_ABORT ON;
 DECLARE @SyncRunAt DATETIME = GETDATE();
 DECLARE @RowsInserted INT = 0;
 DECLARE @RowsCreatedateUpdated INT = 0;
+DECLARE @RowsDeleted INT = 0;
 DECLARE @RowsLookupMiss INT = 0;
 DECLARE @RowsDuplicateRef INT = 0;
 DECLARE @ShowPreview BIT = 0;
@@ -255,10 +258,11 @@ BEGIN TRY
             AND e.[cust_name_key] = s.[cust_name_key] COLLATE Latin1_General_CI_AI
       );
 
-    -- UPDATE createdate untuk existing yang match reference (code + distributor_name + customer_name)
+    -- UPDATE createdate + account_trading_term untuk existing yang match reference
     UPDATE c
     SET
         c.[createdate] = CAST(s.[customer_createdate] AS NVARCHAR(MAX)),
+        c.[account_trading_term] = CAST(s.[account_trading_term] AS NVARCHAR(MAX)),
         c.[updated_at] = CAST(@SyncRunAt AS DATETIME2(7))
     FROM [dbo].[MP_CUSTOMER_NEW] c
     LEFT JOIN [dbo].[Distributors] d ON d.[Id] = c.[distributor_id]
@@ -339,10 +343,29 @@ BEGIN TRY
 
     SET @RowsInserted = @@ROWCOUNT;
 
+    -- Hapus data lama yang tidak ada di reference (triple tidak match)
+    DELETE c
+    FROM [dbo].[MP_CUSTOMER_NEW] c
+    LEFT JOIN [dbo].[Distributors] d ON d.[Id] = c.[distributor_id]
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM #RefSource s
+        WHERE s.[row_num] = 1
+          AND s.[customer_code] COLLATE Latin1_General_CI_AI
+              = CAST(LTRIM(RTRIM(ISNULL(c.[code], ''))) AS NVARCHAR(100)) COLLATE Latin1_General_CI_AI
+          AND s.[dist_key] COLLATE Latin1_General_CI_AI
+              = CAST(LTRIM(RTRIM(ISNULL(d.[Distributor], ''))) AS NVARCHAR(350)) COLLATE Latin1_General_CI_AI
+          AND s.[cust_name_key] COLLATE Latin1_General_CI_AI
+              = CAST(LTRIM(RTRIM(ISNULL(c.[name], ''))) AS NVARCHAR(500)) COLLATE Latin1_General_CI_AI
+    );
+
+    SET @RowsDeleted = @@ROWCOUNT;
+
     COMMIT TRANSACTION;
 
-    PRINT 'Sync selesai | inserted=' + CAST(@RowsInserted AS VARCHAR)
+    PRINT 'Refresh selesai | inserted=' + CAST(@RowsInserted AS VARCHAR)
         + ' | createdate_updated=' + CAST(@RowsCreatedateUpdated AS VARCHAR)
+        + ' | deleted=' + CAST(@RowsDeleted AS VARCHAR)
         + ' | dup_ref_skipped=' + CAST(@RowsDuplicateRef AS VARCHAR)
         + ' | lookup_miss=' + CAST(@RowsLookupMiss AS VARCHAR);
 
@@ -350,9 +373,10 @@ BEGIN TRY
         @SyncRunAt AS SyncRunAt,
         @RowsInserted AS RowsInserted,
         @RowsCreatedateUpdated AS RowsCreatedateUpdated,
+        @RowsDeleted AS RowsDeleted,
         @RowsDuplicateRef AS DuplicateReferenceRowsSkipped,
         @RowsLookupMiss AS LookupMissLogged,
-        N'Sync berhasil' AS Message;
+        N'Refresh berhasil' AS Message;
 END TRY
 BEGIN CATCH
     IF @@TRANCOUNT > 0
