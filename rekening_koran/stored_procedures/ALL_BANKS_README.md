@@ -435,9 +435,9 @@ EXEC SP_MASTER_FindBTP_Batch @TransactionsJSON = @JSON;
 ### Next Steps:
 
 1. ✅ Deploy all SPs (already generated!)
-2. ✅ Setup Power Automate Flow (15 minutes)
+2. ✅ Setup Power Automate Flow
 3. ✅ Test with statement_for_sp.json
-4. ✅ Deploy to Power Apps (15 minutes)
+4. ✅ Deploy to Power Apps
 5. ✅ Use in production! 🚀
 
 ---
